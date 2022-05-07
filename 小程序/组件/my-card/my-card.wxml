@@ -1,0 +1,13 @@
+<wxs src="/wxs/index.wxs" module="computed" />
+
+<view class="my-card" wx:if="{{ config.cosURL }}" bind:tap="tapNavToArticle">
+  <view class="img">
+    <image src="{{ imageUrl }}" mode="widthFix" lazy-load="true" />
+  </view>
+  <view class="summary">{{ title }}</view>
+  <view class="info">
+    <view class="author" wx:if="{{ author }}">{{ author }}</view>
+    <view class="author" wx:else>{{ computed.randomAuthor() }}</view>
+    <view class="watcher">🌞{{ viewCounts }}</view>
+  </view>
+</view>

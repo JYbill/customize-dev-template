@@ -1,0 +1,3 @@
+<view class="my-backtop" bind:tap="onTap">
+  <view class="logo">🐸</view>
+</view>
