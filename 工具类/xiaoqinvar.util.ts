@@ -1,14 +1,17 @@
-
 /**
- * xiaoQinVar自己封装的常用工具类
+ * @time 2022/5/9 13:56
+ * @author xiaoqinvar
+ * @desc 常用字符串、文件/目录操作、数字工具类、常用正则表达式
+ * @dependence diff.js
  */
 export class xiaoQinVarUtils {
 
+  // 正则：匹配所有
   private readonly Regex_matchAll = /.*测试.*/ig
 
   /**
-   * 获取UUID
-   * @returns 
+   * 随机获取UUID
+   * @returns string
    */
   static uuid() {
     return 'xxxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -16,8 +19,6 @@ export class xiaoQinVarUtils {
       return v.toString(16);
     });
   }
-
-
 
   /**
    * 日期格式化
@@ -51,13 +52,11 @@ export class xiaoQinVarUtils {
     return fmt;
   }
 
-
-
   /**
    * 使用Ecmascript默认的时间处理格式化, 最后得到的数据是: 2022/2/23 15:38:46, 需要进一步可以转换自己
    * @param date 日期、时间戳
    * @param option 没有使用默认的, 有用自己的
-   * @returns 
+   * @returns
    */
   static dateFormatByEcma(date: Date | number, option?) {
     return option ?
@@ -70,8 +69,6 @@ export class xiaoQinVarUtils {
       }).format(date);
   }
 
-
-
   /**
    * 文件名获取随机文件名  abc.jpg => abc_89dac30047f7.jpg
    * @param filename 
@@ -82,7 +79,6 @@ export class xiaoQinVarUtils {
     const fileNameArr: Array<string> = filename.split(separator);
     return fileNameArr[0] + '_' + this.uuid() + '.' + fileNameArr[1];
   }
-
 
   /**
    * 获取前一天和后一天的时间戳
@@ -99,7 +95,6 @@ export class xiaoQinVarUtils {
     return [+new Date(before), +new Date(after)]
   }
 
-
   /**
    * 随机字符串
    * 默认10位
@@ -107,7 +102,6 @@ export class xiaoQinVarUtils {
   static randomString(num: number = 0): string {
     return Math.random().toString(36).split('.')[1].substring(num);
   }
-
 
   /**
    * 防抖函数
@@ -191,5 +185,12 @@ export class xiaoQinVarUtils {
     }
     // console.log('str2StrByFlag:index', index);
     return str.slice(0, index) + insertStr + str.slice(index);
+  }
+
+  /**
+   * 数字 + 字符组成的随机字符串
+   */
+  randomString() {
+    return Math.random().toString(16).slice(2, 10);
   }
 }
