@@ -65,6 +65,24 @@ var TrtcUtil = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 流关闭、客户端退出
+     * @param client
+     * @param stream
+     */
+    TrtcUtil.leaveAndClose = function (client, stream) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (stream) {
+                    stream.close();
+                }
+                if (client) {
+                    client.leave();
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
     return TrtcUtil;
 }());
 exports.TrtcUtil = TrtcUtil;

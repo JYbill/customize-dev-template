@@ -4,7 +4,7 @@
  * @desc TRTC SDK工具类
  * @dependence trtc-js-sdk 自带.d.ts文件
  */
-import {Client, Stream} from "trtc-js-sdk";
+import {Client, LocalStream, Stream} from "trtc-js-sdk";
 
 export class TrtcUtil {
 
@@ -24,4 +24,17 @@ export class TrtcUtil {
     }
   }
 
+  /**
+   * 流关闭、客户端退出
+   * @param client
+   * @param stream
+   */
+  static async leaveAndClose(client: Client, stream: LocalStream) {
+    if (stream) {
+      stream.close();
+    }
+    if (client) {
+      client.leave();
+    }
+  }
 }
