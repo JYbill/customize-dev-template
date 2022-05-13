@@ -1,0 +1,91 @@
+.room-item {
+  padding: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+
+  // 显示播放按钮
+  .showIcon {
+    $w-h: 82px;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    width: $w-h;
+    height: $w-h;
+    background-image: url('../../assets/images/bofang.png');
+    background-size: cover;
+    transform: translate(-50%, -50%);
+  }
+
+  // 隐藏播放按钮
+  .dontShowIcon {
+    display: none;
+  }
+
+
+  // 封面
+  .cover {
+    height: 206px;
+    background-image: url('../../assets/images/login_bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  // 直播间、录屏信息
+  .info {
+    background-color: #FFFFFF;
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    p {
+      width: 127px;
+      height: 22px;
+      font-size: 16px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 600;
+      color: #333333;
+      line-height: 22px;
+      margin-left: 19px;
+      margin-bottom: 4px;
+    }
+
+    .time-and-count {
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        height: 20px;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 20px;
+      }
+
+      span:nth-of-type(1) {
+        margin-left: 19px;
+      }
+
+      span:nth-of-type(2) {
+        margin-right: 13px;
+
+        &::before {
+          content: '';
+          width: 12px;
+          height: 12px;
+          background-image: url('../../assets/images/watcher.png');
+          background-size: 100%;
+          display: inline-block;
+          margin-right: 6px;
+        }
+      }
+    }
+  }
+}

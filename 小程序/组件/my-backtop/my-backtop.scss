@@ -1,0 +1,14 @@
+.my-backtop {
+  text-align: center;
+  position: fixed;
+  right: 10%;
+  bottom: 10%;
+
+  .logo {
+    width: 5vw;
+    height: 5vw;
+    background-color: rgba(231,229,229, .4);
+    padding: 20rpx;
+    border-radius: 20rpx;
+  }
+}

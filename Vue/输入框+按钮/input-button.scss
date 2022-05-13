@@ -1,0 +1,21 @@
+.input-button {
+  align-self: center;
+
+  .el-input {
+    width: 230px;
+    box-sizing: border-box;
+    /deep/ input {
+      background-color: #515151;
+      border-radius: 17px 0 0 17px;
+      border: none;
+    }
+  }
+
+  .el-button {
+    height: 40px;
+    border-radius: 0 17px 17px 0;
+    background-color: #515151;
+    color: #00CFAE;
+    border: none;
+  }
+}
