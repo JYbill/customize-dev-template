@@ -1,14 +1,14 @@
 "use strict";
 exports.__esModule = true;
-exports.xiaoQinVarUtils = void 0;
+exports.xiaoQinVarUtil = void 0;
 /**
  * @time 2022/5/9 13:56
  * @author xiaoqinvar
  * @desc 常用字符串、文件/目录操作、数字工具类、常用正则表达式
  * @dependence diff.js
  */
-var xiaoQinVarUtils = /** @class */ (function () {
-    function xiaoQinVarUtils() {
+var xiaoQinVarUtil = /** @class */ (function () {
+    function xiaoQinVarUtil() {
         // 正则：匹配所有
         this.Regex_matchAll = /.*测试.*/ig;
     }
@@ -16,7 +16,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * 随机获取UUID
      * @returns string
      */
-    xiaoQinVarUtils.uuid = function () {
+    xiaoQinVarUtil.uuid = function () {
         return 'xxxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
@@ -28,7 +28,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @param date
      * @returns
      */
-    xiaoQinVarUtils.dateFormat = function (fmt, date) {
+    xiaoQinVarUtil.dateFormat = function (fmt, date) {
         date = new Date(date);
         var ret;
         var opt = {
@@ -58,7 +58,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @param option 没有使用默认的, 有用自己的
      * @returns
      */
-    xiaoQinVarUtils.dateFormatByEcma = function (date, option) {
+    xiaoQinVarUtil.dateFormatByEcma = function (date, option) {
         return option ?
             new Intl.DateTimeFormat('zh-CN', option).format(date)
             :
@@ -73,7 +73,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @param filename
      * @returns
      */
-    xiaoQinVarUtils.randomFileName = function (filename) {
+    xiaoQinVarUtil.randomFileName = function (filename) {
         var separator = '.';
         var fileNameArr = filename.split(separator);
         return fileNameArr[0] + '_' + this.uuid() + '.' + fileNameArr[1];
@@ -82,7 +82,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * 获取前一天和后一天的时间戳
      * @returns [昨天0点时间戳, 明天0点时间戳]
      */
-    xiaoQinVarUtils.getBeforeAndAfterTime = function (date) {
+    xiaoQinVarUtil.getBeforeAndAfterTime = function (date) {
         if (date === void 0) { date = new Date(); }
         var before = date;
         before.setMinutes(0);
@@ -97,7 +97,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * 随机字符串
      * 默认10位
      */
-    xiaoQinVarUtils.randomString = function (num) {
+    xiaoQinVarUtil.randomString = function (num) {
         if (num === void 0) { num = 0; }
         return Math.random().toString(36).split('.')[1].substring(num);
     };
@@ -107,7 +107,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @param delay 延迟时间ms
      * @returns
      */
-    xiaoQinVarUtils.debounce = function (func, delay) {
+    xiaoQinVarUtil.debounce = function (func, delay) {
         // 起始时间戳
         var startTimeStamp = 0;
         // 定时器
@@ -139,19 +139,19 @@ var xiaoQinVarUtils = /** @class */ (function () {
             }
         };
     };
-    xiaoQinVarUtils.throttle = function (time, func) {
+    xiaoQinVarUtil.throttle = function (time, func) {
         var args = [];
         for (var _i = 2; _i < arguments.length; _i++) {
             args[_i - 2] = arguments[_i];
         }
-        if (!xiaoQinVarUtils.timer) {
+        if (!xiaoQinVarUtil.timer) {
             console.log('允许执行', new Date().getMilliseconds());
             // 执行到这里说明没有定时器, 执行并添加定时器
             func.call(this, args);
-            xiaoQinVarUtils.timer = setTimeout(function () {
+            xiaoQinVarUtil.timer = setTimeout(function () {
                 // 清空定时器
-                clearTimeout(xiaoQinVarUtils.timer);
-                xiaoQinVarUtils.timer = null;
+                clearTimeout(xiaoQinVarUtil.timer);
+                xiaoQinVarUtil.timer = null;
             }, time);
         }
         console.log('节流中...', new Date().getMilliseconds());
@@ -163,7 +163,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @returns 返回新增之前的所有字符片段
      */
     // 得到新增前的字符串，排除removed的字符串
-    xiaoQinVarUtils.diffUtil = function (diffArr, i) {
+    xiaoQinVarUtil.diffUtil = function (diffArr, i) {
         // 排除自身
         for (var index = i - 1; index >= 0; index--) {
             if (diffArr[index].removed) {
@@ -173,7 +173,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
         }
     };
     // 根据上面方法获取的字符片段插入insertStr字符串，
-    xiaoQinVarUtils.prototype.str2StrByFlag = function (str, insertStr, strFlag) {
+    xiaoQinVarUtil.prototype.str2StrByFlag = function (str, insertStr, strFlag) {
         var index; // 插入下标
         if (strFlag == '') {
             index = 0;
@@ -187,8 +187,15 @@ var xiaoQinVarUtils = /** @class */ (function () {
     /**
      * 数字 + 字符组成的随机字符串
      */
-    xiaoQinVarUtils.prototype.randomString = function () {
+    xiaoQinVarUtil.prototype.randomString = function () {
         return Math.random().toString(16).slice(2, 10);
+    };
+    /**
+     * 获取随机数字字符串
+     * @param length 长度
+     */
+    xiaoQinVarUtil.prototype.randomNumberString = function (length) {
+        return Math.random().toString().slice(2, length + 2);
     };
     /**
      * 节流函数
@@ -196,7 +203,7 @@ var xiaoQinVarUtils = /** @class */ (function () {
      * @param time 延迟
      */
     // 定时器
-    xiaoQinVarUtils.timer = null;
-    return xiaoQinVarUtils;
+    xiaoQinVarUtil.timer = null;
+    return xiaoQinVarUtil;
 }());
-exports.xiaoQinVarUtils = xiaoQinVarUtils;
+exports.xiaoQinVarUtil = xiaoQinVarUtil;

@@ -4,7 +4,7 @@
  * @desc 常用字符串、文件/目录操作、数字工具类、常用正则表达式
  * @dependence diff.js
  */
-export class xiaoQinVarUtils {
+export class xiaoQinVarUtil {
 
   // 正则：匹配所有
   private readonly Regex_matchAll = /.*测试.*/ig
@@ -100,7 +100,7 @@ export class xiaoQinVarUtils {
    * 默认10位
    */
   static randomString(num: number = 0): string {
-    return Math.random().toString(36).split('.')[1].substring(num);
+    return Math.random().toString(36).split('.')[1].slice(num);
   }
 
   /**
@@ -146,14 +146,14 @@ export class xiaoQinVarUtils {
   // 定时器
   private static timer: NodeJS.Timeout = null;
   static throttle(time: number, func: Function, ...args: any[]): void {
-    if (!xiaoQinVarUtils.timer) {
+    if (!xiaoQinVarUtil.timer) {
       console.log('允许执行', new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
       func.call(this, args);
-      xiaoQinVarUtils.timer = setTimeout(() => {
+      xiaoQinVarUtil.timer = setTimeout(() => {
         // 清空定时器
-        clearTimeout(xiaoQinVarUtils.timer);
-        xiaoQinVarUtils.timer = null;
+        clearTimeout(xiaoQinVarUtil.timer);
+        xiaoQinVarUtil.timer = null;
       }, time)
     }
     console.log('节流中...', new Date().getMilliseconds());
@@ -176,7 +176,7 @@ export class xiaoQinVarUtils {
     }
   }
   // 根据上面方法获取的字符片段插入insertStr字符串，
-  str2StrByFlag(str: string, insertStr: string, strFlag: string): string {
+  static str2StrByFlag(str: string, insertStr: string, strFlag: string): string {
     let index; // 插入下标
     if (strFlag == '') {
       index = 0;
@@ -190,7 +190,15 @@ export class xiaoQinVarUtils {
   /**
    * 数字 + 字符组成的随机字符串
    */
-  randomString() {
+  static randomNumberAndString() {
     return Math.random().toString(16).slice(2, 10);
+  }
+
+  /**
+   * 获取随机数字字符串
+   * @param length 长度
+   */
+  static randomNumberString(length: number): string {
+    return Math.random().toString().slice(2, length + 2);
   }
 }
