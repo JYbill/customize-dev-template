@@ -62,14 +62,14 @@ export declare class xiaoQinVarUtil {
      * @returns 返回新增之前的所有字符片段
      */
     static diffUtil(diffArr: any, i: any): any;
-    str2StrByFlag(str: string, insertStr: string, strFlag: string): string;
+    static str2StrByFlag(str: string, insertStr: string, strFlag: string): string;
     /**
      * 数字 + 字符组成的随机字符串
      */
-    randomString(): string;
+    static randomNumberAndString(): string;
     /**
      * 获取随机数字字符串
      * @param length 长度
      */
-    randomNumberString(length: number): string;
+    static randomNumberString(length: number): string;
 }

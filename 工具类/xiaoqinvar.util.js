@@ -99,7 +99,7 @@ var xiaoQinVarUtil = /** @class */ (function () {
      */
     xiaoQinVarUtil.randomString = function (num) {
         if (num === void 0) { num = 0; }
-        return Math.random().toString(36).split('.')[1].substring(num);
+        return Math.random().toString(36).split('.')[1].slice(num);
     };
     /**
      * 防抖函数
@@ -173,7 +173,7 @@ var xiaoQinVarUtil = /** @class */ (function () {
         }
     };
     // 根据上面方法获取的字符片段插入insertStr字符串，
-    xiaoQinVarUtil.prototype.str2StrByFlag = function (str, insertStr, strFlag) {
+    xiaoQinVarUtil.str2StrByFlag = function (str, insertStr, strFlag) {
         var index; // 插入下标
         if (strFlag == '') {
             index = 0;
@@ -187,14 +187,14 @@ var xiaoQinVarUtil = /** @class */ (function () {
     /**
      * 数字 + 字符组成的随机字符串
      */
-    xiaoQinVarUtil.prototype.randomString = function () {
+    xiaoQinVarUtil.randomNumberAndString = function () {
         return Math.random().toString(16).slice(2, 10);
     };
     /**
      * 获取随机数字字符串
      * @param length 长度
      */
-    xiaoQinVarUtil.prototype.randomNumberString = function (length) {
+    xiaoQinVarUtil.randomNumberString = function (length) {
         return Math.random().toString().slice(2, length + 2);
     };
     /**
