@@ -1,10 +1,10 @@
 /**
  * @time 2022/5/9 13:56
  * @author xiaoqinvar
- * @desc 常用字符串、文件/目录操作、数字工具类、常用正则表达式
+ * @desc 常用字符串、数字工具类、常用正则表达式
  * @dependence diff.js
  */
-export declare class xiaoQinVarUtil {
+export declare class EcmaUtil {
     private readonly Regex_matchAll;
     /**
      * 随机获取UUID
