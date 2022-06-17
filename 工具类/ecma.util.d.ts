@@ -2,10 +2,10 @@
  * @time 2022/5/9 13:56
  * @author xiaoqinvar
  * @desc 常用字符串、数字工具类、常用正则表达式
- * @dependence diff.js
+ * @dependence
  */
 export declare class EcmaUtil {
-    private readonly Regex_matchAll;
+    static readonly MathAllRegx: RegExp;
     /**
      * 随机获取UUID
      * @returns string
@@ -37,8 +37,8 @@ export declare class EcmaUtil {
      */
     static getBeforeAndAfterTime(date?: Date): number[];
     /**
-     * 随机字符串
-     * 默认10位
+     * 随机字符串默认11位
+     * @param num 11 - num长度的字符串
      */
     static randomString(num?: number): string;
     /**
@@ -64,11 +64,11 @@ export declare class EcmaUtil {
     static diffUtil(diffArr: any, i: any): any;
     static str2StrByFlag(str: string, insertStr: string, strFlag: string): string;
     /**
-     * 数字 + 字符组成的随机字符串
+     * 混合数字、字符串
      */
     static randomNumberAndString(): string;
     /**
-     * 获取随机数字字符串
+     * 获取随机纯数字字符串，第一个数组如果为0则用1代替
      * @param length 长度
      */
     static randomNumberString(length: number): string;

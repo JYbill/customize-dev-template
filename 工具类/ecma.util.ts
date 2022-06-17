@@ -2,12 +2,12 @@
  * @time 2022/5/9 13:56
  * @author xiaoqinvar
  * @desc 常用字符串、数字工具类、常用正则表达式
- * @dependence diff.js
+ * @dependence
  */
 export class EcmaUtil {
 
   // 正则：匹配所有
-  private readonly Regex_matchAll = /.*测试.*/ig
+  static readonly MathAllRegx = /.*测试.*/ig
 
   /**
    * 随机获取UUID
@@ -96,8 +96,8 @@ export class EcmaUtil {
   }
 
   /**
-   * 随机字符串
-   * 默认10位
+   * 随机字符串默认11位
+   * @param num 11 - num长度的字符串
    */
   static randomString(num: number = 0): string {
     return Math.random().toString(36).split('.')[1].slice(num);

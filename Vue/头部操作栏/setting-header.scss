@@ -16,6 +16,12 @@
     border: 1px solid #D9D9D9;
     margin-left: 20px;
 
+    .icon {
+      font-size: 25px;
+      height: 36px;
+      line-height: 36px;
+    }
+
     /deep/ .el-input {
       width: 420px;
     }
@@ -25,7 +31,9 @@
     }
   }
 
-  > .el-button {
+
+
+  .share {
     color: #00CFAE;
     border: 1px solid #00CFAE;
   }
@@ -49,10 +57,56 @@
       border-radius: 4px 0 0 4px;
       border-right: none;
     }
+
     .history-playback {
       border-radius: 0 4px 4px 0;
       margin-left: 0;
       border-left: none;
     }
+  }
+
+  // 没有权限的样式
+  .no-permission {
+    flex: 1;
+    text-align: right;
+    padding-right: 20px;
+
+    .history-playback {
+      margin-right: 20px;
+    }
+  }
+}
+
+// 分享主体内容
+.share-body {
+  padding: 0;
+  margin: 0 0 15px 0;
+  display: flex;
+
+  .el-input {
+    width: 254px;
+    height: 38px;
+    position: relative;
+    left: 10px;
+    border-radius: 3px;
+  }
+
+  /deep/ .el-button {
+    background: #00CFAE;
+    border-radius: 3px;
+    color: #FFFFFF;
+    position: relative;
+    z-index: 10;
+  }
+}
+
+// 二维码
+.qrcode {
+  display: flex;
+  span {
+    margin-right: 10px;
+  }
+  img {
+    width: 80px;
   }
 }

@@ -53,3 +53,8 @@
   <img src="./Vue/头部操作栏/头部操作栏.png" />
 
 <br/>
+
+- 聊天盒子
+  ![](./Vue/聊天盒子/chat-box.png)
+
+<br/>
