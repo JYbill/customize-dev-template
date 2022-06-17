@@ -35,7 +35,8 @@
 <br/>
 
 - 直播间聊天项
-  <img src="./Vue/直播间聊天项/直播间聊天项.png" />
+
+  <img src="./Vue/直播间聊天项/直播间聊天项.png" width="50%" />
 
 <br/>
 
@@ -45,7 +46,8 @@
 <br/>
 
 - 小卡片
-  <img src="./Vue/创建业务卡片/create-card.png" />
+
+  <img width="60%" src="./Vue/创建业务卡片/create-card.png" />
 
 <br/>
 
@@ -55,6 +57,7 @@
 <br/>
 
 - 聊天盒子
-  ![](./Vue/聊天盒子/chat-box.png)
+
+  <img width="50%" src="./Vue/聊天盒子/chat-box.png" />
 
 <br/>
