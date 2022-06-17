@@ -15,12 +15,13 @@
 <br/>
 
 - 回放直播录屏项
-  <img src="./Vue/回放直播录屏项/回放直播间项.png" />
+
+  <img width="60%" src="./Vue/回放直播录屏项/回放直播间项.png" />
 
 <br/>
 
 - 会议直播间视频项
-  <img src="./Vue/会议直播间视频项/会议直播间视频项.png" />
+  <img width="60%" src="./Vue/会议直播间视频项/会议直播间视频项.png" />
 
 <br/>
 
@@ -40,14 +41,15 @@
 
 <br/>
 
-- 小卡片
-  <img src="./Vue/小卡片/card.png" />
+- 小卡片1
+
+  <img width="50%" src="./Vue/小卡片/card.png" />
 
 <br/>
 
-- 小卡片
+- 小卡片2
 
-  <img width="60%" src="./Vue/创建业务卡片/create-card.png" />
+  <img width="50%" src="./Vue/创建业务卡片/create-card.png" />
 
 <br/>
 
