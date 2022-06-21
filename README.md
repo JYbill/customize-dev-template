@@ -5,7 +5,8 @@
 
 ## <a id="Vue">Vue</a>
 - 登陆组件
-  <img src="./Vue/登陆组件/登陆组件.png" />
+
+  <img width="70%" src="./Vue/登陆组件/登陆组件.png" />
 
 <br/>
 
@@ -16,12 +17,13 @@
 
 - 回放直播录屏项
 
-  <img width="60%" src="./Vue/回放直播录屏项/回放直播间项.png" />
+  <img width="40%" src="./Vue/回放直播录屏项/回放直播间项.png" />
 
 <br/>
 
 - 会议直播间视频项
-  <img width="60%" src="./Vue/会议直播间视频项/会议直播间视频项.png" />
+
+  <img width="40%" src="./Vue/会议直播间视频项/会议直播间视频项.png" />
 
 <br/>
 
@@ -30,7 +32,7 @@
 
 <br/>
 
-- 聊天块
+- 聊天块输入与发送
   <img src="./Vue/输入框+按钮/input-button组件.png" />
 
 <br/>
@@ -61,5 +63,11 @@
 - 聊天盒子
 
   <img width="50%" src="./Vue/聊天盒子/chat-box.png" />
+
+<br/>
+
+- 日期时间输入框组件
+
+  <img width="100%" src="./Vue/日期时间输入框组件/datetime-search-header.png" />
 
 <br/>

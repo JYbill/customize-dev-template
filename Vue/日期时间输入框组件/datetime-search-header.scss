@@ -1,0 +1,48 @@
+.datetime-search-header {
+  display: flex;
+  margin-bottom: 28px;
+  margin-top: 10px;
+
+  // 占位
+  .empty {
+    flex: 2;
+  }
+
+  // 日期选择器
+  .el-date-editor {
+    width: 225px;
+    height: 36px;
+    background: #FFFFFF;
+    border-radius: 18px;
+    border: 1px solid #EEEEEE;
+    margin-right: 15px;
+  }
+
+  .search {
+    width: 266px;
+    height: 36px;
+    display: flex;
+    position: relative;
+
+    .el-input {
+      border: 1px solid #d7d7d7;
+      /deep/ .el-input__inner {
+        border-radius: 18px;
+        border: 1px solid black;
+        height: 33px;
+      }
+    }
+
+    .el-button {
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      width: 60px;
+      height: 36px;
+      right: 0;
+      background: #00CFAE;
+      border-radius: 18px;
+    }
+  }
+}
