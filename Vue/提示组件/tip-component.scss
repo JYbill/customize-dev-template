@@ -1,0 +1,13 @@
+.tip-component {
+  width: 50%;
+  height: 128px;
+  background-color: rgba(200, 200, 200, .8);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 10px;
+
+  img {
+    margin: 5px 0;
+  }
+}

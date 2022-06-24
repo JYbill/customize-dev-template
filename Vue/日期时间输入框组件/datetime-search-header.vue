@@ -2,6 +2,7 @@
   <div class="datetime-search-header">
     <el-button @click="clickDownVideo">下载视频</el-button>
     <el-button @click="clickDeleteVideo">删除视频</el-button>
+    <el-button @click="clickEditorVideo">编辑视频</el-button>
     <div class="empty"></div>
     <el-date-picker
         v-model="date"
@@ -12,7 +13,7 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
-        @blur="blurDatePicker" />
+    />
     <div class="search">
       <el-input
           style="border-radius: 18px"
@@ -70,6 +71,11 @@ export default {
     // 搜索内容
     searchValue: String,
   },
+  watch: {
+    date() {
+      this.$emit('blurDate', this.date);
+    }
+  },
   methods: {
 
     // 下载视频
@@ -82,15 +88,16 @@ export default {
       this.$emit('delete');
     },
 
+    // 编辑视频名称
+    clickEditorVideo() {
+      this.$emit('editor');
+    },
+
     // 搜索事件
     searchHandler() {
       this.$emit('search', this.searchValue);
     },
 
-    // 日期选择器失去焦点触发
-    blurDatePicker() {
-      this.$emit('blurDate', this.date);
-    }
   },
 };
 </script>

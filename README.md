@@ -71,3 +71,9 @@
   <img width="100%" src="./Vue/日期时间输入框组件/datetime-search-header.png" />
 
 <br/>
+
+- 提示组件
+
+  <img width="80%" src="./Vue/提示组件/tip-component.png" />
+
+<br/>
