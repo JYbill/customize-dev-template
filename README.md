@@ -77,3 +77,9 @@
   <img width="80%" src="./Vue/提示组件/tip-component.png" />
 
 <br/>
+
+- 信息栏组件
+
+  <img width="90%" src="./Vue/信息banner/info-banner.png" />
+
+<br/>
