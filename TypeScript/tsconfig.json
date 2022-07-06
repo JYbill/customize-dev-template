@@ -24,5 +24,7 @@
     "resolveJsonModule": true,
     // 不允许type类型为any
     "noImplicitAny": false,
+    // 不允许出现未使用的变量
+    "noUnusedLocals": false,
   }
 }
