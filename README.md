@@ -83,3 +83,9 @@
   <img width="90%" src="./Vue/信息banner/info-banner.png" />
 
 <br/>
+
+- 选择成员dialog组件
+
+  <img width="90%" src="./Vue/选择成员dialog组件/choose-member-dialog.png" />
+
+<br/>
