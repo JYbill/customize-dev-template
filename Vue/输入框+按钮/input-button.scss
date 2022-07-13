@@ -1,8 +1,24 @@
 .input-button {
   align-self: center;
 
+  // 表情组件
+  .emoji-picker {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 102%;
+    z-index: 999;
+  }
+
+  .icon {
+    color: #5ECDB0;
+    position: relative;
+    margin-right: 10px;
+    font-size: 28px;
+    vertical-align: middle;
+  }
   .el-input {
-    width: 230px;
+    width: 190px;
     box-sizing: border-box;
     /deep/ input {
       background-color: #515151;
@@ -16,8 +32,11 @@
   .el-button {
     height: 40px;
     border-radius: 0 17px 17px 0;
-    background-color: #515151;
-    color: #00CFAE;
+    color: white;
     border: none;
+    position: relative;
+    top: 0;
+    left: -1px;
+    background-color: #00CFAE;
   }
 }

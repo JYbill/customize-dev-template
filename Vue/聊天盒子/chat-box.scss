@@ -1,15 +1,17 @@
 @import "~@/assets/css/color.scss";
 
 .chat-box {
-  $margin-top: 20px;
-  height: calc(100% - 20px);
+  $margin-top: 10px;
   width: 320px;
   margin-top: $margin-top;
   margin-right: 20px;
   padding: 0;
   border-radius: 1px;
   background-color: #FFFFFF;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  border: 1px solid #e7e6e6;
+  min-height: 200px;
 
   // 成员列表头部
   .header {
@@ -47,9 +49,12 @@
   .chat-continer {
     display: flex;
     flex-direction: column;
-    padding-top: 13px;
-    height: 80vh;
-    overflow: hidden;
+    background-color: #F6F7F8;
+    height: 490px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 490px;
+    overscroll-behavior-y: contain;
 
     // 滚动条、内容显示设置
     &:hover {
@@ -88,8 +93,7 @@
 
   // 聊天组件
   .chat-input {
-    //background-color: orange;
-    height: 60px;
+    height: 100px;
     display: grid;
     grid-template-columns: 40px 1fr 10px;
     grid-template-rows: 1fr;
@@ -99,6 +103,15 @@
     .emoji {
       color: $theme-green;
       font-size: 20px;
+      position: relative;
+
+      svg { cursor: pointer; }
+
+      .emoji-picker {
+        position: absolute;
+        width: 348px;
+        transform: translate(-50%, -105%);
+      }
     }
     .el-input {
       color: $theme-green;
@@ -120,7 +133,13 @@
           &:active {
             color: #D9D9D9;
           }
+
+          &.disabled {
+            cursor: auto;
+            color: #D9D9D9;
+          }
         }
+
       }
 
     }
