@@ -13,6 +13,30 @@ export class NodeUtil {
    * @param salt
    */
   static md5SlotCrypto(text: string, salt: string = ''): string {
-    return crypto.createHash('md5').update(text + salt).digest('hex');
+    return crypto
+      .createHash('md5')
+      .update(text + salt)
+      .digest('hex');
+  }
+
+  /**
+   * 获取当前node环境的ip地址
+   * @returns ip string
+   */
+  static getCurrentIpAddress(): string {
+    var interfaces = require('os').networkInterfaces();
+    for (var devName in interfaces) {
+      var inter = interfaces[devName];
+      for (var i = 0; i < inter.length; i++) {
+        var alias = inter[i];
+        if (
+          alias.family === 'IPv4' &&
+          alias.address !== '127.0.0.1' &&
+          !alias.internal
+        ) {
+          return alias.address;
+        }
+      }
+    }
   }
 }
