@@ -30,5 +30,7 @@
     // 例子：原本需要import * as React from "react";
     // 为true，import React from "react";
     // "allowSyntheticDefaultImports": true,
+    // 源码映射
+    "sourceMap": true,
   }
 }
