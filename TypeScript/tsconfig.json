@@ -26,5 +26,9 @@
     "noImplicitAny": false,
     // 不允许出现未使用的变量
     "noUnusedLocals": false,
+    // 允许模块没有显式指定默认导出时， 允许默认导出
+    // 例子：原本需要import * as React from "react";
+    // 为true，import React from "react";
+    // "allowSyntheticDefaultImports": true,
   }
 }
