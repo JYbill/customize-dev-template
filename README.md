@@ -1,9 +1,11 @@
 # 目录
-+ <a href="#Vue">Vue</a>
+
+- <a href="#Vue">`Vue`</a>
 
 <br/>
 
-## <a id="Vue">Vue</a>
+## <a id="Vue">`Vue`</a>
+
 - 登陆组件
 
   <img width="70%" src="./Vue/登陆组件/登陆组件.png" />
@@ -12,9 +14,7 @@
 
 - 分享组件
   <img src="./Vue/分享组件(禁用输入框+复制按钮)/share组件.png" />
-
-<br/>
-
+  <br/>
 - 回放直播录屏项
 
   <img width="40%" src="./Vue/回放直播录屏项/回放直播间项.png" />
@@ -43,13 +43,13 @@
 
 <br/>
 
-- 小卡片1
+- 小卡片 1
 
   <img width="50%" src="./Vue/小卡片/card.png" />
 
 <br/>
 
-- 小卡片2
+- 小卡片 2
 
   <img width="50%" src="./Vue/创建业务卡片/create-card.png" />
 
@@ -84,7 +84,7 @@
 
 <br/>
 
-- 选择成员dialog组件
+- 选择成员 dialog 组件
 
   <img width="90%" src="./Vue/选择成员dialog组件/choose-member-dialog.png" />
 

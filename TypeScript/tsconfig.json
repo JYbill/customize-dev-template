@@ -1,36 +1,184 @@
 {
-  // 导入另外一个tsconfig.json问价你的配置
+  // 在编辑了项目中文件保存的时候，编辑器会根据 tsconfig.json 的配置重新生成文件，不过这个需要编辑器支持
+  // "compileOnSave": true,
+  // 路径必须是指定文件无法使用* ? ** global pattern，权重高于includes、excludes
+  // "files": [],
+  // 指定要编译的路径列表，如果没有include选项，则默认会编译根目录以及所有子目录中的文件，允许使用global pattern ，可以是文件或者文件夹
+  // "include": [],
+  // 表示要排除的、不编译的文件, 规则与include一致
+  // "exclude": [],
+  // ⚠️ 继承来的同名配置会覆盖当前文件定义的配置
+  // Node.js 包的 tsconfig.json 配置文件(typescript 3.2+)
   "extends": "",
   "compilerOptions": {
+    // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
     "target": "ES2017",
+    // 使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6
     "module": "NodeNext",
+    // 用来指定编译文件的根目录，编译器会在根目录查找入口文件
     "rootDir": "./src",
+    // 用来指定输出文件夹，值为一个文件夹路径字符串，输出的文件都将放置在这个文件夹
     "outDir": "./dist",
     // es模块交互，推荐开启，否则命名空间导入或默认导入又问题，详细差官网配置
     "esModuleInterop": true,
-    // 导入文件采用大小写一致
+    // 导入文件采用大小写一致，false允许忽略大小写
     "forceConsistentCasingInFileNames": true,
-    // 严格模式
-    "strict": false,
     // 跳过第三方库检查
     "skipLibCheck": true,
-    // 包含的ts库
+    // 包含一组内建JS接口的类型定义，如"DOM"...，默认包括target相匹配的api类型定义
     "lib": [
       "ESNext"
     ],
+    // 默认为false即不编译js
+    // "allowJs": false,
+    // checkJs：值为 true 或 false，用来指定是否检查和报告 JS 文件中的错误，默认是 false。
+    // "checkJs": false,
     // typing跟路径, 默认情况node_modules/@types都是可见的，除特例
     // "typeRoots": ["./"]
+    // 指定jsx代码用于的开发环境
+    // "jsx": "preserve",
+    // 指定生成目标为react JSX时，使用的JSX工厂函数
+    // "jsxFactory": "React.createElement",
+    // 用来指定是否在编译的时候生成响应的".d.ts"声明文件。如果设为 true，编译每个 ts 文件之后会生成一个 js 文件和一个声明文件
+    "declaration": false,
+    // 是否为声明文件.d.ts生成.map文件
+    "declarationMap": true,
     // 是否允许导入json模块，默认：false
     "resolveJsonModule": true,
-    // 不允许type类型为any
-    "noImplicitAny": false,
-    // 不允许出现未使用的变量
-    "noUnusedLocals": false,
+    // 为 true 时，它会隐式地将 catch 中的任何变量设置为 unknown 而不是 any
+    // "useUnknownInCatchVariables": false,
+    // 检测到一定会执行return代码后，后面如果还有代码会报错
+    "allowUnreachableCode": true,
+    // 使用`.`访问存在的属性object.params，使用object["name"]访问未知的选项
+    "noPropertyAccessFromIndexSignature": true,
     // 允许模块没有显式指定默认导出时， 允许默认导出
     // 例子：原本需要import * as React from "react";
     // 为true，import React from "react";
+    /* 
+    // bad
+    function add(input: number, output: number) {
+      if (input + output > 0) {
+          return input + output;
+      }
+    }
+
+    // good
+      function add(input: number, output: number) {
+        if (input + output > 0) {
+          return input + output;
+        }
+        return
+      }
+    */
     // "allowSyntheticDefaultImports": true,
-    // 源码映射
+    // 用于指定将输出文件合并为一个文件，它的值为一个文件路径名, 只有设置 module 的值为 amd 和 system 模块时才支持这个配置
+    // "outFile": "./dist/main.js"
+    // 是否将编译后的文件中的注释删掉, 默认false, 除了/!*开头的版权信息
+    "removeComments": true,
+    // 不生成变编译文件
+    // "noEmit": false,
+    // 指定是否引入tslib里的辅助工具函数， 默认false
+    "importHelpers": true,
+    // 是否将每个文件作为单独的模块，默认true，它不可以和`declaration`同时设定
+    // "isolatedModules": true,
+    // 类型检查选项
+    // 严格模式, 为true所有检查开启，默认false
+    "strict": false,
+    // 不允许type类型为any，包括自动推断为any也会报错
+    "noImplicitAny": true,
+    // 指定始终以严格模式检查每个模块，并且在编译之后的 JS 文件中加入"use strict"，用来告诉浏览器该 JS 为严格模式
+    "alwaysStrict": true,
+    // null和 undefined 值不能赋值给非这两种类型的值，如`const str: string;` 报错
+    "strictNullChecks": true,
+    // 会更彻底地检查函数参数, Typescript 参数默认是双向协变的，开启后类似java的多态机制
+    /* 
+      interface Animal {
+        name: string;
+      }
+
+      interface Dog extends Animal {
+        breeds: Array<string>;
+      }
+
+      let getDogName = (dog: Dog) => dog.name;
+      let getAnimalName = (animal: Animal) => animal.name;
+
+      getDogName = getAnimalName;  // Okay (狗是动物，所以可以变成动物)
+      getAnimalName = getDogName;  // Okay (默认okay，开启后即bad，动物无法变成狗，广范围无法变成窄范围)
+     */
+    "strictFunctionTypes": true,
+    // 确保在构造函数中初始化所有类属性，否则报错，或者可以定义为String | undefined
+    "strictPropertyInitialization": true,
+    // 不正确使用call()、bind() 和 apply() 函数时会报错，如：传参...
+    "strictBindCallApply": true,
+    // 额外检查
+    // 不允许出现未使用的变量
+    "noUnusedLocals": false,
+    // 不允许出现未使用的变量(范围仅在函数型参和函数内部)
+    // "noUnusedParameters": false,
+    // 保证所有函数返回值都显示声明return
+    "noImplicitReturns": true,
+    // switch语句中缺少`break`或`return`关键字，这个编译选项就会生成错误
+    "noFallthroughCasesInSwitch": true,
+    // 不正确地使用 this 关键字的情况下或在不清楚 this 所指的位置的地方提示错误
+    "noImplicitThis": true,
+    /* 模块解析检查 */
+    // 选择模块解析策略
+    // "moduleResolution": "Classic"
+    // 基准目录：
+    /*
+    baseUrl
+        ├── ex.ts
+        ├── hello
+        │   └── world.ts
+        └── tsconfig.json
+
+      // 设置之后以当前目录为基准目录
+      // 未设置：import { helloWorld } from "./hello/world";
+      import { helloWorld } from "hello/world";
+      console.log(helloWorld);
+    */
+    // "baseUrl": "./"
+    // 用于设置模块名到基于 baseUrl 的路径映射
+    /*
+      // 你可以告诉 TypeScript 文件解析器支持一些自定义的前缀来寻找代码。 这种模式可以避免在你的代码中出现过长的相对路径
+      {
+        "compilerOptions": {
+          "baseUrl": "src",
+          "paths": {
+              "app/*": ["app/*"],
+              "config/*": ["app/_config/*"],
+              "environment/*": ["environments/*"],
+              "shared/*": ["app/_shared/*"],
+              "helpers/*": ["helpers/*"],
+              "tests/*": ["tests/*"]
+          },
+      }
+    */
+    // "paths": [],
+    // 在构建时编译器会将这个路径列表中的路径内容都放到一个文件夹中
+    // "rootDirs": [],
+    // 用来指定声明文件或文件夹的路径列表，如果指定了此项，则只有在这里列出的声明文件才会被加载, 默认所有"**/node_modules/**/@types/*"包都将包含在你的编译过程中
+    // "typeRoots": [],
+    // 用来指定需要包含的模块，只有在这里列出的模块声明文件才会被加载进来
+    // "types": [],
+    // 允许从没有默认导出的模块中默认导入
+    // "allowSyntheticDefaultImports": false,
+    /* source map选项 */
+    // 源码.ts映射.map文件
     "sourceMap": true,
+    // 指定调试器应该找到 TypeScript 文件而不是源文件位置，这个值会被写进 .map 文件里
+    // "sourceRoot": ""
+    // 指定调试器找到映射文件而非生成文件的位置，指定 map 文件的根路径
+    // "mapRoot": ""
+    // 是否将 map 文件的内容和 js 文件编译在同一个 js 文件中;如果设为 true，则 map 的内容会以//# sourceMappingURL=然后接 base64 字符串的形式插入在 js 文件底部
+    // "inlineSourceMap": false,
+    // 用于指定是否进一步将 .ts 文件的内容也包含到输出文件中。
+    // "inlineSources": true,
+    /* 实验性选项 */
+    // 用于指定是否启用实验性的装饰器特性
+    // "experimentalDecorators": true,
+    // 用于指定是否为装饰器提供元数据支持
+    // "emitDecoratorMetadata": true,
   }
 }
