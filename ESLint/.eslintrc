@@ -1,7 +1,0 @@
-{
-  "rules": {
-    // ts eslint 关闭定义未使用值
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "off"
-  }
-}

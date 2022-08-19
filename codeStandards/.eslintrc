@@ -1,0 +1,16 @@
+{
+  "rules": {
+    // ts eslint 关闭定义未使用值
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    // eslint整合prettier：未达到以下条件的以警告处理
+    "prettier/prettier": [
+      "warn",
+      {
+        "singleQuote": true,
+        "parser": "flow",
+        "printWidth": 180
+      }
+    ]
+  }
+}
