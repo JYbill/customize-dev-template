@@ -11,6 +11,10 @@
         "parser": "flow",
         "printWidth": 180
       }
-    ]
+    ],
+    // 导入非dependence import
+    "node/no-unpublished-import": "off",
+    // 导入非dependence require
+    "node/no-unpublished-require": "off"
   }
 }
