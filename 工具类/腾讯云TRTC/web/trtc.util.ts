@@ -30,11 +30,11 @@ export class TrtcUtil {
    * @param stream
    */
   static async leaveAndClose(client: Client, stream: LocalStream) {
+    if (client) {
+      await client.leave();
+    }
     if (stream) {
       stream.close();
-    }
-    if (client) {
-      client.leave();
     }
   }
 }

@@ -24,7 +24,7 @@ export class TimUtil {
    */
   static async quitOrDismissGroup(tim: IMClient, roomId: string, uid: string) {
     const promise = await TimUtil.quitGroup(tim, roomId, uid);
-    TimUtil.destroy(tim);
+    return TimUtil.destroy(tim);
   }
 
   /**
@@ -41,9 +41,12 @@ export class TimUtil {
 
     let promise;
     const memberList:GroupMember[]  = data.memberList;
+
+    console.log("== debug member list", memberList);
     for (const member of memberList) {
       const role = member["role"];
       const userID = member["userID"];
+      // console.log("== debug quitGroup", role);
       if (userID === uid) {
         switch (role) {
           // 群员
@@ -52,6 +55,7 @@ export class TimUtil {
             break;
           // 群主
           case TYPES.GRP_MBR_ROLE_OWNER:
+            console.log("== debug member list", role, userID);
             promise = tim.dismissGroup(roomId);
             break;
         }

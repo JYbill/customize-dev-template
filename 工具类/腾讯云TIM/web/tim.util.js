@@ -68,8 +68,7 @@ var TimUtil = /** @class */ (function () {
                     case 0: return [4 /*yield*/, TimUtil.quitGroup(tim, roomId, uid)];
                     case 1:
                         promise = _a.sent();
-                        TimUtil.destroy(tim);
-                        return [2 /*return*/];
+                        return [2 /*return*/, TimUtil.destroy(tim)];
                 }
             });
         });
@@ -92,10 +91,12 @@ var TimUtil = /** @class */ (function () {
                     case 1:
                         data = (_a.sent()).data;
                         memberList = data.memberList;
+                        console.log("== debug member list", memberList);
                         for (_i = 0, memberList_1 = memberList; _i < memberList_1.length; _i++) {
                             member = memberList_1[_i];
                             role = member["role"];
                             userID = member["userID"];
+                            // console.log("== debug quitGroup", role);
                             if (userID === uid) {
                                 switch (role) {
                                     // 群员
@@ -104,6 +105,7 @@ var TimUtil = /** @class */ (function () {
                                         break;
                                     // 群主
                                     case tim_js_sdk_1.TYPES.GRP_MBR_ROLE_OWNER:
+                                        console.log("== debug member list", role, userID);
                                         promise = tim.dismissGroup(roomId);
                                         break;
                                 }
