@@ -62,8 +62,12 @@ export default {
     // 将进度条修改为线性渐变色
     "userStatus.volume"(volume) {
       const elProgressInnerEl = document.querySelector('.deviceStatus .el-progress-bar__inner');
-      console.log(elProgressInnerEl);
       this.$nextTick(() => {
+        // 可能关闭声音中
+        if (!elProgressInnerEl) {
+          return;
+        }
+        // console.log(elProgressInnerEl);
         if (volume <= 25) {
           elProgressInnerEl.style.background = 'green';
         } else if (volume <= 50) {

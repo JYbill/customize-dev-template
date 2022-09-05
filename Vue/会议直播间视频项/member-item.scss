@@ -89,6 +89,12 @@
       width: 30px;
       opacity: 0.8;
       transform: rotate(270deg);
+
+      /deep/ {
+        .el-progress-bar__inner {
+          transition: width .6s ease, background 1s;
+        }
+      }
     }
 
     img {
