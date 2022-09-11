@@ -4,7 +4,20 @@
  * @desc 常用字符串、数字工具类、常用正则表达式
  * @dependence
  */
-type TPrimitive = number | string | boolean;
+
+/**
+ * 原始类型
+ */
+export type TPrimitive = number | string | boolean;
+
+/**
+ * jwt 解析后的类型
+ */
+export type TJwtParseObject = {
+  type: Record<string, string>;
+  payload: Record<string, TPrimitive>;
+};
+
 export class EcmaUtil {
   // 正则：匹配所有
   static readonly MathAllRxp = /.*.*/gi;
@@ -14,9 +27,9 @@ export class EcmaUtil {
    * @returns string
    */
   static uuid() {
-    return 'xxxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    return 'xxxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
       const r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8;
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -43,7 +56,7 @@ export class EcmaUtil {
     for (const k in opt) {
       ret = new RegExp('(' + k + ')').exec(fmt);
       if (ret) {
-        fmt = fmt.replace(ret[1], ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, '0'));
+        fmt = fmt.replace(ret[1], ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, '0'));
       }
     }
     return fmt;
@@ -114,7 +127,7 @@ export class EcmaUtil {
     // 起始时间戳
     let startTimeStamp = 0;
     // 定时器
-    let timer: number | null = null;
+    let timer: NodeJS.Timeout | null = null;
     return (...arg: TPrimitive[]) => {
       // 当前的时间戳
       const nowTimeStamp = +new Date();
@@ -128,12 +141,12 @@ export class EcmaUtil {
         startTimeStamp = +new Date();
       } else {
         // 校验 - 不允许执行，且重置结束时间戳
-        clearTimeout(timer as number);
+        clearTimeout(timer as NodeJS.Timeout);
         // 重置定时器
         timer = setTimeout(() => {
           console.log('定时器执行时间', new Date().getSeconds());
           func.call(func, arg);
-          clearTimeout(timer as number);
+          clearTimeout(timer as NodeJS.Timeout);
           startTimeStamp = +new Date();
         }, delay);
         startTimeStamp = +new Date();
@@ -144,10 +157,10 @@ export class EcmaUtil {
   /**
    * 节流函数
    * @param func 回调函数
-   * @param time 延迟
+   * @param time 延迟ms
    */
   // 定时器
-  private static timer: number | null;
+  private static timer: NodeJS.Timeout | null;
   static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
     if (!EcmaUtil.timer) {
       console.log('允许执行', new Date().getMilliseconds());
@@ -155,7 +168,7 @@ export class EcmaUtil {
       func.call(this, args);
       EcmaUtil.timer = setTimeout(() => {
         // 清空定时器
-        clearTimeout(EcmaUtil.timer as number);
+        clearTimeout(EcmaUtil.timer as NodeJS.Timeout);
         EcmaUtil.timer = null;
       }, time);
     }
@@ -178,5 +191,30 @@ export class EcmaUtil {
       .toString()
       .slice(2, length + 2);
     return numberStr.startsWith('0') ? '1' + numberStr.slice(1) : numberStr;
+  }
+
+  /**
+   * 解析jwt并返回解析结果
+   * @param token 完整token数据
+   * @param authHeader Auth: Barber字段
+   * @returns
+   */
+  static parseJWT(token: string, authHeader: string): TJwtParseObject {
+    if (token.length <= 1) {
+      throw new Error('token is null.');
+    }
+    let jwtString: string = token;
+    // 存在authHeader即去除authHeader
+    if (jwtString.includes(authHeader)) {
+      jwtString = token.replace(authHeader, '');
+    }
+    const jwtArr = jwtString.split('.');
+    const type = window.atob(jwtArr[0]);
+    const payload = window.atob(jwtArr[1]);
+
+    return {
+      type: JSON.parse(type) as Record<string, string>,
+      payload: JSON.parse(payload) as Record<string, TPrimitive>,
+    };
   }
 }
