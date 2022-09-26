@@ -1,4 +1,8 @@
 {
+  "globals": {
+    // 自定义全局变量
+    "TCPlayer": true
+  },
   "rules": {
     // ts eslint 关闭定义未使用值
     "no-unused-vars": "off",
