@@ -3,13 +3,18 @@
  * @author xiaoqinvar
  * @desc 有关db对校验规则, 采用状态机模式
  * @dependence
+ * @tip 
+ * ```
+ *  // 需要先在app.js进行加载
+ *  const baseDir = this.app.baseDir;
+    this.app.loader.loadFile(resolve(baseDir, 'app/validator/objectId.js'));
+ * ```
  */
 module.exports = (app) => {
-  const {validator} = app;
+  const { validator } = app;
 
   // objectId处理器
   const objectIdHandler = {
-
     // 字符串处理
     string: (str) => {
       if (!app.mongoose.isValidObjectId(str)) {
@@ -25,7 +30,7 @@ module.exports = (app) => {
           return 'have a value that is not objectId type';
         }
       }
-    }
+    },
   };
 
   // objectId、objectId数组的校验规则
