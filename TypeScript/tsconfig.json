@@ -154,12 +154,10 @@
     // --------------------------  source map start  --------------------------
     // 源码.ts映射.map文件，便于报错时知道ts文件错误发生的位置信息
     "sourceMap": true
-    // 指定调试器应该找到 TypeScript 文件而不是源文件位置，这个值会被写进 .map 文件里
+    // 指定调试器应该找到 TypeScript 文件而不是js源文件位置，这个值会被写进 .map 文件里
     // "sourceRoot": ""
     // 指定调试器找到映射文件而非生成文件的位置，指定 map 文件的根路径
     // "mapRoot": ""
-    // 是否将 map 文件的内容和 js 文件编译在同一个 js 文件中;如果设为 true，则 map 的内容会以//# sourceMappingURL=然后接 base64 字符串的形式插入在 js 文件底部
-    // "inlineSourceMap": false,
     // 用于指定是否进一步将 .ts 文件的内容也包含到输出文件中。
     // "inlineSources": true,
     // --------------------------  source map start  --------------------------
