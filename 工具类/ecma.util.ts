@@ -27,9 +27,9 @@ export class EcmaUtil {
    * @returns string
    */
   static uuid() {
-    return 'xxxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    return "xxxxxxxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0,
-        v = c === 'x' ? r : (r & 0x3) | 0x8;
+        v = c === "x" ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   }
@@ -45,18 +45,18 @@ export class EcmaUtil {
 
     let ret;
     const opt: Record<string, string> = {
-      'Y+': date.getFullYear().toString(), // 年
-      'm+': (date.getMonth() + 1).toString(), // 月
-      'd+': date.getDate().toString(), // 日
-      'H+': date.getHours().toString(), // 时
-      'M+': date.getMinutes().toString(), // 分
-      'S+': date.getSeconds().toString(), // 秒
+      "Y+": date.getFullYear().toString(), // 年
+      "m+": (date.getMonth() + 1).toString(), // 月
+      "d+": date.getDate().toString(), // 日
+      "H+": date.getHours().toString(), // 时
+      "M+": date.getMinutes().toString(), // 分
+      "S+": date.getSeconds().toString(), // 秒
       // 有其他格式化字符需求可以继续添加，必须转化成字符串
     };
     for (const k in opt) {
-      ret = new RegExp('(' + k + ')').exec(fmt);
+      ret = new RegExp("(" + k + ")").exec(fmt);
       if (ret) {
-        fmt = fmt.replace(ret[1], ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, '0'));
+        fmt = fmt.replace(ret[1], ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"));
       }
     }
     return fmt;
@@ -71,14 +71,14 @@ export class EcmaUtil {
 
   static dateFormatByEcma(date: Date | number, option?: Intl.DateTimeFormatOptions) {
     return option
-      ? new Intl.DateTimeFormat('zh-CN', option).format(date)
-      : new Intl.DateTimeFormat('zh-CN', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
+      ? new Intl.DateTimeFormat("zh-CN", option).format(date)
+      : new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
           hour12: false,
         }).format(date);
   }
@@ -89,9 +89,9 @@ export class EcmaUtil {
    * @returns
    */
   static randomFileName(filename: string): string {
-    const separator = '.';
+    const separator = ".";
     const fileNameArr: Array<string> = filename.split(separator);
-    return fileNameArr[0] + '_' + this.uuid() + '.' + fileNameArr[1];
+    return fileNameArr[0] + "_" + this.uuid() + "." + fileNameArr[1];
   }
 
   /**
@@ -114,7 +114,7 @@ export class EcmaUtil {
    * @param num 11 - num长度的字符串
    */
   static randomString(num = 0): string {
-    return Math.random().toString(36).split('.')[1].slice(num);
+    return Math.random().toString(36).split(".")[1].slice(num);
   }
 
   /**
@@ -134,7 +134,7 @@ export class EcmaUtil {
 
       if (nowTimeStamp - startTimeStamp >= delay) {
         // 校验 - 允许执行
-        console.log('立即执行时间', new Date().getSeconds());
+        console.log("立即执行时间", new Date().getSeconds());
         // 执行函数
         func.call(func, arg);
         // 继续初始化下一个运行立即执行的时间戳
@@ -144,7 +144,7 @@ export class EcmaUtil {
         clearTimeout(timer as NodeJS.Timeout);
         // 重置定时器
         timer = setTimeout(() => {
-          console.log('定时器执行时间', new Date().getSeconds());
+          console.log("定时器执行时间", new Date().getSeconds());
           func.call(func, arg);
           clearTimeout(timer as NodeJS.Timeout);
           startTimeStamp = +new Date();
@@ -163,7 +163,7 @@ export class EcmaUtil {
   private static timer: NodeJS.Timeout | null;
   static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
     if (!EcmaUtil.timer) {
-      console.log('允许执行', new Date().getMilliseconds());
+      console.log("允许执行", new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
       func.call(this, args);
       EcmaUtil.timer = setTimeout(() => {
@@ -172,7 +172,7 @@ export class EcmaUtil {
         EcmaUtil.timer = null;
       }, time);
     }
-    console.log('节流中...', new Date().getMilliseconds());
+    console.log("节流中...", new Date().getMilliseconds());
   }
 
   /**
@@ -190,7 +190,7 @@ export class EcmaUtil {
     const numberStr = Math.random()
       .toString()
       .slice(2, length + 2);
-    return numberStr.startsWith('0') ? '1' + numberStr.slice(1) : numberStr;
+    return numberStr.startsWith("0") ? "1" + numberStr.slice(1) : numberStr;
   }
 
   /**
@@ -201,14 +201,14 @@ export class EcmaUtil {
    */
   static parseJWT(token: string, authHeader: string): TJwtParseObject {
     if (token.length <= 1) {
-      throw new Error('token is null.');
+      throw new Error("token is null.");
     }
     let jwtString: string = token;
     // 存在authHeader即去除authHeader
     if (jwtString.includes(authHeader)) {
-      jwtString = token.replace(authHeader, '');
+      jwtString = token.replace(authHeader, "");
     }
-    const jwtArr = jwtString.split('.');
+    const jwtArr = jwtString.split(".");
     const type = window.atob(jwtArr[0]);
     const payload = window.atob(jwtArr[1]);
 
@@ -216,5 +216,16 @@ export class EcmaUtil {
       type: JSON.parse(type) as Record<string, string>,
       payload: JSON.parse(payload) as Record<string, TPrimitive>,
     };
+  }
+
+  /**
+   * ES2020 String.prototype.replaceAll方法的替代方案
+   * 替换全部
+   * @param target
+   * @param targetStr
+   * @param replaceStr
+   */
+  static replaceAll(target: string, targetStr: string, replaceStr: string) {
+    return target.split(targetStr).join(replaceStr);
   }
 }
