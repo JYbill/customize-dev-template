@@ -1,3 +1,4 @@
+# 指定eslint忽略的文件
 node_modules
 dist
 prettier.config.js
