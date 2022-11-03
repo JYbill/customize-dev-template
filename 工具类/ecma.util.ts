@@ -21,6 +21,7 @@ export type TJwtParseObject = {
 export class EcmaUtil {
   // 正则：匹配所有
   static readonly MathAllRxp = /.*.*/gi;
+  static readonly PhoneRxp = /^1[34578]\d{9}$/;
 
   /**
    * 随机获取UUID
@@ -56,7 +57,10 @@ export class EcmaUtil {
     for (const k in opt) {
       ret = new RegExp("(" + k + ")").exec(fmt);
       if (ret) {
-        fmt = fmt.replace(ret[1], ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"));
+        fmt = fmt.replace(
+          ret[1],
+          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"),
+        );
       }
     }
     return fmt;
