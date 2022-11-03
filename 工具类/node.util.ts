@@ -4,7 +4,7 @@
  * @desc 常用node工具封装，文件、流、buffer、crypto
  * @dependence node
  */
-import * as crypto from 'crypto';
+import * as crypto from "crypto";
 
 export class NodeUtil {
   /**
@@ -12,11 +12,11 @@ export class NodeUtil {
    * @param text
    * @param salt
    */
-  static md5SlotCrypto(text: string, salt: string = ''): string {
+  static md5SlotCrypto(text: string, salt: string = ""): string {
     return crypto
-      .createHash('md5')
+      .createHash("md5")
       .update(text + salt)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
@@ -24,19 +24,24 @@ export class NodeUtil {
    * @returns ip string
    */
   static getCurrentIpAddress(): string {
-    var interfaces = require('os').networkInterfaces();
+    var interfaces = require("os").networkInterfaces();
     for (var devName in interfaces) {
       var inter = interfaces[devName];
       for (var i = 0; i < inter.length; i++) {
         var alias = inter[i];
-        if (
-          alias.family === 'IPv4' &&
-          alias.address !== '127.0.0.1' &&
-          !alias.internal
-        ) {
+        if (alias.family === "IPv4" && alias.address !== "127.0.0.1" && !alias.internal) {
           return alias.address;
         }
       }
     }
+  }
+
+  /**
+   * 返回包含中的下载文件名，默认下载不支持中文
+   * @param filename 下载文件名支持中文
+   * @returns
+   */
+  downloadFileName(filename: string) {
+    return Buffer.from(filename).toString("binary");
   }
 }
