@@ -1,5 +1,5 @@
 /**
- * @time 2022/5/18 11:21
+ * @time 2022/5/18  11:21
  * @author xiaoqinvar
  * @desc 云直播接口
  * @dependence tencentcloud画d-sdk-nodejs
