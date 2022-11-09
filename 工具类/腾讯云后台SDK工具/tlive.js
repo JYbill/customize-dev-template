@@ -4,13 +4,13 @@
  * @desc 云直播接口
  * @dependence tencentcloud画d-sdk-nodejs
  */
-const {live} = require("tencentcloud-sdk-nodejs");
+const { live } = require("tencentcloud-sdk-nodejs");
 const Service = require("egg").Service;
 
 class TLiveService extends Service {
   constructor(ctx) {
     super(ctx);
-    const {config} = this;
+    const { config } = this;
     const cloudConfig = config.TCloud.clientConfig;
     this.TLiveClient = new live.v20180801.Client(cloudConfig);
   }
@@ -25,15 +25,15 @@ class TLiveService extends Service {
    * @param roomId 直播间号
    * @return {Promise<void>}
    */
-  async describeLiveStreamState({appName = 'live', domainName, streamName}) {
-    const {ctx, app} = this;
+  async describeLiveStreamState({ appName = "live", domainName, streamName }) {
+    const { ctx, app } = this;
     // this.logger.debug(typeof streamName);
     const stateRet = await this.TLiveClient.DescribeLiveStreamState({
       AppName: appName,
       DomainName: domainName,
-      StreamName: streamName
+      StreamName: streamName,
     });
-    this.logger.debug('流状态判断', )
+    this.logger.debug("流状态判断");
     return stateRet;
   }
 
@@ -47,7 +47,7 @@ class TLiveService extends Service {
    * @return {Promise<void>}
    */
   async createRecordTask(streamName, appName = "live", domain, endTime, templateId) {
-    const {ctx, app, logger, config} = this;
+    const { ctx, app, logger, config } = this;
     if (!domain) {
       domain = config.TCloud.domain;
     }
@@ -77,7 +77,7 @@ class TLiveService extends Service {
   async stopRecordTask(taskId) {
     return this.TLiveClient.StopRecordTask({
       TaskId: taskId,
-    })
+    });
   }
 
   /**
@@ -88,7 +88,7 @@ class TLiveService extends Service {
   async delRecordTask(taskId) {
     return this.TLiveClient.DeleteRecordTask({
       TaskId: taskId,
-    })
+    });
   }
 
   /**
@@ -96,7 +96,7 @@ class TLiveService extends Service {
    * @return {Promise<void>}
    */
   async describeRecordTask(startTime, endTime, streamName, domain, name = "live") {
-    const {ctx, app, logger, config} = this;
+    const { ctx, app, logger, config } = this;
     if (!domain) {
       domain = config.TCloud.domain;
     }
@@ -106,7 +106,7 @@ class TLiveService extends Service {
       StreamName: streamName,
       DomainName: domain,
       AppName: name,
-    })
+    });
   }
 }
 
