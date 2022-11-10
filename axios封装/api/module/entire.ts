@@ -5,7 +5,7 @@ import { AxiosResponse } from "axios";
  * @desc：entire 接口例子🌰
  * @date: 2022-10-29 13:04:43
  */
-import Request, { BaiduRequest } from "../index";
+import Request, { BaiduRequest } from "../index.request";
 
 interface IList {
   offset: number;
