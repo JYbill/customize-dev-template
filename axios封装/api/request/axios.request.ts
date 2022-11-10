@@ -5,7 +5,7 @@
  * @date: 2022-10-29 12:04:11
  */
 import axios from "axios";
-import type { IAxiosError, AxiosConfig } from "./type";
+import type { IAxiosError, AxiosConfig } from "./type.request";
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 export default class AxiosRequest {
