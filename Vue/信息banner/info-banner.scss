@@ -22,6 +22,7 @@
   }
 
   .info {
+    position: relative;
     align-content: center;
     display: flex;
     flex-direction: column;
@@ -45,6 +46,54 @@
 
       span {
         cursor: inherit;
+      }
+    }
+
+    // 分享内容
+    .share-content {
+      border-color: #FBFCFB;
+      box-shadow: 1px 1px 10px #dbdbdb;
+      position: absolute;
+      top: 105px;
+      background-color: #FEFEFE;
+      width: 420px;
+      height: 350px;
+      border-radius: 5px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+
+      img {
+        margin-top: 30px;
+      }
+
+      .el-button {
+        margin-top: 10px;
+        a {
+          text-decoration: none;
+          color: #9A979A;
+        }
+      }
+
+      // 分享内容
+      .share-input {
+        .el-input {
+          width: 254px;
+          height: 38px;
+          position: relative;
+          left: 10px;
+          bottom: 1px;
+          border-radius: 3px;
+        }
+        .el-button {
+          background: #00CFAE;
+          border-radius: 3px;
+          color: #FFFFFF;
+          position: relative;
+          z-index: 10;
+        }
       }
     }
   }
