@@ -1,10 +1,10 @@
 # 目录
 
-- <a href="#Vue">`Vue`</a>
+- <a href="#Element2">`Element 2`</a>
 
 <br/>
 
-## <a id="Vue">`Vue`</a>
+## <a id="Element2">`Element2`</a>
 
 - 登陆组件
 
