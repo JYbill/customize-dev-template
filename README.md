@@ -1,4 +1,4 @@
 # 目录
 
-- <a href="./md/vue.md" target="_blank">`Vue`</a>
-- <a href="./md/react.md" target="_blank">`React`</a>
+- <a href="./md/vue.md">`Vue`</a>
+- <a href="./md/react.md">`React`</a>
