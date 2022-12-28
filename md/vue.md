@@ -12,7 +12,15 @@
 
 <br/>
 
-- 分享组件 <img src="../Vue/分享组件(禁用输入框+复制按钮)/share组件.png" /> <br/>
+- search-input 搜索组件 + 按钮
+
+  <img width="50%" src="../Vue/search-input/search-input.png" />
+
+- 分享组件
+
+<img src="../Vue/分享组件(禁用输入框+复制按钮)/share组件.png" /> 
+<br/>
+
 - 回放直播录屏项
 
   <img width="40%" src="../Vue/回放直播录屏项/回放直播间项.png" />
@@ -26,6 +34,24 @@
 <br/>
 
 - 聊天块 <img src="../Vue/聊天块/chat-block组件.png" />
+
+<br/>
+
+- chat-item-v2 聊天块 v2
+
+<img width="80%" src="../Vue/chat-item-v2/chat-item-v2.png" />
+
+<br/>
+
+- conversation-item 会话块
+
+<img width="45%" src="../Vue/conversation-item/conversation-item.png" />
+
+<br/>
+
+- linkman-item 联系人
+
+<img width="40%" src="../Vue/linkman-item/linkman-item.png" />
 
 <br/>
 
