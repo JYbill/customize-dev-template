@@ -1,0 +1,59 @@
+.conversation-item {
+  display: flex;
+  height: 60px;
+  //background-color: wheat;
+  align-items: center;
+  cursor: pointer;
+
+  .header {
+    cursor: inherit;
+    margin-left: 8px;
+    margin-right: 15px;
+    color: #FFFFFF;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    border-radius: 50px;
+    background-color: grey;
+    text-align: center;
+  }
+
+  .content {
+    cursor: inherit;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    .top {
+      cursor: inherit;
+      font-size: 14px;
+      color: #3A5060;
+      font-weight: 400;
+      margin-bottom: 6px;
+      width: 150px;
+    }
+    .bottom {
+      cursor: inherit;
+      font-size: 10px;
+      color: #ACB1B6;
+      width: 150px;
+    }
+  }
+
+  .last-time {
+    width: 30px;
+    font-size: 10px;
+    color: #ACB1B6;
+  }
+}
+
+// 单行文本移除
+.text-overflow-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
