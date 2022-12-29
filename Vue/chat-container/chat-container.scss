@@ -1,0 +1,74 @@
+.conversation-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+
+  .chat-header {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid #EEEEEE;
+    display: flex;
+    align-items: center;
+
+    .name {
+      margin-left: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333333;
+      line-height: 22px;
+      max-width: 300px;
+    }
+
+    .desc {
+      color: #999999;
+      margin-left: 8px;
+      line-height: 17px;
+      font-size: 12px;
+    }
+  }
+
+  // 消息内容
+  .content {
+    height: 382px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    //background-color: #0B906A;
+  }
+
+  // 输入框板块
+  .input {
+    position: relative;
+
+    // 选择表情
+    svg {
+      color: #999999;
+      position: absolute;
+      top: 11px;
+      left: 30px;
+    }
+
+    // 文本框
+    .el-textarea {
+      width: 100%;
+      height: 135px;
+      /deep/ {
+        textarea {
+          padding-top: 30px;
+          width: 549px;
+          margin: 0 auto;
+          height: 120px;
+        }
+      }
+    }
+
+    // emoji选择板
+    .emoji-picker {
+      position: absolute;
+      left: 0;
+      top: -430px;
+    }
+  }
+}

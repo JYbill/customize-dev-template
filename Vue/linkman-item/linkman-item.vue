@@ -1,7 +1,7 @@
 <template>
   <div class="linkman-item">
     <div class="header">{{ username[0] }}</div>
-    <div class="name">{{ username }}</div>
+    <div class="name text-overflow-1">{{ username }}</div>
   </div>
 </template>
 
