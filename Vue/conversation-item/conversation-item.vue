@@ -11,6 +11,9 @@
 
     <!--  时间  -->
     <div class="last-time">{{ lastTime | formatDate }}</div>
+
+    <!--  未读消息数  -->
+    <div class="notice" v-show="noticeNum >= 1"></div>
   </div>
 </template>
 
@@ -21,6 +24,7 @@ export default {
     username: String,
     lastMessage: String,
     lastTime: [Date, String],
+    noticeNum: Number, // 未读消息数
   },
   filters: {
     formatDate(dateStr) {

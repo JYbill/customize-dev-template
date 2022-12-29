@@ -17,9 +17,13 @@
     color: #FFFFFF;
     line-height: 35px;
     text-align: center;
+    flex-shrink: 0;
   }
 
   .name {
+    font-size: 14px;
+    display: block;
     color: #3A5060;
+    width: 170px;
   }
 }

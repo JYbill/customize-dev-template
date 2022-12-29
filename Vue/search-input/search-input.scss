@@ -8,15 +8,18 @@
   border-bottom: 1px solid #EEEEEE;
 
   $height: 32px;
-  .el-input {
+
+  .el-autocomplete {
     margin-left: 12px;
     border: 1px solid #EEEEEE;
     border-radius: 5px;
-    /deep/  {
+
+    /deep/ {
       input {
         height: $height;
         background-color: #FAFBFD;
       }
+
       .el-input__icon {
         line-height: $height;
       }
@@ -29,6 +32,7 @@
     margin-left: 7px;
     margin-right: 11px;
     background-color: #FAFBFD;
+
     /deep/ {
       i {
         color: #ABABAB;
@@ -39,4 +43,9 @@
       }
     }
   }
+}
+
+// 提示建议
+.suggestion .linkman-item {
+  padding-left: 10px;
 }

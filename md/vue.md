@@ -87,6 +87,12 @@
 
 <br/>
 
+- chat-container 聊天盒子 2
+
+  <img width="70%" src="../Vue/chat-container/chat-container.png" />
+
+<br/>
+
 - 日期时间输入框组件
 
   <img width="100%" src="../Vue/日期时间输入框组件/datetime-search-header.png" />
