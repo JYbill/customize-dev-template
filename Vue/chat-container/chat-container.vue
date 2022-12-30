@@ -28,7 +28,7 @@
       <VEmojiPicker
           ref="emojiRef"
           v-show="showEmoji"
-          @click.native.stop="closeEmoji"
+          @click.native.stop
           @select="selectEmoji"/>
       <svg class="icon"
            aria-hidden="true"
@@ -88,20 +88,25 @@ export default {
     },
 
     /**
-     * 关闭emoji选择板
+     * 关闭emoji
      */
     closeEmoji() {
       this.showEmoji = false;
     },
 
+    /**
+     * 聊天内容触顶请求加载历史消息
+     * @param e
+     */
     scrollContainer(e) {
       const el = e.target;
-      if (el.scrollTop >= 1) {
+      const conversation = this.conversation;
+      // 未到顶不触发 || 从未发送过消息不触发
+      if (el.scrollTop >= 1 || conversation.msg.length <= 0) {
         return;
       }
 
       // 滚动到顶，请求加载更多历史信息
-      const conversation = this.conversation;
       const latestMsgCreatTime = conversation.msg[0].createdAt;
       const cid = conversation._id;
       this.getHistoryMsgHTTP(cid, latestMsgCreatTime);
@@ -149,7 +154,6 @@ export default {
         // 发生动态滚动
         chatContainerRef.scroll({
           top: historyMidEl.offsetTop - historyMidEl.offsetHeight - marginHeightNum,
-          behavior: "smooth",
         });
       });
     },
