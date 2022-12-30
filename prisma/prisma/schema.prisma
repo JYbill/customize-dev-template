@@ -1,0 +1,23 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 模板
+// model User {
+//   id       String @id @default(auto()) @map("_id") @db.ObjectId
+//   username String @unique // 查询直接根据casbin查，不用逻辑外键查，加唯一即可
+//   nickname String // 昵称
+//   password String
+//   salt     String // 信息摘要加密盐
+//
+//   gmt_create   DateTime @default(now())
+//   gmt_modified DateTime @default(now()) @updatedAt
+//   isAdmin      Boolean  @default(false) // 是否是管理员，作用于casbin的超级管理员权限
+//
+//   @@map("users")
+// }
