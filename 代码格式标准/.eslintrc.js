@@ -1,6 +1,13 @@
+/**
+ * @file: .eslintrc.js
+ * @author: xiaoqinvar
+ * @desc: eslint模板
+ * @dependencies: 
+ * @date: 2022-12-31 11:06:09
+ */
 module.exports = {
   root: true,
-  parser: "@typescript-eslint/parser", // 解析器
+  parser: "@typescript-eslint/parser", // 解析器 @typescript-eslint/parser
 
   // 解析配置
   parserOptions: {
@@ -18,13 +25,21 @@ module.exports = {
   },
 
   // 插件
-  plugins: ["@typescript-eslint"],
+  plugins: [
+    // "@typescript-eslint", // 需要@typescript-eslint/eslint-plugin
+    // "node", // 需要eslint-plugin-node
+    // "prettier", // 需要eslint-plugin-prettier
+    // "react", // 需要eslint-plugin-react
+    // "sonarjs", // 需要eslint-plugin-sonarjs(代码质量)
+  ],
 
   extends: [
     "eslint:recommended",
-    "plugin:prettier/recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
+    // "plugin:node/recommended", // 需要eslint-plugin-node
+    // "plugin:react/recommended", // 需要eslint-plugin-react
+    // "plugin:@typescript-eslint/recommended", // 需要@typescript-eslint/eslint-plugin
+    // "plugin:prettier/recommended", // 需要eslint-plugin-prettier
+    // "plugin:sonarjs/recommended", // // 需要eslint-plugin-sonarjs(代码质量)
   ],
 
   settings: {
