@@ -1,3 +1,10 @@
+/**
+ * @file: .prettierrc.js
+ * @author: xiaoqinvar
+ * @desc: prettier模板
+ * @dependencies: @trivago/prettier-plugin-sort-imports
+ * @date: 2022-12-31 11:07:51
+ */
 module.exports = {
   semi: true,
   tabWidth: 2,
