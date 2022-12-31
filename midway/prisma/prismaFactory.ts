@@ -4,6 +4,7 @@
  * @Date: 2022/12/31 13:39
  */
 import { PrismaClient } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import { Autoload, Destroy, ILogger, ServiceFactory } from "@midwayjs/core";
 import { Config, Init, Logger, Provide, Scope, ScopeEnum } from "@midwayjs/decorator";
@@ -60,7 +61,7 @@ export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
     this.logger.info("Close Mongo Prisma.");
   }
 
-  stdoutLog(event: QueryEvent) {
+  stdoutLog(event: Prisma.QueryEvent) {
     this.logger.info("请求时间: ", new Date(event.timestamp).toLocaleString());
     this.logger.info("耗时: ", event.duration + "ms");
     this.logger.info("DB SQL: ", event.query);
@@ -69,14 +70,3 @@ export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
     }
   }
 }
-
-/**
- * prisma query log event params
- */
-type QueryEvent = {
-  timestamp: Date;
-  query: string; // Query sent to the database
-  params: string; // Query parameters
-  duration: number; // Time elapsed (in milliseconds) between client issuing query and database responding - not only time taken to run query
-  target: string;
-};
