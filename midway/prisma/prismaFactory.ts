@@ -9,7 +9,7 @@ import type { Prisma } from "@prisma/client";
 import { Autoload, Destroy, ILogger, ServiceFactory } from "@midwayjs/core";
 import { Config, Init, Logger, Provide, Scope, ScopeEnum } from "@midwayjs/decorator";
 
-@Autoload() // v3.9.0 @InjectClient 无法初始化解决方案
+@Autoload()
 @Provide()
 @Scope(ScopeEnum.Singleton)
 export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
@@ -19,14 +19,14 @@ export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
   @Logger()
   logger: ILogger;
 
-  prisma: PrismaClient;
+  prisma: PrismaClient<any>;
 
   @Init()
   async init() {
     await this.initClients(this.prismaConfig);
     this.prisma = this.get("mongo");
     this.prisma.$on("beforeExit", this.beforeExit.bind(this));
-    this.prisma.$on<any>("query", this.stdoutLog.bind(this));
+    this.prisma.$on("query", this.stdoutLog.bind(this));
     this.prisma.$connect();
     this.logger.info("Init Autoload PrismaServiceFactory completed.");
   }
@@ -41,7 +41,7 @@ export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
    * @param config
    * @returns
    */
-  protected createClient(config: any) {
+  protected createClient(config: Prisma.PrismaClientOptions) {
     return new PrismaClient(config);
   }
 
@@ -62,7 +62,8 @@ export class PrismaServiceFactory extends ServiceFactory<PrismaClient> {
   }
 
   stdoutLog(event: Prisma.QueryEvent) {
-    this.logger.info("请求时间: ", new Date(event.timestamp).toLocaleString());
+    const date = new Date(event.timestamp);
+    this.logger.info("请求时间: ", date.toLocaleTimeString());
     this.logger.info("耗时: ", event.duration + "ms");
     this.logger.info("DB SQL: ", event.query);
     if (!event.target.includes("mongodb")) {
