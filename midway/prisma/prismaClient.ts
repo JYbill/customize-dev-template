@@ -1,7 +1,7 @@
 /**
  * @file: prismaClient.ts
  * @author: xiaoqinvar
- * @desc: v3.9.0+ 可以废弃
+ * @desc: IOC动态注入prisma不同的客户端
  * @dependencies:
  * @date: 2022-12-31 12:01:18
  */
@@ -13,7 +13,16 @@ import { ScopeEnum } from "@midwayjs/decorator";
 export async function dynamicPrismaClientHandler(container: IMidwayContainer) {
   try {
     const prismaClient: PrismaServiceFactory = await container.getAsync("prismaServiceFactory");
-    return prismaClient.get("mongo");
+    return prismaClient.prisma;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function dynamicExtendPrismaClientHandler(container: IMidwayContainer) {
+  try {
+    const prismaClient: PrismaServiceFactory = await container.getAsync("prismaServiceFactory");
+    return prismaClient.extendPrisma;
   } catch (error) {
     console.log(error);
   }
@@ -21,8 +30,13 @@ export async function dynamicPrismaClientHandler(container: IMidwayContainer) {
 
 providerWrapper([
   {
-    id: "prismaClient",
+    id: "prisma",
     provider: dynamicPrismaClientHandler,
-    scope: ScopeEnum.Singleton, // 也可以设置为全局作用域，那么里面的调用的逻辑将被缓存
+    scope: ScopeEnum.Singleton,
+  },
+  {
+    id: "prismaExtends",
+    provider: dynamicExtendPrismaClientHandler,
+    scope: ScopeEnum.Singleton,
   },
 ]);
