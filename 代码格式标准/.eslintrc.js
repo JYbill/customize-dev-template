@@ -40,6 +40,7 @@ module.exports = {
     // "plugin:@typescript-eslint/recommended", // 需要@typescript-eslint/eslint-plugin
     // "plugin:prettier/recommended", // 需要eslint-plugin-prettier
     // "plugin:sonarjs/recommended", // // 需要eslint-plugin-sonarjs(代码质量)
+    // "plugin:react-hooks/recommended", // 需要eslint-plugin-react-hooks(强制react hook规则)
   ],
 
   settings: {

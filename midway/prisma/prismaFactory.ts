@@ -1,5 +1,5 @@
 /**
- * @Description: v3.9.0 可以不在需要prismaClient动态注入
+ * @Description: v3.9.0 可以不在需要prismaClient动态注入，使用@InjectClient、@Autoload，实现注入
  * @Author: 小钦var
  * @Date: 2022/12/31 13:39
  */
