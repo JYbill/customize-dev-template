@@ -3,6 +3,7 @@ import { NotFoundFilter } from "./filter/notfound.filter";
 import UnAuthorizedFilter from "./filter/unauthorized.filter";
 import { JwtPassportMiddleware } from "./middleware/jwt.middleware";
 import { ReportMiddleware } from "./middleware/report.middleware";
+import { ResponseMiddleware } from "./middleware/response.middleware";
 import * as dotenv from "dotenv";
 import { join } from "path";
 
@@ -36,7 +37,7 @@ export class ContainerLifeCycle {
 
   async onReady() {
     // add middleware
-    this.app.useMiddleware([ReportMiddleware, JwtPassportMiddleware]);
+    this.app.useMiddleware([ResponseMiddleware, ReportMiddleware, JwtPassportMiddleware]);
     // add filter
     this.app.useFilter([UnAuthorizedFilter, NotFoundFilter, DefaultErrorFilter]);
   }
