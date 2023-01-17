@@ -10,7 +10,7 @@ export default class Res {
     return new Res(data, message, code);
   }
 
-  static error(message = "出错了 ⚠️", code = 0) {
+  static error(message = "出错了❗️", code = 0) {
     return new Res(null, message, code);
   }
 }

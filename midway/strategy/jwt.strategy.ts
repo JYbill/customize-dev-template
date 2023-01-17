@@ -12,17 +12,25 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   @Logger()
   logger: ILogger;
 
+  /**
+   * 策略的验证
+   * @param payload token = `${sign}.${payload = 信息}.${加密(sign + payload + 密钥)}`，
+   *    这里是base解码payload信息，转的json对象
+   */
   async validate(payload) {
     return payload;
   }
 
   /**
-   * option 参考：passport-jwt
+   * passport-jwt的option
+   * doc https://github.com/mikenicholson/passport-jwt#configure-strategy
    * @returns
    */
-  getStrategyOptions(): any {
+  getStrategyOptions() {
     return {
       secretOrKey: this.jwtConfig.secret,
+      // 1. passport-jwt解析token
+      // 在request请求头中查找`bearer ${token}` => 解析token
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     };
   }
