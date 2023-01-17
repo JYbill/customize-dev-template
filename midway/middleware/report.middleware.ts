@@ -8,7 +8,6 @@ export class ReportMiddleware implements IMiddleware<Context, NextFunction> {
     return async (ctx: Context, next: NextFunction) => {
       const startTime = Date.now();
       const result = await next();
-      const headers = ctx.header;
       const rt = Date.now() - startTime; // 耗时ms
       ctx.logger.info(`rt = ${rt}ms`);
       return result;
