@@ -10,6 +10,6 @@ export class DefaultErrorFilter {
     ctx.logger.error(err.message);
     ctx.logger.error(err);
     ctx.status = HttpStatus.INTERNAL_SERVER_ERROR;
-    return Res.error();
+    return Res.error(err.message);
   }
 }
