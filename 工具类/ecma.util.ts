@@ -5,18 +5,13 @@
  * @dependence
  */
 
+import * as jose from "jose";
+import type { JWTPayload } from "jose";
+
 /**
  * 原始类型
  */
 export type TPrimitive = number | string | boolean;
-
-/**
- * jwt 解析后的类型
- */
-export type TJwtParseObject = {
-  type: Record<string, string>;
-  payload: Record<string, TPrimitive>;
-};
 
 export class EcmaUtil {
   // 正则：匹配所有
@@ -59,7 +54,7 @@ export class EcmaUtil {
       if (ret) {
         fmt = fmt.replace(
           ret[1],
-          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"),
+          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
         );
       }
     }
@@ -73,7 +68,10 @@ export class EcmaUtil {
    * @returns
    */
 
-  static dateFormatByEcma(date: Date | number, option?: Intl.DateTimeFormatOptions) {
+  static dateFormatByEcma(
+    date: Date | number,
+    option?: Intl.DateTimeFormatOptions
+  ) {
     return option
       ? new Intl.DateTimeFormat("zh-CN", option).format(date)
       : new Intl.DateTimeFormat("zh-CN", {
@@ -165,7 +163,11 @@ export class EcmaUtil {
    */
   // 定时器
   private static timer: NodeJS.Timeout | null;
-  static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
+  static throttle(
+    time: number,
+    func: (args: TPrimitive[]) => void,
+    ...args: TPrimitive[]
+  ): void {
     if (!EcmaUtil.timer) {
       console.log("允许执行", new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
@@ -203,7 +205,7 @@ export class EcmaUtil {
    * @param authHeader Auth: Barber字段
    * @returns
    */
-  static parseJWT(token: string, authHeader: string): TJwtParseObject {
+  static parseJWT(token: string, authHeader = "bearer"): JWTPayload {
     if (token.length <= 1) {
       throw new Error("token is null.");
     }
@@ -212,14 +214,9 @@ export class EcmaUtil {
     if (jwtString.includes(authHeader)) {
       jwtString = token.replace(authHeader, "");
     }
-    const jwtArr = jwtString.split(".");
-    const type = window.atob(jwtArr[0]);
-    const payload = window.atob(jwtArr[1]);
 
-    return {
-      type: JSON.parse(type) as Record<string, string>,
-      payload: JSON.parse(payload) as Record<string, TPrimitive>,
-    };
+    const payload = jose.decodeJwt(jwtString);
+    return payload;
   }
 
   /**

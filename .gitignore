@@ -8,7 +8,7 @@ coverage/
 dist/
 .idea/
 .vscode/
-.env
+.env*
 run/
 .DS_Store
 *.sw*
