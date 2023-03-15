@@ -229,4 +229,37 @@ export class EcmaUtil {
   static replaceAll(target: string, targetStr: string, replaceStr: string) {
     return target.split(targetStr).join(replaceStr);
   }
+
+  /**
+  * 递归深克隆（支持日期、数组、正则）
+  * @param obj
+  * @return {RegExp|*|*[]|{}|Date}
+  */
+  static deepClone(obj) {
+   // 当null NaN undefined number string等基本数据类型时直接返回
+   if (obj === null || typeof obj !== 'object') {
+     return obj;
+   }
+   // Date类型
+   if (obj instanceof Date) {
+     const copy = new Date();
+     copy.setTime(obj.getTime());
+     return copy;
+   }
+   // 正则类型类型
+   if (obj instanceof RegExp) {
+     const Constructor = obj.constructor;
+     return new Constructor(obj);
+   }
+   // 如果是数组等引用数据类型
+   if (obj instanceof Array || obj instanceof Object) {
+     const copyObj = Array.isArray(obj) ? [] : {};
+     for (const key in obj) {
+       if (obj.hasOwnProperty(key)) {
+         copyObj[key] = this.deepClone(obj[key]);
+       }
+     }
+     return copyObj;
+   }
+ },
 }
