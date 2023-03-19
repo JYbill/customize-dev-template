@@ -6,7 +6,7 @@
   "compilerOptions": {
     // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
     "target": "ES2022",
-    // 使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6
+    // （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     "module": "NodeNext",
     // 用来指定编译文件的根目录，编译器会在根目录查找入口文件
     "rootDir": "./src",
@@ -64,6 +64,8 @@
     "removeComments": true,
     // 不生成变编译文件
     // "noEmit": false,
+    // 只生成.d.ts类型声明文件, 编译交给第三方编译工具
+    "emitDeclarationOnly": true,
 
     // 指定是否引入tslib里的辅助工具函数， 默认false
     // 形如babel里的`polyfill`，当前环境没有的api，通过polyfill补丁的形式打包进去，从而正常使用
@@ -108,9 +110,15 @@
     // 不正确地使用 this 关键字的情况下或在不清楚 this 所指的位置的地方提示错误
     "noImplicitThis": true,
 
-    // 模块查找规则，一般用"node"查找规则
+    // 模块查找规则（编译时期）
     // node查找规则：const fs = require("fs");
     // "moduleResolution": "node"
+    // "bundler" v5.0+ 不使用bundler打包，适用于写npm包启用，让构建工具去处理引入写法
+    /* 
+    // 打包工具经过配置后下面的引入可以都生效
+    import * as utils from "./utils";     
+    import * as utils from "./utils.mjs";
+    */
 
     // 基准目录：
     /*
@@ -167,6 +175,55 @@
     // "experimentalDecorators": true,
     // 用于指定是否为装饰器提供元数据支持
     // "emitDecoratorMetadata": true,
+
+    // （编译时）允许TS文件使用特定于的扩展名（如 .ts、.mts 或 .tsx）相互导入，需开启noEmit或emitDeclarationOnly时才生效，由第三方构建工具处理这些模块
+    // "allowImportingTsExtensions": "", // Typescript v5.0+
+
+    // 强制TS从node_modules中的包中读取时查询package.json文件的exports字段
+    // "resolvePackageJsonExports": true, // Typescript v5.0+
+    // 强制TS从node_modules中的包中读取时查询package.json文件的exports字段
+    // "resolvePackageJsonImports": true, // Typescript v5.0+
+    // 在moduleResolution的node16、nodeNext和bundler选项下，以上两选项默认为true
+
+    // 当存在构建工具，如：已有css-loader，想直接导入css文件，编译时通过，构建时由构建工具处理
+    // "allowArbitraryExtensions": true, // Typescript v5.0+
+    /* 
+    app.css
+    .cookie-banner { display: none; }
+
+    // 以前的方法：添加一个app.css.d.ts类型声明文件，但在moduleResolution：node16或nodeNext下的module：ESM模块化规则文件中出错。因为cjs规则是对"app.css.js"的类型声明文件，骗过了编辑器；而ESM需要完整的后缀名压根就没有该js文件
+    // app.css.d.ts
+      declare const css: {
+        cookieBanner: string;
+      };
+      export default css;
+    
+    App.tsx
+    import styles from "./app.css";
+    styles.cookieBanner; // string
+     */
+
+    // 导包时，首选package.json下的exports或imports字段中的指定字段
+    // "customConditions": ["custom"], // Typescript v5.0+
+    /* 
+    生效条件，moduleResolution: ["node16", "nodeNext", "bundler"]
+    package.json文件
+    {
+    "exports": {
+        ".": {
+            "custom": "./foo.mjs", 首选！
+            "node": "./bar.mjs",
+            "import": "./baz.mjs",
+            "require": "./biz.mjs"
+        }
+      }
+    }
+     */
+
+    // 完全删除，以下的两种导入方式，替换弃用以前的"importsNotUsedAsValues"、"preserveValueImports"
+    // import type Person from "...";
+    // import type { Person } from "...";
+    // "verbatimModuleSyntax": "", // Typescript v5.0+
   }
 
   // --------------------------  选择、排除编译文件 start  --------------------------
