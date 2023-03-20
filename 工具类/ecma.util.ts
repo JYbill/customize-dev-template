@@ -54,7 +54,7 @@ export class EcmaUtil {
       if (ret) {
         fmt = fmt.replace(
           ret[1],
-          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
+          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"),
         );
       }
     }
@@ -68,10 +68,7 @@ export class EcmaUtil {
    * @returns
    */
 
-  static dateFormatByEcma(
-    date: Date | number,
-    option?: Intl.DateTimeFormatOptions
-  ) {
+  static dateFormatByEcma(date: Date | number, option?: Intl.DateTimeFormatOptions) {
     return option
       ? new Intl.DateTimeFormat("zh-CN", option).format(date)
       : new Intl.DateTimeFormat("zh-CN", {
@@ -163,11 +160,7 @@ export class EcmaUtil {
    */
   // 定时器
   private static timer: NodeJS.Timeout | null;
-  static throttle(
-    time: number,
-    func: (args: TPrimitive[]) => void,
-    ...args: TPrimitive[]
-  ): void {
+  static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
     if (!EcmaUtil.timer) {
       console.log("允许执行", new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
@@ -231,35 +224,35 @@ export class EcmaUtil {
   }
 
   /**
-  * 递归深克隆（支持日期、数组、正则）
-  * @param obj
-  * @return {RegExp|*|*[]|{}|Date}
-  */
+   * 递归深克隆（支持日期、数组、正则）
+   * @param obj
+   * @return {RegExp|*|*[]|{}|Date}
+   */
   static deepClone(obj) {
-   // 当null NaN undefined number string等基本数据类型时直接返回
-   if (obj === null || typeof obj !== 'object') {
-     return obj;
-   }
-   // Date类型
-   if (obj instanceof Date) {
-     const copy = new Date();
-     copy.setTime(obj.getTime());
-     return copy;
-   }
-   // 正则类型类型
-   if (obj instanceof RegExp) {
-     const Constructor = obj.constructor;
-     return new Constructor(obj);
-   }
-   // 如果是数组等引用数据类型
-   if (obj instanceof Array || obj instanceof Object) {
-     const copyObj = Array.isArray(obj) ? [] : {};
-     for (const key in obj) {
-       if (obj.hasOwnProperty(key)) {
-         copyObj[key] = this.deepClone(obj[key]);
-       }
-     }
-     return copyObj;
-   }
- },
+    // 当null NaN undefined number string等基本数据类型时直接返回
+    if (obj === null || typeof obj !== "object") {
+      return obj;
+    }
+    // Date类型
+    if (obj instanceof Date) {
+      const copy = new Date();
+      copy.setTime(obj.getTime());
+      return copy;
+    }
+    // 正则类型类型
+    if (obj instanceof RegExp) {
+      const Constructor = obj.constructor;
+      return new Constructor(obj);
+    }
+    // 如果是数组等引用数据类型
+    if (obj instanceof Array || obj instanceof Object) {
+      const copyObj = Array.isArray(obj) ? [] : {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          copyObj[key] = this.deepClone(obj[key]);
+        }
+      }
+      return copyObj;
+    }
+  }
 }
