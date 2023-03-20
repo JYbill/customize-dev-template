@@ -32,4 +32,37 @@ class BOMUtil {
       document.body.removeChild(textarea);
     }
   }
+
+  /**
+   * 通过fetch获取二进制数据，并转为blob后通过a标签下载
+   * @param query post参数
+   */
+  async fetchDownBlob(query) {
+    const data = await fetch(`/reservation/exportExcel`, {
+      method: "POST",
+      responseType: "blob",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.token,
+      },
+      body: JSON.stringify(query),
+    });
+    const blob = await data.blob();
+    // const data = await api.exportReservationExcel(query);
+    console.log("data", data);
+    const url = window.URL.createObjectURL(
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+    );
+    const link = document.createElement("a");
+    link.style.display = "none";
+    link.href = url;
+    console.log(url);
+    link.setAttribute("download", "reservationList.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
