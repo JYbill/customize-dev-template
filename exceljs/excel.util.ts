@@ -76,16 +76,29 @@ export default class ExcelUtil {
     const sheet = workbook.addWorksheet();
 
     // 列
-    const columnList = fieldList.map((field) => ({
-      header: field,
-      key: field,
-      width: 15,
-    }));
-    columnList.unshift({
-      header: "id",
-      key: "id",
-      width: 15,
+    const columnItem = {
+      header: "",
+      key: "",
+      width: 25,
+      style: {
+        font: {
+          size: 16,
+          vertAlign: "superscript",
+        },
+        alignment: {
+          vertical: "middle",
+          horizontal: "center",
+        },
+      },
+    };
+    const columnList = fieldList.map(({ key, show }) => {
+      columnItem.header = show;
+      columnItem.key = key;
+      return { ...columnItem };
     });
+    columnItem.header = "序号";
+    columnItem.key = "id";
+    columnList.unshift({ ...columnItem });
     sheet.columns = columnList;
 
     // 行
