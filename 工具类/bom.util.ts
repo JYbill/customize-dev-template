@@ -35,10 +35,11 @@ class BOMUtil {
 
   /**
    * 通过fetch获取二进制数据，并转为blob后通过a标签下载
+   * @param apiUrl {string}
    * @param query post参数
    */
-  async fetchDownBlob(query) {
-    const data = await fetch(`/reservation/exportExcel`, {
+  async fetchDownloadBlob(apiUrl, query) {
+    const data = await fetch(apiUrl, {
       method: "POST",
       responseType: "blob",
 
