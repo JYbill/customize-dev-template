@@ -49,8 +49,6 @@ class BOMUtil {
       body: JSON.stringify(query),
     });
     const blob = await data.blob();
-    // const data = await api.exportReservationExcel(query);
-    console.log("data", data);
     const url = window.URL.createObjectURL(
       new Blob([blob], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -59,7 +57,6 @@ class BOMUtil {
     const link = document.createElement("a");
     link.style.display = "none";
     link.href = url;
-    console.log(url);
     link.setAttribute("download", "reservationList.xlsx");
     document.body.appendChild(link);
     link.click();
