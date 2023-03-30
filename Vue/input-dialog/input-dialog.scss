@@ -1,0 +1,68 @@
+.input-dialog {
+  border-radius: 8px;
+
+  /deep/ {
+    .el-dialog {
+      border-radius: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-top: 0 !important;
+      .el-dialog__header {
+        padding-top: 10px;
+      }
+
+      .el-dialog__body {
+        padding-top: 0;
+      }
+    }
+  }
+
+  // 头部
+  .header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    img {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // 内容
+  .content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #00CFAE;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 5px;
+
+    .input {
+      height: 32px;
+      line-height: 28px;
+
+      /deep/ {
+        input {
+          height: 100%;
+          line-height: 100%;
+          border: none;
+        }
+      }
+    }
+
+    .submit {
+      cursor: pointer;
+      width: 58px;
+      height: 32px;
+      background: #00CFAE;
+      color: #FFFFFF;
+      border-radius: 4px;
+      border: 1px solid #00CFAE;
+      margin-right: 5px;
+    }
+  }
+}

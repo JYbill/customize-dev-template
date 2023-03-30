@@ -1,0 +1,149 @@
+@import "~@/assets/css/mixin.scss";
+
+.addition-list-dialog {
+  /deep/ {
+    .el-dialog {
+      border-radius: 8px;
+      .el-dialog__header {
+        padding-top: 10px;
+      }
+
+      .el-dialog__body {
+        padding-top: 0;
+        padding-bottom: 9px;
+      }
+    }
+  }
+
+  // 头部
+  .header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    img {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // 公共样式
+  .submit {
+    @include buttonGreenStyle1;
+    margin-left: 5px;
+
+    &.cancel {
+      color: #999999;
+      border-color: #EEEEEE;
+      background-color: #EEEEEE;
+    }
+  }
+
+  .content {
+    width: 100%;
+
+    .search.el-input {
+      margin-bottom: 12px;
+      &.isFocus /deep/ input.el-input__inner {
+        border-color: #00CFAE !important;
+      }
+
+      /deep/ {
+        $search-height: 32px;
+
+        input.el-input__inner {
+          height: $search-height;
+          line-height: $search-height;
+          border-radius: 5px;
+          border-color: #EEEEEE !important;
+        }
+
+        .el-input__icon {
+          line-height: $search-height;
+        }
+      }
+    }
+
+    .list {
+      width: 100%;
+      height: 350px;
+      overflow-y: auto;
+      border-bottom: 1px solid #EEEEEE;
+      @include commonScrollBarStyle;
+
+      .item {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+
+        .label {
+          max-width: 300px;
+        }
+        // 默认提交按钮隐藏，hover时显示
+        .submit {
+          display: none;
+        }
+        &:hover {
+          background-color: #F4F6F8;
+          border-radius: 5px;
+          .submit {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  .create {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 40px;
+    line-height: 60px;
+    align-items: center;
+    margin-top: 9px;
+
+    .prefix {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      color: #00CFAE;
+      border-radius: 100px;
+      border: 1px solid #00CFAE;
+      line-height: 15px;
+      text-align: center;
+      margin-right: 5px;
+    }
+
+    .title {
+      cursor: pointer;
+      color: #333333;
+      font-weight: 500;
+    }
+
+    // 新建input、button样式
+    &.operation {
+      border: 1px solid #00CFAE;
+      padding: 0 5px;
+      border-radius: 5px;
+
+      .input {
+        /deep/ {
+          input {
+            height: 35px;
+            line-height: 35px;
+            padding-left: 0;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+}

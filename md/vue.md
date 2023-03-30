@@ -116,3 +116,15 @@
   <img width="90%" src="../Vue/选择成员dialog组件/choose-member-dialog.png" />
 
 <br/>
+
+- addition-list-dialog 组件
+
+  <img width="90%" src="../Vue/addition-list-dialog/addition-list-dialog.png" />
+
+<br/>
+
+- input dialog 组件
+
+  <img width="90%" src="../Vue/input-dialog/input-dialog.png" />
+
+<br/>
