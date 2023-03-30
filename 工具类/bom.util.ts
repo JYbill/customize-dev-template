@@ -63,4 +63,28 @@ class BOMUtil {
     link.click();
     document.body.removeChild(link);
   }
+
+  /**
+   *
+   * @param str {string}
+   * @returns
+   */
+  static async copyToClipboard(str) {
+    // HTTPS下启用
+    const res = await navigator.permissions.query({ name: "clipboard-write" });
+    if (res.state === "granted") {
+      return await navigator.clipboard.writeText(str);
+    } else {
+      const el = document.createElement("textarea");
+      el.value = str;
+      el.setAttribute("readonly", "");
+      el.style.position = "absolute";
+      el.style.left = "-9999px";
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      return Promise.resolve(true);
+    }
+  }
 }
