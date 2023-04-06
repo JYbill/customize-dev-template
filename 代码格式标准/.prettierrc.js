@@ -27,4 +27,5 @@ module.exports = {
   ],
   importOrderSeparation: true, // 每个类别导入用空格区分
   importOrderSortSpecifiers: true, // 大小写排序
+  importOrderParserPlugins : ["typescript", "classProperties", "decorators-legacy"], // 格式化TS规范
 };
