@@ -93,25 +93,27 @@ export async function copyToClipboard(str) {
  * @param el
  * @return {Promise<boolean>}
  */
-export function waitAllImagesLoaded(el) {
+export async function waitAllImagesLoaded(el) {
   return new Promise((resolve, reject) => {
     const images = el.querySelectorAll("img");
     if (images.length <= 0) resolve(true);
 
     // 待加载图片的总数，为0返回resolve表示所有图片都加载完毕
-    let total = images.length;
-    for (const img of images) {
-      // 情况一：img已经加载完毕
-      if (img.complete === true) {
-        total--;
-        continue;
-      }
-
-      // 情况二：img未加载完毕
+    // 剔除已完成的img
+    const loadingImgList = []; // 需要加载的img List
+    let total = [...images].reduce((pre, curr) => {
+      if (curr.complete) return pre;
+      loadingImgList.push(curr);
+      return pre + 1;
+    }, 0);
+    // console.log("debug 待加载图片总数", total);
+    // console.log(...loadingImgList);
+    if (total <= 0) return resolve(true); // 没有需要加载的img
+    for (const img of loadingImgList) {
       img.onload = () => {
-        if (--total <= 0) resolve(true);
+        total--;
+        if (total <= 0) setTimeout(() => resolve(true), 300); // 期间没有网络请求可以取消setTimeout
       };
     }
-    if (total <= 0) resolve(true);
   });
 }
