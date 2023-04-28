@@ -1,4 +1,4 @@
-const path = require("path");
+const { resolve } = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const UglifyjsWebpackPlugin = require("uglifyjs-webpack-plugin");
@@ -9,10 +9,7 @@ module.exports = {
   devtool: "inline-source-map", // 对于ts，开启sourceMap可以看到源文件内容，而不是编译后的
   //出口文件
   output: {
-    //path.resolve是node里面的绝对路径，__dirname是package.json里面自带的的全局变量  'dist'是自定义的文件夹
-    //path 这整个代表，导出到当前文件夹下的dist文件夹
-    path: path.resolve(__dirname, "dist"),
-    //filename 文件名
+    path: resolve(__dirname, "dist"),
     filename: "bundle.js",
     //将url引用目录前缀加上...
     // publicPath: 'dist/'
@@ -76,6 +73,8 @@ module.exports = {
   resolve: {
     //别名vue/dist/vue.esm.js->a
     alias: {
+      "@": resolve(__dirname, "src"),
+      assets: resolve(__dirname, "src/assets"),
       Vue$: "vue/dist/vue.esm.js",
     },
     //extensions 那些后缀可以省略
