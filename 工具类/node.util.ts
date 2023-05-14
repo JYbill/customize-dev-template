@@ -45,3 +45,15 @@ export class NodeUtil {
     return Buffer.from(filename).toString("binary");
   }
 }
+
+export async function saveUploadFile(basedir, savePath, readableStream): Promise<boolean> {
+  const [filename, suffix] = readableStream.filename.split(".");
+  const randomFilename = filename + "." + Math.random().toString(16).slice(2) + "." + suffix;
+  // 流写入
+  const filepath = path.resolve(basedir, savePath, randomFilename);
+  const ws = fs.createWriteStream(filepath);
+  fileStream.pipe(ws);
+  await new Promise((resolve) => {
+    ws.on("finish", () => resolve(true));
+  });
+}
