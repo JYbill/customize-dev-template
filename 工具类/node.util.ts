@@ -82,3 +82,28 @@ export async function saveUploadFile(readableStream): Promise<boolean> {
     readableStream.pipe(ws);
   });
 }
+
+/**
+ * 根据文件名删除临时文件夹目录的文件
+ * @param filename
+ * @return {Promise<void>}
+ */
+export function delTempFileByName(filename) {
+  const { logger } = this.ctx;
+  const filePath = path.resolve(this.tempFilePath, filename);
+  const fileStat = fs.statSync(filePath);
+
+  if (!fileStat) {
+    logger.error("delTempFileByName()#该文件不存在，无需删除");
+    logger.error(filePath);
+  }
+
+  if (fileStat.isFile()) {
+    // console.log(filePath, filename); // debug
+    fs.unlinkSync(filePath);
+  } else {
+    logger.error(filename);
+    logger.error(filePath);
+    this.ctx.throw(400, "delTempFileByName()#删除的是非文件");
+  }
+}
