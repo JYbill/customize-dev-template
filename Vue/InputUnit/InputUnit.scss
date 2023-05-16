@@ -1,0 +1,23 @@
+.InputUnit {
+  width: 100%;
+  display: flex;
+  position: relative;
+
+  .el-input {
+    /deep/ {
+      input.el-input__inner {
+        padding-right: 60px;
+      }
+    }
+  }
+
+  .unit {
+    line-height: 38px;
+    color: #333333;
+    font-size: 14px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
