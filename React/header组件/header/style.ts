@@ -49,7 +49,7 @@ export const HeadWrapper = styled.div`
           position: relative;
         }
 
-        // 下载客户端的hot精灵图
+        // 客户端的hot精灵图
         .hot {
           position: relative;
           left: 20px;

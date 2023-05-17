@@ -50,10 +50,15 @@ export class NodeUtil {
  * 存储上传的文件流
  * @param readableStream
  * @returns
+ * @description
+ *  依赖：
+ *    mime包：文件名读取MIME类型（推荐使用魔数读取）
  */
 export async function saveUploadFile(readableStream): Promise<boolean> {
   return new Promise((resolve) => {
     const baseDir = this.baseDir;
+
+    // 随机文件名hash化
     const splitList = readableStream.filename.split(".");
     const suffix = splitList[splitList.length - 1];
     const filename = splitList.reduce((prev, curr, index) => {
@@ -65,6 +70,14 @@ export async function saveUploadFile(readableStream): Promise<boolean> {
       return prev + "." + curr;
     }, "");
     const randomFilename = filename + "." + Math.random().toString(16).slice(2) + "." + suffix;
+
+    // 通过文件名后缀获取MIME类型
+    const mimeType = mime.getType(randomFilename);
+
+    // uri
+    const { href } = new URL(path.join(this.uploadTemp, randomFilename), this.ip);
+    console.log(this.uploadTemp, randomFilename);
+    console.log(href);
     // 流写入
     const filepath = path.resolve(baseDir, "app", this.uploadTemp, randomFilename);
     const ws = fs.createWriteStream(filepath);
@@ -73,6 +86,8 @@ export async function saveUploadFile(readableStream): Promise<boolean> {
         filepath,
         originFileName: readableStream.filename,
         filename: randomFilename,
+        url: href,
+        mime: mimeType,
       }),
     );
     ws.on("error", (err) => {
@@ -91,19 +106,18 @@ export async function saveUploadFile(readableStream): Promise<boolean> {
 export function delTempFileByName(filename) {
   const { logger } = this.ctx;
   const filePath = path.resolve(this.tempFilePath, filename);
-  const fileStat = fs.statSync(filePath);
-
-  if (!fileStat) {
+  try {
+    const fileStat = fs.statSync(filePath);
+    if (fileStat.isFile()) {
+      // console.log(filePath, filename); // debug
+      fs.unlinkSync(filePath);
+    } else {
+      logger.error(filename);
+      logger.error(filePath);
+      this.ctx.throw(400, "delTempFileByName()#删除的是非文件");
+    }
+  } catch (err) {
     logger.error("delTempFileByName()#该文件不存在，无需删除");
     logger.error(filePath);
-  }
-
-  if (fileStat.isFile()) {
-    // console.log(filePath, filename); // debug
-    fs.unlinkSync(filePath);
-  } else {
-    logger.error(filename);
-    logger.error(filePath);
-    this.ctx.throw(400, "delTempFileByName()#删除的是非文件");
   }
 }
