@@ -157,7 +157,9 @@ export function printPicture(imgList) {
       if (++loadNum === imgList.length) {
         iframeWindow.focus();
         iframeWindow.print();
-        document.body.removeChild(iframe);
+        iframeWindow.onafterprint = () => {
+          document.body.removeChild(iframe);
+        };
       }
     });
     img.src = url;
