@@ -117,3 +117,49 @@ export async function waitAllImagesLoaded(el) {
     }
   });
 }
+
+/**
+ * 打印模板
+ * 打印附加图片：一张图一页显示
+ * @param imgList
+ */
+export function printPicture(imgList) {
+  let loadNum = 0;
+  const iframeDOM = document.createElement("iframe");
+  iframeDOM.style.display = "none";
+  // debug
+  // iframeDOM.width = "50%";
+  // iframeDOM.height = "50%";
+  // iframeDOM.style.position = "absolute";
+  // iframeDOM.style.left = "0";
+  // iframeDOM.style.top = "0";
+  const iframe = document.body.appendChild(iframeDOM);
+  const iframeDoc = iframe.contentDocument;
+  const iframeWindow = iframe.contentWindow;
+  iframeDoc.head.innerHTML = `<style>
+        .container {
+          text-align: center;
+          margin: 0 auto;
+        }
+      </style>`;
+  const divEl = document.createElement("div");
+  divEl.className = "container";
+  iframeDoc.body.append(divEl);
+
+  for (const url of imgList) {
+    const img = new Image();
+    const brEl = document.createElement("br");
+    divEl.append(img, brEl);
+
+    img.addEventListener("load", (evt) => {
+      // 不改变原始图片比例下，一张图一页
+      img.style.marginBottom = `${855 - img.height}px`;
+      if (++loadNum === imgList.length) {
+        iframeWindow.focus();
+        iframeWindow.print();
+        document.body.removeChild(iframe);
+      }
+    });
+    img.src = url;
+  }
+}
