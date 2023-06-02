@@ -136,20 +136,26 @@ export function printPicture(imgList) {
   const iframe = document.body.appendChild(iframeDOM);
   const iframeDoc = iframe.contentDocument;
   const iframeWindow = iframe.contentWindow;
+
+  // <div><img></div> 让img自动自适应div内容
   iframeDoc.head.innerHTML = `<style>
-        .container {
-          text-align: center;
-          margin: 0 auto;
+        img {
+          width: 100%;
+          object-fit: scale-down;
         }
       </style>`;
   const divEl = document.createElement("div");
-  divEl.className = "container";
   iframeDoc.body.append(divEl);
 
   for (const url of imgList) {
     const img = new Image();
-    const brEl = document.createElement("br");
-    divEl.append(img, brEl);
+    img.src = url;
+    const divEl = document.createElement("div");
+    divEl.append(img);
+    divEl.style.width = "100%";
+    divEl.style.height = "840px"; // 高度 = 980(A4高度) - 140(表头高度)
+    divEl.style.display = "flex";
+    divEl.append(img, divEl);
 
     img.addEventListener("load", (evt) => {
       // 不改变原始图片比例下，一张图一页
