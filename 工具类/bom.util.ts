@@ -124,6 +124,10 @@ export async function waitAllImagesLoaded(el) {
  * @param imgList
  */
 export function printPicture(imgList) {
+  // 推荐：克隆节点当作模板，最后销毁节点时不影响该模板节点
+  const printNode = this.$refs.picturePrintRef.$el.cloneNode(true);
+  printNode.style.display = "block";
+
   let loadNum = 0;
   const iframeDOM = document.createElement("iframe");
   iframeDOM.style.display = "none";
