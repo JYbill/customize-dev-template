@@ -8,6 +8,13 @@
     "target": "ES2022",
     // （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     "module": "NodeNext",
+    /*
+      使用自定义模块分辨，设置环境
+      "module": [".ios", ".native", ""]
+      import * as foo from './foo';
+      首先检查./foo.ios.ts, 其次./foo.native.ts, 最后./foo.ts.
+    */
+
     // 用来指定编译文件的根目录，编译器会在根目录查找入口文件
     "rootDir": "./src",
     // 用来指定输出文件夹，值为一个文件夹路径字符串，输出的文件都将放置在这个文件夹
