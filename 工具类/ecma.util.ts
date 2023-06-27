@@ -256,3 +256,42 @@ export class EcmaUtil {
     }
   }
 }
+
+/**
+ * 忽略所有并行的Promise，只返回最后一个
+ * @param fn
+ * @returns
+ */
+export function onlyResolvesLast(fn) {
+  // 利用闭包保存最新的请求 id
+  let id = 0;
+
+  const wrappedFn = (...args) => {
+    // 发起请求前，生成新的 id 并保存
+    const fetchId = id + 1;
+    id = fetchId;
+
+    // 执行请求
+    const result = fn.apply(this, args);
+
+    return new Promise((resolve, reject) => {
+      // result 可能不是 promise，需要包装成 promise
+      Promise.resolve(result).then(
+        (value) => {
+          // 只处理最新一次请求
+          if (fetchId === id) {
+            resolve(value);
+          }
+        },
+        (error) => {
+          // 只处理最新一次请求
+          if (fetchId === id) {
+            reject(error);
+          }
+        },
+      );
+    });
+  };
+
+  return wrappedFn;
+}
