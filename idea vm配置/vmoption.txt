@@ -1,5 +1,5 @@
--Xms3g
--Xmx3g
+-Xms6g
+-Xmx6g
 -XX:ReservedCodeCacheSize=2048m
 -XX:+UseG1GC
 -Dfile.encoding=UTF-8

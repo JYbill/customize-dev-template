@@ -222,38 +222,38 @@ export class EcmaUtil {
   static replaceAll(target: string, targetStr: string, replaceStr: string) {
     return target.split(targetStr).join(replaceStr);
   }
+}
 
-  /**
-   * 递归深克隆（支持日期、数组、正则）
-   * @param obj
-   * @return {RegExp|*|*[]|{}|Date}
-   */
-  static deepClone(obj) {
-    // 当null NaN undefined number string等基本数据类型时直接返回
-    if (obj === null || typeof obj !== "object") {
-      return obj;
-    }
-    // Date类型
-    if (obj instanceof Date) {
-      const copy = new Date();
-      copy.setTime(obj.getTime());
-      return copy;
-    }
-    // 正则类型类型
-    if (obj instanceof RegExp) {
-      const Constructor = obj.constructor;
-      return new Constructor(obj);
-    }
-    // 如果是数组等引用数据类型
-    if (obj instanceof Array || obj instanceof Object) {
-      const copyObj = Array.isArray(obj) ? [] : {};
-      for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          copyObj[key] = this.deepClone(obj[key]);
-        }
+/**
+ * 递归深克隆（支持日期、数组、正则）
+ * @param obj
+ * @return {RegExp|*|*[]|{}|Date}
+ */
+export function deepClone(obj) {
+  // 当null NaN undefined number string等基本数据类型时直接返回
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  // Date类型
+  if (obj instanceof Date) {
+    const copy = new Date();
+    copy.setTime(obj.getTime());
+    return copy;
+  }
+  // 正则类型类型
+  if (obj instanceof RegExp) {
+    const Constructor = obj.constructor;
+    return new Constructor(obj);
+  }
+  // 如果是数组等引用数据类型
+  if (obj instanceof Array || obj instanceof Object) {
+    const copyObj = Array.isArray(obj) ? [] : {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        copyObj[key] = this.deepClone(obj[key]);
       }
-      return copyObj;
     }
+    return copyObj;
   }
 }
 
@@ -294,4 +294,22 @@ export function onlyResolvesLast(fn) {
   };
 
   return wrappedFn;
+}
+
+/**
+ * 文件二进制转Blob二进制对象
+ * @param base64 文件的Base64字符串
+ * @returns { Blob } 二进制对象
+ */
+export function base64ToBlob(base64: string): Blob {
+  const parts = base64.split(";"); // base64文件首部
+  const mime = parts[0].split(":")[1]; // 类型
+  const raw = atob(parts[1].split(",")[1]); // 主体
+  const rawLength = raw.length;
+  const uInt8Array = new Uint8Array(rawLength);
+  for (let i = 0; i < rawLength; ++i) {
+    uInt8Array[i] = raw.charCodeAt(i);
+  }
+  const blob = new Blob([uInt8Array], { type: mime });
+  return blob;
 }
