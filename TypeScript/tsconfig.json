@@ -106,7 +106,7 @@
      getDogName = getAnimalName; // Okay (狗是动物，所以可以变成动物，广范围可以接受窄范围)
      getAnimalName = getDogName; // Okay (默认okay，开启后即bad，动物无法变成狗，窄范围无法接收广范围)
      */
-    "strictFunctionTypes": true,
+    "strictFunctionTypes": true, // 默认false，是否严格检查函数的逆变多态
     "strictPropertyInitialization": true, // 确保在构造函数中初始化所有类属性，否则报错，或者可以定义为String | undefined
     "strictBindCallApply": true, // 不正确使用call()、bind() 和 apply() 函数时会报错，如：传参...
     // --------------------------  类型检查选项 end  --------------------------
