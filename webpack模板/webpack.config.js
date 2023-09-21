@@ -191,7 +191,7 @@ module.exports = function (env, argv) {
      *
      * - extensions: 默认是['.js', '.json']。在导入语句没带文件后缀时，尝试过程中用到的后缀列表
      *
-     * - modules：配置去哪些目录下寻找第三方模块，默认只会去"node_modules"去找\
+     * - modules：配置去哪些目录下寻找第三方模块，默认按照nodejs寻找规则
      *
      * - descriptionFiles: 默认["package.json"]，配置描述第三方模块的文件名称
      *
