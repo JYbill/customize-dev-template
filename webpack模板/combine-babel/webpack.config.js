@@ -1,5 +1,3 @@
-const path = require("path");
-
 module.exports = function (env, argv) {
   return {
     module: {
@@ -13,6 +11,10 @@ module.exports = function (env, argv) {
           },
         },
       ],
+    },
+
+    resolve: {
+      extensions: [".ts", ".mts", ".js"],
     },
   };
 };
