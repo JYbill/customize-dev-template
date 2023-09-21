@@ -1,4 +1,4 @@
--Xms6g
+-Xms4g
 -Xmx6g
 -XX:ReservedCodeCacheSize=2048m
 -XX:+UseG1GC
