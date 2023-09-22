@@ -1,13 +1,8 @@
-/**
- * @file: webpack.config.js
- * @author: xiaoqinvar
- * @desc: webpack5 配置
- * @dependencies:
- * @date: 2023-09-21 11:53:12
- */
 // plugins
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const DllReferencePlugin = require("webpack/lib/DllReferencePlugin");
+const DefinePlugin = require("webpack/lib/DefinePlugin");
 
 const path = require("path");
 
@@ -88,7 +83,7 @@ module.exports = function (env, argv) {
      * };
      * ```
      */
-    entry: ["./index.js"],
+    entry: ["./index.ts"],
     mode: "development",
 
     /**
@@ -100,7 +95,7 @@ module.exports = function (env, argv) {
      * - "electron-main": 构建为 Electron 主线程
      * - "electron-renderer": 构建为 Electron 渲染线程
      */
-    target: "node",
+    target: "web",
 
     /**
      * 作用：配置Webpack如何生成Source Map
@@ -148,6 +143,8 @@ module.exports = function (env, argv) {
      * > ⚠️ "devServe.publicPath" 是静态资源资源文件夹访问内容的路径
      * > ⚠️ "output.publicPath" 是构建内容的访问路径
      * ```
+     * // 对于打包发不到cdn服务器应该配置为：//cdn.test.com/dist/，"//"表示省略了"http:" or "https:"，这样可以根据当前访问html的环境进行请求对应的资源。
+     *
      * // 在 devServe 下，/static/index.html 才能访问到资源
      * devServe.publicPath = "/static/";
      *
@@ -167,7 +164,7 @@ module.exports = function (env, argv) {
     output: {
       filename: "[name].js",
       path: path.resolve(__dirname, "dist"),
-      publicPath: "/dist/",
+      // publicPath: "/dist/",
       clean: false, // 清空输出文件夹
       // assetModuleFilename: "images/[name][ext]",
       // library: {
@@ -204,6 +201,8 @@ module.exports = function (env, argv) {
         vue$: "./node_modules/vue/core/vue.min.js", // 只有命中以vue结尾的导入语句
       },
       symlinks: true,
+      extensions: [".ts", ".mts", ".js"],
+      // modules: [path.resolve(__dirname, "../node_modules")],
     },
 
     /**
@@ -220,10 +219,24 @@ module.exports = function (env, argv) {
         chunkFilename: "[name].css", // 非入口文件引入的chunk名
         ignoreOrder: false,
       }),
+      new HtmlWebpackPlugin({
+        template: "./index.html",
+      }),
+      new DllReferencePlugin({
+        context: path.resolve(__dirname, "dist"),
+        manifest: require("./dist/lodash-manifest.json"),
+      }),
+      new DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      }),
     ],
     /* **************************** Plugin配置（结束） **************************** */
 
     /* **************************** Loader配置（开始） **************************** */
+    /**
+     * 作用：模块解析规则
+     * - noParse: 防止 webpack 解析那些任何与给定正则表达式相匹配的文件。忽略的文件中 不应该含有 import, require, define 的调用，或任何其他导入机制。忽略大型的 library 可以提高构建性能。
+     */
     module: {
       rules: [
         {
@@ -258,6 +271,25 @@ module.exports = function (env, argv) {
               // presets: ["@babel/preset-env"],
             },
           },
+        },
+        {
+          // 整合 TS
+          test: /\.m?ts$/,
+          exclude: /node_modules/,
+          use: [
+            /*{
+              loader: "thread-loader",
+              options: {
+                poolTimeout: 500, // 可以设置为无穷大，以watch模式下使用；当超过指定毫秒时，关闭子进程
+              },
+            },*/
+            {
+              loader: "ts-loader",
+              options: {
+                happyPackMode: true,
+              },
+            },
+          ],
         },
       ],
     },
@@ -299,7 +331,7 @@ module.exports = function (env, argv) {
         ],
       },
       static: {
-        publicPath: "/dist/",
+        // publicPath: "/dist/",
       },
     },
     /* **************************** DevServe配置（结束） **************************** */
@@ -347,5 +379,17 @@ module.exports = function (env, argv) {
      */
     // cache: {},
     /* **************************** Cache配置（结束） **************************** */
+
+    /* **************************** Optimization配置（开始） **************************** */
+    /**
+     * 作用：优化
+     * - moduleIds: 选择模块id时需要使用哪种算法。"named" 显示更新的文件名，"natural" 显示更新的id，"deterministic" 显示更新的hash模块名
+     * - minimizer: 提供一个或多个定制过压缩插件实例(如：CssMinimizerWebpackPlugin、TerserWebpackPlugin)
+     */
+    optimization: {
+      moduleIds: "deterministic",
+      minimizer: ["..."],
+    },
+    /* **************************** Optimization配置（结束） **************************** */
   };
 };
