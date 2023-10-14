@@ -26,7 +26,30 @@
     // 用来指定输出文件夹，值为一个文件夹路径字符串，输出的文件都将放置在这个文件夹
     "outDir": "./dist",
 
-    // es模块交互，推荐开启，可以让ESModule与require进行交互使用，特别是有些第三方库是commonJS导出的
+    // ES模块交互，推荐开启，可以让ESModule与CJS进行包装，兼容性调用(默认：false)
+    /**
+     代码：
+      import fs from 'fs';
+      console.log(fs);
+     编译后：
+      const fs = require("fs");
+      console.log(fs.default);
+
+     代码：
+      import * as fs from "fs";
+      console.log(fs);
+     编译后：
+      const fs = require("fs");
+      console.log(fs);
+
+    总结：
+     开启后TS会对编译后的导入进行工具包裹
+     将import fs from "fs"，中的fs变量，如果不是ESM则会包括成
+     fs["default"] = 真实fs内容
+     以fs["default"]形式去使用
+
+    ⚠️注意：如果导出的内容都在导出的原型链上，则应该使用import fs from "fs"形式，或关闭"esModuleInterop"，这于TS编译转化的工具函数有关
+     */
     "esModuleInterop": true,
 
     // 导入文件采用大小写一致，false允许忽略大小写
