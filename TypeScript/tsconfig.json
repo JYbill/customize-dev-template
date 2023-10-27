@@ -74,6 +74,7 @@
 
     // 指定生成目标为react JSX时，使用的JSX工厂函数
     // "jsxFactory": "React.createElement",
+
     // 用来指定是否在编译的时候生成响应的".d.ts"声明文件。如果设为 true，编译每个 ts 文件之后会生成一个 js 文件和一个声明文件
     "declaration": false,
     // 是否为声明文件.d.ts生成.map文件

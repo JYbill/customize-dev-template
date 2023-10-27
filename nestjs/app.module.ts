@@ -1,12 +1,13 @@
 import { MiddlewareConsumer, Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
+import { ConfigModule } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import process from "process";
 
 import { AuthModule } from "./auth/auth.module";
 import { validateConfig } from "./config/config.validate";
+import { MemoModule } from "./memo/memo.module";
 import LoggerMiddleware from "./middleware/log.middleware";
+import VerifyMiddleware from "./middleware/verify.middleware";
 import { IPrismaModule } from "./prisma/prisma.builder";
 import { PrismaModule } from "./prisma/prisma.module";
 import { UserModule } from "./user/user.module";
@@ -18,6 +19,11 @@ import { UserModule } from "./user/user.module";
       isGlobal: true,
       cache: true,
       expandVariables: true,
+      load: [
+        () => ({
+          REFRESH_EXPIRE: "7d",
+        }),
+      ],
       validate: validateConfig,
     }),
     PrismaModule.forRootAsync({
@@ -34,23 +40,21 @@ import { UserModule } from "./user/user.module";
         };
       },
     }),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService<IEnv>) => {
-        return {
-          secret: configService.get("JWT_SECRET"),
-          signOptions: { expiresIn: "60s" },
-        };
-      },
-      inject: [ConfigService],
-    }),
     AuthModule,
     UserModule,
+    MemoModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {
   async configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes("*");
+    consumer.apply().forRoutes("*");
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes("*")
+      .apply(VerifyMiddleware)
+      .exclude("/auth/register", "/auth/login", "/auth/refresh")
+      .forRoutes("*");
   }
 }
