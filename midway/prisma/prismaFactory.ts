@@ -60,7 +60,7 @@ export class PrismaServiceFactory {
            * @param keys
            */
           exclude<T, Key extends keyof T>(payload: T, keys: Key[]): Omit<T, Key> {
-            for (let key of keys) {
+            for (const key of keys) {
               delete payload[key];
             }
             return payload;
@@ -72,8 +72,8 @@ export class PrismaServiceFactory {
            * @param keys
            */
           excludeAll<T, Key extends keyof T>(payloadList: T[], keys: Key[]): Omit<T, Key>[] {
-            for (let payload of payloadList) {
-              for (let key of keys) {
+            for (const payload of payloadList) {
+              for (const key of keys) {
                 delete payload[key];
               }
             }
