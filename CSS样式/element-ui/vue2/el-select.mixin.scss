@@ -1,0 +1,12 @@
+// el-select样式
+.el-select {
+  .el-input {
+    input[type="text"] {
+      width: 192px;
+      border-radius: 0;
+      background-color: var(--gary4);
+      border-color: var(--gary2);
+      color: #ffffff;
+    }
+  }
+}

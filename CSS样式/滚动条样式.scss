@@ -1,0 +1,20 @@
+.scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-button:start {
+    display: none;
+  }
+  &::-webkit-scrollbar-button:end {
+    display: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 6px;
+    background: transparent;
+    border-radius: 2px;
+  }
+  &::-webkit-scrollbar-corner {
+    display: none;
+  }
+}

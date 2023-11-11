@@ -1,15 +1,17 @@
 // el-checkbox样式
-@mixin resetCheckBox {
+@mixin resetCheckBox($color: #5eccb0) {
   .el-checkbox__input {
-    &.is-checked {
+    &.is-checked,
+    &.is-indeterminate {
       .el-checkbox__inner {
-        border-color: #5eccb0;
-        background-color: #5eccb0;
+        border-color: $color;
+        background-color: $color;
       }
     }
+
     &.is-focus {
       .el-checkbox__inner {
-        border-color: #5eccb0;
+        border-color: $color;
       }
     }
   }
