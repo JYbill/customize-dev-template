@@ -1,0 +1,30 @@
+// 圆框 + 选中后✅样式
+input[type="checkbox"] {
+  appearance: none;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  border: 1px solid var(--gary2);
+  background-color: transparent;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 4px;
+
+    // 对勾样式
+    width: 7px;
+    height: 3px;
+    transform: rotate(-45deg);
+    border-left: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+  }
+  &:checked {
+    border-color: transparent;
+    background-color: var(--navHoverColor);
+    &::before {
+      border-color: var(--defaultfontColor);
+    }
+  }
+}

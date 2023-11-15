@@ -18,10 +18,10 @@
     提示：node16与nodeNext: 表示node.js双模块系统（支持ESM与CJS），目前他俩表示一致，未来如果模块化内容有更新，则nodeNext表示最新的模块化特性！
 
     node16、nodeNext: 
-      1. 暗示并强制使用相同名称的"moduleResolution"设置
-      2. 暗示且强制启用"esModuleInterop"
-    node16暗示且强制"target"为"es2022"
-    nodeNext暗示且强制"target"为"esnext"
+      1. 强制使用相同名称的"moduleResolution"设置
+      2. 强制启用"esModuleInterop"
+    node16强制"target"为"es2022"+
+    nodeNext强制"target"为"esnext"+
 
     ⚠️ "es2015-esnext"不要和"moduleResolution": "node/nodeNext"一起使用。如果想使用ESM模块规则，应该在最近的package.json中定义"type": "module"即可。
 
