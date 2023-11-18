@@ -1,4 +1,4 @@
-// 圆框 + 选中后✅样式
+// checkbox 圆框 + 选中后✅样式
 input[type="checkbox"] {
   appearance: none;
   position: relative;
@@ -26,5 +26,34 @@ input[type="checkbox"] {
     &::before {
       border-color: var(--defaultfontColor);
     }
+  }
+}
+
+// range
+input[type="range"] {
+  // range 主体
+  padding: 0;
+  appearance: none;
+  height: 4px;
+  background-color: var(--transparent);
+  border-radius: 2px;
+
+  // 进度条
+  &::-webkit-slider-runnable-track {
+    height: 4px;
+    background-color: var(--navHoverColor);
+    border-radius: 2px;
+  }
+
+  // 圆滑块
+  &::-webkit-slider-thumb {
+    appearance: none;
+    height: 12px;
+    width: 12px;
+    background: var(--navHoverColor);
+    border-radius: 50%;
+    margin-top: -4px;
+    content: "";
+    border: 2px solid var(--white1);
   }
 }

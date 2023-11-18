@@ -1,0 +1,19 @@
+// 绘制： x icon
+div {
+  &:before,
+  &:after {
+    position: absolute;
+    content: "";
+    background-color: #eeeeee;
+    left: 6px;
+    top: 11px;
+    width: 1px;
+    height: 8px;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
