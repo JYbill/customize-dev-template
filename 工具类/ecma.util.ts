@@ -109,8 +109,8 @@ export class EcmaUtil {
   }
 
   /**
-   * 随机字符串默认11位
-   * @param num 11 - num长度的字符串
+   * 随机字符串，总长度11个字符
+   * @param num 11 - num数 = 返回的总长度
    */
   static randomString(num = 0): string {
     return Math.random().toString(36).split(".")[1].slice(num);
@@ -234,6 +234,10 @@ export function deepClone(obj) {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
+  // HTML元素
+  if (obj instanceof HTMLElement) {
+    return obj.cloneNode(true);
+  }
   // Date类型
   if (obj instanceof Date) {
     const copy = new Date();
@@ -242,7 +246,7 @@ export function deepClone(obj) {
   }
   // 正则类型类型
   if (obj instanceof RegExp) {
-    const Constructor = obj.constructor;
+    const Constructor = obj.constructor as new (arg: any) => any;
     return new Constructor(obj);
   }
   // 如果是数组等引用数据类型

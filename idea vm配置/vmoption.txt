@@ -1,6 +1,6 @@
--Xms4g
--Xmx6g
--XX:ReservedCodeCacheSize=2048m
+# -Xms4g # 设置JVM的初始堆大小(一般可以不用设置)
+-Xmx4096 # 设置JVM的最大堆大小
+-XX:ReservedCodeCacheSize=2048m # 保留代码缓存大小
 -XX:+UseG1GC
 -Dfile.encoding=UTF-8
 -XX:SoftRefLRUPolicyMSPerMB=50
