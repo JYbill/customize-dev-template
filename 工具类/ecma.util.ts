@@ -317,3 +317,13 @@ export function base64ToBlob(base64: string): Blob {
   const blob = new Blob([uInt8Array], { type: mime });
   return blob;
 }
+
+/**
+ * vite下通过URL获取图片地址，支持构建后产出该图片
+ * @param name
+ * @returns
+ */
+export const getImg = (name: string): URL => {
+  const url = new URL(`../assets/images/${name}.png`, import.meta.url);
+  return url;
+};
