@@ -407,26 +407,47 @@ module.exports = function (env, argv) {
      *
      * - concatenateModules: 默认false，production为true。根据模块图数据结构查找，哪些公共重读代码可以安全地被合并到单一模块中。
      *
-     * - splitChunks: 内置的SplitChunksPlugin插件，用于自动拆分chunks
-     * - cacheGroups: 自定义分割规则
-     * - cacheGroups.{customName}.test: 匹配的路径
-     * - cacheGroups.{customName}.chunks: 分割类型
-     * - cacheGroups.{customName}.reuseExistingChunk: 如果当前 chunk 包含已从主 bundle 中拆分出的模块，则它将被重用，而不是生成新的模块。
      */
     optimization: {
       providedExports: true,
-      usedExports: true,
+      usedExports: false,
       moduleIds: "deterministic",
       minimize: false,
       minimizer: [new TerserPlugin(), "..."],
       sideEffects: false,
       splitChunks: {
+        /*
+         * - splitChunks: 内置的SplitChunksPlugin插件，用于自动拆分chunks
+         *    - cacheGroups: 自定义分割规则
+         *      - chunks: 分割规则：all(所有)、async(异步引入)、initial(首次同步加载需要)，也允许为方法
+         *      - minSize: 提取出的chunk的最小大小
+         *      - test: 匹配的路径
+         *      - chunks: 分割类型
+         *      - reuseExistingChunk: 如果当前chunk包含已从主bundle中拆分出的模块，则它将被重用，而不是生成新的模块。
+         *      - minChunks: 模块被引用2次以上的才抽离
+         *      - priority: cacheGroups内自定义组的优先级、权重
+         */
         cacheGroups: {
-          chunks: "all",
           base: {
+            chunks: "all",
             filename: "lodash.bundle.js",
             test: /lodash/,
             reuseExistingChunk: true,
+            minChunks: 2,
+          },
+          // 拆分第三方库（通过npm|yarn安装的库）
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: "vendor",
+            chunks: "initial",
+            priority: -10,
+          },
+          // 拆分自定义js文件
+          custom: {
+            test: /(src\/custom\.js)$/,
+            name: "custom",
+            chunks: "initial",
+            priority: -9,
           },
         },
       },
