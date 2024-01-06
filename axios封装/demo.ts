@@ -1,4 +1,4 @@
-import { list, listTest, listTestMethodAOP } from "./api/module/entire";
+import { list, listTestMethodAOP } from "./api/module/entire";
 
 // 公共拦截器
 // const listRes = await list({ offset: 0, size: 20 });

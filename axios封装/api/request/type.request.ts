@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig, CreateAxiosDefaults, AxiosResponse } from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 /**
  * axios 错误接口
