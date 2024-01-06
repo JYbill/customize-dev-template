@@ -4,9 +4,9 @@
  * @desc：封装axios实例
  * @date: 2022-10-29 12:04:11
  */
-import axios from "axios";
+import axios from 'axios'
 import type { IAxiosError, AxiosConfig } from "./type.request";
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from "axios";
 
 export default class AxiosRequest {
   private instance: AxiosInstance;
@@ -18,7 +18,7 @@ export default class AxiosRequest {
     const interceptors = this.instance.interceptors;
     // request interceptor
     interceptors.request.use(
-      (config: AxiosRequestConfig<any>) => {
+      (config: InternalAxiosRequestConfig<any>) => {
         // config AOP
         return config;
       },
@@ -41,7 +41,7 @@ export default class AxiosRequest {
 
     // 自定义实例化时自定义的拦截器
     interceptors.request.use(
-      config.interceptor?.reqSuccessHandler,
+      config.interceptor?.reqSuccessHandler as (config: AxiosRequestConfig) => InternalAxiosRequestConfig,
       config.interceptor?.reqFailHandler,
     );
     interceptors.response.use(
@@ -55,7 +55,6 @@ export default class AxiosRequest {
    * @param config 请求配置
    * @returns
    */
-
   async request<T = any, C = any>(config: AxiosConfig<T, C>) {
     const interceptor = config.interceptor;
 
@@ -75,12 +74,13 @@ export default class AxiosRequest {
       }
       return result;
     } catch (err: unknown) {
+      let error = err as any;
       // 响应失败通知 AOP
       if (interceptor?.resFailHandler) {
         const errorRes = interceptor.resFailHandler(<IAxiosError>err);
-        err = errorRes;
+        error = errorRes;
       }
-      throw err;
+      throw error;
     }
   }
 

@@ -1,11 +1,11 @@
-import { AxiosResponse } from "axios";
 /**
  * @file: entire.ts
  * @author: xiaoqinvar
  * @desc：entire 接口例子🌰
  * @date: 2022-10-29 13:04:43
  */
-import Request, { BaiduRequest } from "../index.request";
+import { Request } from '@/api';
+import type { InternalAxiosRequestConfig } from 'axios'
 
 interface IList {
   offset: number;
@@ -13,7 +13,7 @@ interface IList {
 }
 
 interface IHomeData {
-  errcode: number;
+  errCode: number;
   list: any[];
   totalCount: number;
 }
@@ -29,17 +29,6 @@ export async function list(listParam: IList) {
   }
 }
 
-export async function listTest(listParam: IList) {
-  try {
-    return await BaiduRequest.get<IHomeData>("/entire/list", {
-      params: listParam,
-    });
-  } catch (error: unknown) {
-    console.error("entries.ts#listTest", error);
-    return null;
-  }
-}
-
 export async function listTestMethodAOP(listParam: IList) {
   try {
     return await Request.request<IHomeData>({
@@ -48,7 +37,7 @@ export async function listTestMethodAOP(listParam: IList) {
       interceptor: {
         reqSuccessHandler(config) {
           console.log("方法级别请求成功拦截器");
-          return config;
+          return config as InternalAxiosRequestConfig;
         },
         resSuccessHandler(res) {
           console.log("方法级别响应成功拦截器");
