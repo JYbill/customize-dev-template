@@ -418,15 +418,19 @@ module.exports = function (env, argv) {
       splitChunks: {
         /*
          * - splitChunks: 内置的SplitChunksPlugin插件，用于自动拆分chunks
+         *    - automaticNameDelimiter：默认"~"，表示分割文件的连接符
+         *        如：app.js分割为：app~123.js、app~234.js
+         *    - minSize: 规定被提取的模块在压缩前的大小最小值，单位为字节，默认为30000，只有超过了30000字节才会被提取(1)
+         *    - maxSize: 把提取出来的模块打包生成的文件大小不能超过maxSize值，如果超过了，要对其进行分割并打包生成新的文件。单位为字节，默认为0，表示不限制大小。(2)
+         *    - minChunks: 默认1，拆分引用为1的文件模块
+         *    - chunks: 分割规则：all(所有)、async(异步引入)、initial(首次同步加载需要)，也允许为方法
+         *    - test: 匹配的路径
+         *    - minChunks: 模块被引用2次以上的才抽离
+         *    - priority: cacheGroups内自定义组的优先级、权重
          *    - cacheGroups: 自定义分割规则
-         *      - chunks: 分割规则：all(所有)、async(异步引入)、initial(首次同步加载需要)，也允许为方法
-         *      - minSize: 提取出的chunk的最小大小
-         *      - test: 匹配的路径
-         *      - chunks: 分割类型
-         *      - reuseExistingChunk: 如果当前chunk包含已从主bundle中拆分出的模块，则它将被重用，而不是生成新的模块。
-         *      - minChunks: 模块被引用2次以上的才抽离
-         *      - priority: cacheGroups内自定义组的优先级、权重
+         *      - reuseExistingChunk: 默认true。如果当前chunk包含已从主bundle中拆分出的模块，则它将被重用，而不是生成新的模块。
          */
+        automaticNameDelimiter: "-",
         cacheGroups: {
           base: {
             chunks: "all",
