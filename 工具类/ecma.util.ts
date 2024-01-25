@@ -327,3 +327,12 @@ export const getImg = (name: string): URL => {
   const url = new URL(`../assets/images/${name}.png`, import.meta.url);
   return url;
 };
+
+/**
+ * 安全判断是否是奇数
+ * @param n
+ * @returns
+ */
+export const isOdd = (n: number) => {
+  return n % 2 === 1 || n % 2 === -1;
+};
