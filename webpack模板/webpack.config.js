@@ -403,7 +403,8 @@ module.exports = function (env, argv) {
      * - providedExports: 默认true，告知webpack将模块提供"export"导出，便于Tree-Shaking。
      * - usedExports: 默认false，production为true。只起到标记未使用代码功能，真实操作依赖Terse压缩插件的能力。true(对本地代码开启Tree-Shaking，不影响第三方库代码)、"global"(Tree-Shaking作用到运行时第三方库代码)
      *
-     * - sideEffects: 生产环境默认"flag"，让webpack分析第三方包的[副作用代码](https://github.com/webpack/webpack/blob/main/examples/side-effects/README.md)。"flag"：不对源码和第三方库进行副作用分析，但允许使用"flag"。false: 对所有第三方库进行分析副作用函数标记。（如果显示设置该属性，生产环境会默认读取第三方包package.json的"sideEffects"属性进行副作用分析）true: 不进行副作用分析
+     * - sideEffects: 生产环境默认"flag"，让webpack分析第三方包的[副作用代码](https://github.com/webpack/webpack/blob/main/examples/side-effects/README.md)。"flag"：不对源码和第三方库进行副作用分析，但允许使用"flag"。false: 表示所有的导入文件都没有副作用,可以安全地进行tree-shaking。true: 不进行副作用分析
+     * "sideEffects": ["文件路径"]，指定哪些文件不应该被tree-shaking
      *
      * - concatenateModules: 默认false，production为true。根据模块图数据结构查找，哪些公共重读代码可以安全地被合并到单一模块中。
      *

@@ -29,3 +29,38 @@ export function dragEl(el: HTMLElement) {
     return false;
   };
 }
+
+/**
+ * 等待el元素下的所有img元素加载完毕
+ * @param el
+ */
+export async function waitAllImagesLoaded(el: HTMLElement) {
+  return new Promise((resolve, reject) => {
+    const images = el.querySelectorAll("img");
+    if (images.length <= 0) {
+      resolve(true);
+    }
+    // 剔除已完成的img
+    const loadingImgList: HTMLElement[] = []; // 需要加载的img List
+    let total = Array.from(images).reduce((pre, curr) => {
+      if (curr.complete) {
+        return pre;
+      }
+      loadingImgList.push(curr);
+      return pre + 1;
+    }, 0);
+    // 待加载图片的总数，为0返回resolve表示所有图片都加载完毕
+    if (total <= 0) {
+      return resolve(true);
+    }
+    // 实际需要等待下载的img元素
+    for (const img of loadingImgList) {
+      img.onload = () => {
+        total--;
+        if (total <= 0) {
+          setTimeout(() => resolve(true), 400);
+        }
+      };
+    }
+  });
+}
