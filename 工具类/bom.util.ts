@@ -196,3 +196,12 @@ export function printPicture(imgList) {
     img.src = url;
   }
 }
+
+/**
+ * 获取localStorage已存储的总大小，返回的是localStorage字符串长度
+ * 限制5M为字符串长度，内存大小为5M * utf-16大小 = 10M
+ * @returns {number}
+ */
+export function statisticsLSTotal() {
+  return Object.entries(localStorage).map(v => v.join('')).join('').length;
+}
