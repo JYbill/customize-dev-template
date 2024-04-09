@@ -336,3 +336,140 @@ export const getImg = (name: string): URL => {
 export const isOdd = (n: number) => {
   return n % 2 === 1 || n % 2 === -1;
 };
+
+import streamSaver from "streamsaver";
+
+type OversizeFileDownloadOption = {
+  url: string, processHandler?: () => void, limitSize?: number
+}
+type DownloadInfo = {
+  res: Response,
+  reader: ReadableStreamDefaultReader,
+  filename: string,
+  size: number,
+  fileTotalSize: number,
+  contentLength: number,
+}
+
+/**
+ * 超大文件二进制下载器
+ */
+export class OversizeFileDownloader {
+  url;
+  limitSize;
+  processHandler; // 进度钩子
+  processLastTime = 0; // 进度钩子最后一次执行的时间
+
+  // 下面数据结束后需要重置
+  isDownload = false; // 是否正在下载
+  fileTotalSize = 0; // 总二进制大小（字节）
+  filename = ""; // 文件名
+  bufferPos = 0; // 已下载字节大小
+  constructor(options: OversizeFileDownloadOption) {
+    const { url, processHandler, limitSize = 1024 * 1024 * 1024 } = options;
+    if (!url) {
+      throw TypeError("url is must")
+    }
+    this.url = url;
+    this.limitSize = limitSize; // 默认1G
+    if (!processHandler) {
+      this.processHandler = function(this: OversizeFileDownloader) {
+        console.log("progress", (this.bufferPos / this.fileTotalSize * 100).toFixed(2) + "%");
+      }
+    } else {
+      this.processHandler = processHandler;
+    }
+  }
+
+  /**
+   * 下载核心处理
+   */
+  async downloadCore() {
+    if (this.isDownload) {
+      console.warn("downloader is running, pls wait 'isDownload = false'");
+      return;
+    }
+    this.isDownload = true;
+    console.log("😄 start downloading");
+
+    const res = await this.downloadFile();
+    this.filename = res.filename as string;
+    this.fileTotalSize = res.fileTotalSize;
+    let {reader} = res;
+    const fileStream = streamSaver.createWriteStream(this.filename, { size: this.fileTotalSize })
+    const writer = fileStream.getWriter();
+
+    // 分片循环下载
+    while (this.bufferPos < this.fileTotalSize) {
+      let done = false; // 本次HTTP range是否写入完毕
+
+      // 循环读取二进制并写入writeable stream
+      while (!done) {
+        const bufferRes = await reader!.read();
+        const buffer = bufferRes.value;
+        done = bufferRes.done;
+        if (!done) {
+          await writer.ready.then(async () => {
+            await writer.write(buffer);
+            this.bufferPos += buffer!.length;
+
+            // 500ms间隔执行一次钩子（简单防抖）
+            if (performance.now() - this.processLastTime >= 500) {
+              this.processHandler!.call(this);
+              this.processLastTime = performance.now();
+            }
+          })
+        }
+      }
+
+      // 获取下一个range范围的二进制流
+      const retryRes = await this.downloadFile(this.bufferPos);
+      reader = retryRes.reader;
+    }
+    writer.ready.then(() => {
+      writer.close();
+    })
+    writer.closed.then(() => {
+      this.processHandler!.call(this);
+      console.log("✅ 下载完毕");
+      this.resetState();
+    })
+  }
+
+  resetState() {
+    this.isDownload = false;
+    this.fileTotalSize = 0;
+    this.filename = "";
+    this.bufferPos = 0;
+    this.processLastTime = 0;
+  }
+
+  /**
+   * HTTP Range下载文件二进制
+   * @param startPos
+   */
+  async downloadFile(startPos = 0) {
+    const endPos = this.limitSize + startPos;
+    const res = await fetch(this.url, {
+      method: "GET",
+      headers: {
+        'Range': `bytes=${startPos}-${endPos}`
+      }
+    })
+    let contentDisposition = res.headers.get("Content-Disposition")!;
+    contentDisposition = contentDisposition.split("filename=")[1];
+    contentDisposition = contentDisposition.replaceAll(`"`, '');
+    const size = Number(res.headers.get("Content-Length"));
+    const fileTotalSize = Number(res.headers.get('File-Total-Size'));
+    const contentLength = Number(res.headers.get('Content-Length'));
+    const result: DownloadInfo =  {
+      res,
+      reader: res.body!.getReader(),
+      filename: contentDisposition,
+      size,
+      fileTotalSize,
+      contentLength
+    };
+    return result;
+  }
+}
