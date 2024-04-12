@@ -85,6 +85,7 @@ type DownloadInfo = {
 
 export class OversizeFileDownloader {
   url;
+  extension;
   limitSize;
   processHandler; // 进度钩子
 
@@ -95,9 +96,10 @@ export class OversizeFileDownloader {
   bufferPos = 0; // 已下载字节大小
   processLastTime = 0; // 进度钩子最后一次执行的时间
   downloadFilename;
+  abortController = new AbortController()
 
   constructor(options: OversizeFileDownloadOption) {
-    const { url, processHandler, limitSize = 1024 * 1024 * 1024, downloadFilename } = options;
+    const { url, processHandler, limitSize = 200 * 1024 * 1024, downloadFilename } = options;
     if (!url) {
       throw TypeError('url is must');
     }
@@ -123,20 +125,22 @@ export class OversizeFileDownloader {
     }
     this.isDownload = true;
 
-    this.fileTotalSize = await this.getAssetsSize(); // 静态资源总大小
-    const res = await this.downloadAssetFile();
-    await this.pipeToFile(res.reader, this.downloadAssetFile);
+    await this.getAssetsSize() // 静态资源总大小
+    const res = await this.downloadAssetFile()
+    await this.pipeToFile(res.reader, this.downloadAssetFile)
+    this.resetState()
   }
 
   /**
    * 重置状态
    */
   resetState() {
-    this.isDownload = false;
-    this.fileTotalSize = 0;
-    this.bufferPos = 0;
-    this.processLastTime = 0;
-    this.downloadFilename = '';
+    this.isDownload = false
+    this.fileTotalSize = 0
+    this.bufferPos = 0
+    this.processLastTime = 0
+    this.downloadFilename = ''
+    this.abortController = new AbortController()
   }
 
   /**
@@ -147,8 +151,10 @@ export class OversizeFileDownloader {
       method: 'HEAD',
     });
     const headers = fileInfoRes.headers;
-    const fileSize = headers.get('Content-Length');
-    return Number(fileSize);
+    const fileSize = headers.get('Content-Length')
+    this.fileTotalSize = Number(fileSize)
+    const contentType = headers.get('Content-Type')
+    this.extension = mime.getExtension(contentType)
   }
   async downloadAssetFile(startPos = 0) {
     const endPos = this.limitSize + startPos;
@@ -213,6 +219,9 @@ export class OversizeFileDownloader {
               this.processHandler!.call(this);
               this.processLastTime = performance.now();
             }
+          }).catch(err => {
+            this.abortController.abort();
+            throw new TypeError('用户已取消下载')
           });
         }
       }
@@ -228,8 +237,6 @@ export class OversizeFileDownloader {
     });
     await writer.closed.then(() => {
       this.processHandler!.call(this);
-      console.log('✅ 下载完毕');
-      this.resetState();
     });
   }
 }
