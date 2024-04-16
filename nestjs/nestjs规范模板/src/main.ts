@@ -14,7 +14,9 @@ import {
 } from './common/exception/global.expectation';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
 
   // 入口日志器
   const logger = new Logger(bootstrap.name);
