@@ -4,7 +4,7 @@ import {
   ParamsMissedException,
   TokenException,
 } from "../exception/global.expectation";
-import { ResponseUtil } from "../util/response.util";
+import { ResponseUtil } from "../../util/response.util";
 import {
   Body,
   Controller,

@@ -4,7 +4,7 @@ import {
   TokenException,
 } from "../exception/global.expectation";
 import { MemoService } from "../memo/memo.service";
-import { UserService } from "../user/user.service";
+import { UserService } from "../../user/user.service";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";

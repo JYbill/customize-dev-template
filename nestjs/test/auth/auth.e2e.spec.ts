@@ -1,5 +1,5 @@
-import { AppModule } from "../../app.module";
-import { UserService } from "../../user/user.service";
+import { AppModule } from "../../../app.module";
+import { UserService } from "../../../user/user.service";
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import request from "supertest";

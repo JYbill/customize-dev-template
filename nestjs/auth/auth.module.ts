@@ -3,7 +3,7 @@
  * @Author: 小钦var
  * @Date: 2023/10/9 14:05
  */
-import { UserModule } from "../user/user.module";
+import { UserModule } from "../../user/user.module";
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
