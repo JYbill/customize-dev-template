@@ -3,8 +3,8 @@
  * @Author: 小钦var
  * @Date: 2023/10/9 17:07
  */
-import { UserDTO } from '../../dto/user.dto';
-import { DBExpectation } from '../../common/exception/global.expectation';
+import { UserDTO } from '../../../dto/user.dto';
+import { DBExpectation } from '../../exception/global.expectation';
 import {
   Inject,
   Injectable,
@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import * as CryptoJS from 'crypto-js';
 
 import {
   OptionType,
@@ -21,7 +22,8 @@ import {
   PRISMA_OTHER_OPT_INJECT_ID,
 } from './prisma.builder';
 import * as process from 'process';
-import { Role } from '../../enum/app.enum';
+import { Role } from '../../../enum/app.enum';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaService
@@ -36,12 +38,14 @@ export class PrismaService
     private readonly prismaOpt: Prisma.PrismaClientOptions,
     @Inject(PRISMA_OTHER_OPT_INJECT_ID)
     private readonly opt: OptionType,
+    private readonly configService: ConfigService<IEnv>,
   ) {
     super(prismaOpt);
 
     // debug详细内容
     if (opt.debugging) {
       this.$on('query', (event: Prisma.QueryEvent) => {
+        console.log(1);
         const date = new Date(event.timestamp);
         this.logger.debug('请求时间: ', date.toLocaleTimeString());
         this.logger.debug('耗时: ', event.duration + 'ms');
@@ -71,31 +75,11 @@ export class PrismaService
     this.logger.log('Prisma Disconnected');
   }
 
+  /**
+   * DB初始化
+   */
   async init() {
-    const roleTable = await this.$GlobalExt.role;
-    const admin = await roleTable.findFirst({
-      where: {
-        key: Role.ADMIN,
-      },
-    });
-    if (!admin) {
-      const res = await roleTable.create({
-        data: { name: '管理员', key: Role.ADMIN },
-      });
-      console.log('r', res);
-    }
 
-    const user = await roleTable.findFirst({
-      where: {
-        key: Role.USER,
-      },
-    });
-    if (!user) {
-      const res = await roleTable.create({
-        data: { name: '普通用户', key: Role.USER },
-      });
-      console.log('r', res);
-    }
   }
 }
 
@@ -178,11 +162,22 @@ function extendsFactory(prisma: PrismaService) {
       $allModels: {
         /**
          * 自定义Prisma异常
-         * @param args
-         * @param query
+         * @param params
          */
-        async $allOperations({ args, query }) {
+        async $allOperations(params) {
+          const { args, query, operation } = params;
           try {
+            // find* 查询，存在where条件，且不包含isDelete逻辑删除，如果满足，将会追加上isDelete = false条件
+            if (
+              operation.includes('find') &&
+              args['where'] &&
+              !args['where']['isDelete']
+            ) {
+              args['where']['isDelete'] = false;
+              return await query(args);
+            }
+
+            // 其他操作
             return await query(args);
           } catch (err) {
             const error = err as Error;
