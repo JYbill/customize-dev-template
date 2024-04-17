@@ -381,3 +381,19 @@ export function excludeAll<T, Key extends keyof T>(
   }
   return payloadList;
 }
+
+/**
+ * 从payload中挑选出属于payload的字段
+ * @param payload
+ * @param keys payload的字段集合
+ */
+export function pick<T, Key extends keyof T>(
+  payload: T,
+  keys: Key[],
+): Pick<T, Key> {
+  const res: any = {};
+  for (const key of keys) {
+    res[key] = payload[key];
+  }
+  return res as Pick<T, Key>;
+}
