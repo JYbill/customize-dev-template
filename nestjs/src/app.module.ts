@@ -3,13 +3,16 @@ import { ConfigModule } from '@nestjs/config';
 import { Prisma } from '@prisma/client';
 import { validateConfig } from './common/config/config.validate';
 import LoggerMiddleware from './common/middleware/log.middleware';
-import { IPrismaModule } from './modules/prisma/prisma.builder';
-import { PrismaModule } from './modules/prisma/prisma.module';
+import { IPrismaModule } from './common/modules/prisma/prisma.builder';
+import { PrismaModule } from './common/modules/prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import JwtMiddleware from './common/middleware/jwt.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
+import { RepositoryModule } from './repository/repository.module';
+import { MenuModule } from './menu/menu.module';
+import AdminMiddleware from './common/middleware/admin.middleware';
 
 @Module({
   imports: [
@@ -52,6 +55,7 @@ import * as process from 'process';
       useFactory: (): IPrismaModule => {
         return {
           isGlobal: true,
+          // debugging: true,
           async prismaOptFactory() {
             const prismaOption: Prisma.PrismaClientOptions = {};
             if (process.env['ENV'] === 'development') {
@@ -63,6 +67,8 @@ import * as process from 'process';
       },
     }),
     UserModule,
+    RepositoryModule,
+    MenuModule,
   ],
 })
 export class AppModule implements NestModule {
@@ -70,6 +76,14 @@ export class AppModule implements NestModule {
     consumer.apply(LoggerMiddleware).forRoutes('*');
     consumer
       .apply(JwtMiddleware)
-      .forRoutes('/user/updatePwd', '/user/createUser');
+      .forRoutes(
+        '/user/updatePwd',
+        '/user/createUser',
+        '/repository/create',
+        '/menu/create',
+      );
+    consumer
+      .apply(AdminMiddleware)
+      .forRoutes('/user/createUser', '/repository/create', '/menu/create');
   }
 }

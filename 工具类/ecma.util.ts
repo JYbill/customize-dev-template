@@ -350,3 +350,34 @@ type DownloadInfo = {
   fileTotalSize: number,
   contentLength: number,
 }
+
+/**
+ * 排除keys中的字段
+ * @param payload 
+ * @param keys 
+ * @returns 
+ */
+export function exclude<T, Key extends keyof T>(payload: T, keys: Key[]): Omit<T, Key> {
+  for (const key of keys) {
+    delete payload[key];
+  }
+  return payload;
+}
+
+/**
+ * 将数组中包含keys相关的字段排除
+ * @param payloadList 
+ * @param keys 
+ * @returns 
+ */
+export function excludeAll<T, Key extends keyof T>(
+  payloadList: T[],
+  keys: Key[],
+): Omit<T, Key>[] {
+  for (const payload of payloadList) {
+    for (const key of keys) {
+      delete payload[key];
+    }
+  }
+  return payloadList;
+}
