@@ -1,17 +1,11 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/exception/global.filter';
 import { ProjectExceptionFilter } from './common/exception/project.filter';
-import {
-  ParamsMissedException,
-  ProjectException,
-} from './common/exception/global.expectation';
+import { ParamsMissedException } from './common/exception/global.expectation';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -34,7 +28,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true, // 隐式转换
       },
-      whitelist: true, // 剔除在验证类中没有任何装饰器的属性
+      whitelist: true, // 剔除在验证类中没有任何装饰器的属性(可以继续走业务)
       forbidNonWhitelisted: false, // 存在非白名单属性时停止处理请求，并抛出错误
       validationError: {
         value: true,
