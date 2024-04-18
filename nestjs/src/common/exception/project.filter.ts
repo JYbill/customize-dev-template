@@ -1,4 +1,4 @@
-import { ResponseUtil } from '../../util/response.util';
+import { ResponseUtil } from '../util/response.util';
 import {
   ArgumentsHost,
   Catch,
@@ -25,7 +25,7 @@ export class ProjectExceptionFilter implements ExceptionFilter<HttpException> {
     const response = ctx.getResponse<Response>();
 
     request.pass = false;
-    this.logger.error(exception.message);
+    this.logger.error(exception.stack);
     const status = exception.getStatus();
     response.status(status).json(ResponseUtil.error(exception.message, status));
   }

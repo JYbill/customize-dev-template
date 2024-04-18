@@ -34,6 +34,22 @@ class EnvConfig implements IEnv {
   @Expose()
   @IsNumber()
   MAIL_REGISTER_EXPIRE: number;
+
+  @Expose()
+  @IsString()
+  MAIL_USER: string;
+
+  @Expose()
+  @IsString()
+  ROOT_USER: string;
+
+  @Expose()
+  @IsString()
+  ROOT_PWD: string;
+
+  @Expose()
+  @IsString()
+  HOST: string;
 }
 
 export function validateConfig(config: Record<string, unknown>) {

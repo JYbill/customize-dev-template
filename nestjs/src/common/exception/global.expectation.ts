@@ -16,15 +16,6 @@ export class RedisExpectation extends HttpException {
 }
 
 /**
- * 数据库不存在对应数据异常
- */
-export class NOExistException extends HttpException {
-  constructor(msg = 'DB不存在数据') {
-    super(msg, 500);
-  }
-}
-
-/**
  * 项目异常类
  */
 export class ProjectException extends HttpException {}
@@ -68,8 +59,32 @@ export class LogoutException extends ProjectException {
 /**
  * JWT Token异常
  */
+export class TokenMissed extends ProjectException {
+  constructor(msg = 'Token缺失') {
+    super(msg, 403);
+  }
+}
+
 export class TokenException extends ProjectException {
   constructor(msg = '请勿伪造不合法的JWT Token') {
+    super(msg, 403);
+  }
+}
+
+/**
+ * 无权限异常
+ */
+export class AuthDenied extends ProjectException {
+  constructor(msg = '无权限') {
+    super(msg, 403);
+  }
+}
+
+/**
+ * 数据库不存在对应数据异常
+ */
+export class NOExistException extends ProjectException {
+  constructor(msg = 'DB不存在数据') {
     super(msg, 400);
   }
 }
