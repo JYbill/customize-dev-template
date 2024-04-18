@@ -1,4 +1,4 @@
-import { ResponseUtil } from '../../util/response.util';
+import { ResponseUtil } from '../util/response.util';
 import {
   ArgumentsHost,
   Catch,

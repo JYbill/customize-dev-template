@@ -1,11 +1,11 @@
-import { ResponseUtil } from '../../util/response.util';
+import { ResponseUtil } from '../util/response.util';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import * as passport from 'passport';
 import { Strategy as JWTStrategy, VerifiedCallback } from 'passport-jwt';
-import { ProjectException } from '../exception/global.expectation';
+import { ProjectException, TokenMissed } from '../exception/global.expectation';
 
 /**
  * @Description: passport-jwt校验中间件
@@ -22,7 +22,7 @@ export default class JwtMiddleware {
           // 1. 获取Token的方法
           jwtFromRequest: (req: Request) => {
             if (!req.headers.authorization?.includes('Bearer ')) {
-              return null;
+              throw new TokenMissed();
             }
             // 这里可以自定义，但是返回的结果一定是JWT，否则passport-jwt进行校验，失败则抛出异常
             // 抛出异常就会执行passport.fail() -> 下一个策略，没有时调用认证回调函数()

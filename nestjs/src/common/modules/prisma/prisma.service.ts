@@ -3,7 +3,7 @@
  * @Author: 小钦var
  * @Date: 2023/10/9 17:07
  */
-import { UserDTO } from '../../../dto/user.dto';
+import { UserDTO } from '../../dto/user.dto';
 import { DBExpectation } from '../../exception/global.expectation';
 import {
   Inject,
@@ -21,8 +21,7 @@ import {
   PRISMA_MODULE_INJECT_ID,
   PRISMA_OTHER_OPT_INJECT_ID,
 } from './prisma.builder';
-import * as process from 'process';
-import { Role } from '../../../enum/app.enum';
+import { Role } from '../../enum/app.enum';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -79,7 +78,48 @@ export class PrismaService
    * DB初始化
    */
   async init() {
+    const roleTable = await this.$GlobalExt.role;
+    let admin = await roleTable.findFirst({
+      where: {
+        key: Role.ADMIN,
+      },
+    });
+    if (!admin) {
+      admin = await roleTable.create({
+        data: { name: '管理员', key: Role.ADMIN },
+      });
+    }
 
+    const user = await roleTable.findFirst({
+      where: {
+        key: Role.USER,
+      },
+    });
+    if (!user) {
+      await roleTable.create({
+        data: { name: '普通用户', key: Role.USER },
+      });
+    }
+
+    // 创建ROOT账号
+    const adminRoleId = admin.id;
+    const rootUser = await this.$GlobalExt.user.findFirst({
+      where: {
+        name: this.configService.get('ROOT_USER'),
+      },
+    });
+    if (!rootUser) {
+      await this.$GlobalExt.user.create({
+        data: {
+          name: this.configService.get('ROOT_USER'),
+          email: this.configService.get('MAIL_USER'),
+          password: CryptoJS.SHA3(
+            this.configService.get('ROOT_PWD'),
+          ).toString(),
+          roleId: adminRoleId,
+        },
+      });
+    }
   }
 }
 
@@ -167,17 +207,22 @@ function extendsFactory(prisma: PrismaService) {
         async $allOperations(params) {
           const { args, query, operation } = params;
           try {
-            // find* 查询，存在where条件，且不包含isDelete逻辑删除，如果满足，将会追加上isDelete = false条件
-            if (
-              operation.includes('find') &&
-              args['where'] &&
-              !args['where']['isDelete']
-            ) {
-              args['where']['isDelete'] = false;
+            if (operation.includes('create')) {
               return await query(args);
             }
 
-            // 其他操作
+            // 所有判断条件都必须满足有逻辑删除条件
+            // 有where条件但没有isDelete就默认加上
+            if (args['where']) {
+              if (!args['where']['isDelete']) {
+                args['where']['isDelete'] = false;
+              }
+            } else {
+              // 完全没有where条件，直接设置isDelete
+              args['where'] = {
+                isDelete: false,
+              };
+            }
             return await query(args);
           } catch (err) {
             const error = err as Error;
