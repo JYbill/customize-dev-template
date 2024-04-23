@@ -13,6 +13,9 @@ import type { JWTPayload } from "jose";
  */
 export type TPrimitive = number | string | boolean;
 
+// input accept参数,允许上传audio video image ppt pdf excel doc ...
+export const inputAccpet = "audio/*,video/*,image/*,.csv,text/plain,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
 export class EcmaUtil {
   // 正则：匹配所有
   static readonly MathAllRxp = /.*.*/gi;
