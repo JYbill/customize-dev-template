@@ -5,6 +5,7 @@
  */
 import { Expose, plainToInstance } from 'class-transformer';
 import { IsNumber, IsString, validateSync } from 'class-validator';
+import * as path from 'node:path';
 
 class EnvConfig implements IEnv {
   @Expose()
@@ -28,10 +29,6 @@ class EnvConfig implements IEnv {
   JWT_EXPIRE: string;
 
   @Expose()
-  @IsString()
-  REFRESH_EXPIRE: string;
-
-  @Expose()
   @IsNumber()
   MAIL_REGISTER_EXPIRE: number;
 
@@ -50,6 +47,10 @@ class EnvConfig implements IEnv {
   @Expose()
   @IsString()
   HOST: string;
+
+  @Expose()
+  @IsString()
+  APP_ROOT: string;
 }
 
 export function validateConfig(config: Record<string, unknown>) {
@@ -64,5 +65,8 @@ export function validateConfig(config: Record<string, unknown>) {
     console.log(errors);
     throw new Error(errors.toString());
   }
+
+  validatedConfig.APP_ROOT = path.resolve(__dirname, '../../');
+  console.log(validatedConfig.APP_ROOT);
   return validatedConfig;
 }

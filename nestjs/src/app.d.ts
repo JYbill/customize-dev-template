@@ -8,11 +8,12 @@ declare interface IEnv {
   JWT_SECRET: string; // JWT 密钥
   REDIS_URL: string;
   REDIS_PWD: string;
-  REFRESH_EXPIRE: string; // 刷新token
   MAIL_REGISTER_EXPIRE: number; // 邮件过期时长
   ROOT_USER: string; // root 用户名
   ROOT_PWD: string; // root 密码
   MAIL_USER: string; // 邮箱
+  HOST: string; // 当前服务的主机地址
+  APP_ROOT: string; // 项目根目录
 }
 
 declare interface IPayload {
