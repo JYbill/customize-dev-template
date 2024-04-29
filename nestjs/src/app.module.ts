@@ -17,16 +17,11 @@ import AdminMiddleware from './common/middleware/admin.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-      cache: true,
-      expandVariables: true,
-      load: [
-        () => ({
-          REFRESH_EXPIRE: '7d',
-        }),
-      ],
-      validate: validateConfig,
+        envFilePath: '.env',
+        isGlobal: true,
+        cache: true,
+        expandVariables: true,
+        validate: validateConfig,
     }),
     JwtModule.register({
       global: true,
