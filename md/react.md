@@ -36,3 +36,6 @@
 - 工具组件
     - 工具栏
     <img width="30%" src="../React/工具组件/横向工具栏/image.png" /> <br/>
+- 确认删除组件
+    - 确认删除1
+    <img width="30%" src="../React/确认删除组件/确认删除1/image.png" /> <br/>

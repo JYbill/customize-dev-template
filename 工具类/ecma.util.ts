@@ -14,7 +14,10 @@ import type { JWTPayload } from "jose";
 export type TPrimitive = number | string | boolean;
 
 // input accept参数,允许上传audio video image ppt pdf excel doc ...
-export const inputAccpet = "audio/*,video/*,image/*,.csv,text/plain,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+export const inputAccept = "audio/*,video/*,image/*,.csv,text/plain,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+// 获取url中图片名称的正则匹配
+export const imgFilenameRex = /\w+\.(png|jpg|jpeg|svg|webp|gif|ico)/i;
 
 export class EcmaUtil {
   // 正则：匹配所有
