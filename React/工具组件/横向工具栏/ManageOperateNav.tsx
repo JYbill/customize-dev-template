@@ -3,11 +3,11 @@
  * @auth Administrator
  * @desc
  */
-import React, { memo, useCallback, useMemo } from 'react';
-import type { FC, ReactNode } from 'react';
-import Style from './index.less';
-import { Dropdown, Input, MenuProps, Space } from 'antd';
 import { DownOutlined, SearchOutlined } from '@ant-design/icons';
+import { Dropdown, Input, MenuProps, Space } from 'antd';
+import { FC, ReactNode, useState } from 'react';
+import { memo } from 'react';
+import Style from './index.less';
 
 export type ManageOperateNavProps = {
   addTriggerNode: ReactNode;
@@ -19,8 +19,13 @@ export type ManageOperateNavProps = {
   dropDownItem2?: MenuProps['items']; // 下拉菜单2
   clickDropDownItem2?: ({ key }: { key: string }) => void;
   searchPlaceholder?: string;
+  hiddenSearchFlag?: boolean; // 默认false，是否隐藏input search框
+  searchHandler?: (value: string) => void;
 };
 const Index: FC<ManageOperateNavProps> = (props) => {
+  const isChrome = navigator.userAgent.indexOf('WebKit') > -1;
+  const [isComposing, setComposing] = useState(false); // 是否正在输入
+
   const bitchDelRender = () => {
     if (props.showBatchDel) {
       return (
@@ -90,7 +95,37 @@ const Index: FC<ManageOperateNavProps> = (props) => {
         {dropdown2Render()}
 
         {/* 搜索框 */}
-        <Input className={Style.search} placeholder={props.searchPlaceholder || "搜索用户"} prefix={<SearchOutlined />} />
+        {props.hiddenSearchFlag ? (
+          ''
+        ) : (
+          <Input
+            className={Style.search}
+            placeholder={props.searchPlaceholder || '搜索用户'}
+            prefix={<SearchOutlined />}
+            onCompositionStart={() => setComposing(true)}
+            onCompositionEnd={(evt) => {
+              const value: string = (evt.target as any).value;
+              setComposing(false);
+              if (isChrome && props.searchHandler) {
+                props.searchHandler(value);
+              }
+            }}
+            onChange={(e) => {
+              const rawValue = e.target.value;
+              // 未使用输入法
+              if (!isComposing && props.searchHandler) {
+                props.searchHandler(rawValue);
+                return;
+              }
+
+              // 非chrome：输入法start -> 输入法end -> onChange
+              // chrome：输入法start -> onChange -> 输入法end
+              if (!isChrome && props.searchHandler) {
+                props.searchHandler(rawValue);
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   );
