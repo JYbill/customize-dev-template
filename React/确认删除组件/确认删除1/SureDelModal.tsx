@@ -4,9 +4,10 @@
  * @desc
  */
 import { Button, Flex, Modal } from 'antd';
-import React, { memo } from 'react';
+import { memo, ReactNode } from 'react';
 
 type SureDelModalProps<T = any> = {
+  tipMsg?: string | ReactNode;
   type?: T; // 类型
   value?: any; // 值
   open: boolean;
@@ -18,7 +19,7 @@ const index = <T,>(props: SureDelModalProps<T>) => {
   return (
     <Modal
       title="是否确认删除此栏目"
-      width="320px"
+      width="340px"
       open={props.open}
       forceRender
       destroyOnClose={false}
@@ -27,7 +28,11 @@ const index = <T,>(props: SureDelModalProps<T>) => {
       closeIcon={null}
     >
       <Flex vertical gap="middle">
-        <div>栏目删除后，栏目内的所有课程将一并删除。请确认是否要进行删除操作。</div>
+        <div>
+          {props.tipMsg
+            ? props.tipMsg
+            : '栏目删除后，栏目内的所有课程将一并删除。请确认是否要进行删除操作。'}
+        </div>
         <Button
           type="primary"
           danger

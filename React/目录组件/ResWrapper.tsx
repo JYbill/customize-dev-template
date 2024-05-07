@@ -1,10 +1,11 @@
-import { Input } from 'antd';
-import Style from './style.less';
 import { SearchOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
+import React, { useState } from 'react';
 import Item, { ItemProps } from './Item';
-import { useEffect, useState } from 'react';
+import Style from './style.less';
 
 type ResWrapperProps = {
+  title?: string;
   menuList: any[]; // 目录列表
   bottomRender: React.ReactNode;
   activeItemId: number;
@@ -22,7 +23,8 @@ const ResWrapper: React.FC<ResWrapperProps> = (props) => {
    */
   const itemRender = () => {
     return props.menuList.map((item) => {
-      if (keyword && !item.name.match(keyword)) return null;
+      const keywordRegexp = RegExp(keyword, 'i');
+      if (keyword && !(item.name as string).match(keywordRegexp)) return null;
 
       return (
         <Item
@@ -41,7 +43,7 @@ const ResWrapper: React.FC<ResWrapperProps> = (props) => {
   return (
     <div className={Style.wrapper}>
       <div className={Style.headContainer}>
-        <div className={Style.headContainerTitle}>资源栏目</div>
+        <div className={Style.headContainerTitle}>{props.title || '资源栏目'}</div>
         <div className={Style.headContainerCount}>{props.menuList.length}</div>
       </div>
 
@@ -73,7 +75,7 @@ const ResWrapper: React.FC<ResWrapperProps> = (props) => {
         }}
       />
 
-      <div className={Style.scrollContainer}>{itemRender()}</div>
+      <div className={`${Style.scrollContainer} scrollbar`}>{itemRender()}</div>
 
       <div className={Style.bottomBtn}>{props.bottomRender}</div>
     </div>
