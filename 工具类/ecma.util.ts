@@ -403,3 +403,26 @@ export function pick<T, Key extends keyof T>(
   }
   return res as Pick<T, Key>;
 }
+
+/**
+ * 路径转http访问的uri路径
+ * @example
+ * ```ts
+ * // nestjs中根据ASSETS_PREFIX访问前缀拼接成uri
+ * path2URI(
+        this.configService.get('ASSETS_PREFIX'),
+        assetsSysFilePath,
+      );
+ * ```
+ * @param assetsPrefix
+ * @param path
+ */
+export function path2URI(assetsPrefix: string, path: string): string {
+    let uri = path;
+    const assetsStr = 'assets/';
+    uri = uri.replaceAll('\\', '/');
+    uri = uri.slice(uri.indexOf(assetsStr) + assetsStr.length);
+    uri = assetsPrefix + uri;
+    return uri;
+  }
+  
