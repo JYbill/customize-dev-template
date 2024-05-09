@@ -8,25 +8,25 @@
 
 /**
  * 复制文本，兼容HTTPS安全上下文环境 和 非安全上下文
- * @param { string } 被复制的文本字符串
  * @returns { Promise<void> }
+ * @param text
  */
 export async function copyTxt(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    // HTTPS环境
-    await navigator.clipboard.writeText(text);
-  } else {
-    const textarea = document.createElement("textarea");
-    document.body.appendChild(textarea);
-    textarea.style.position = "absolute";
-    textarea.style.zIndex = "-1";
-    textarea.style.opacity = "0";
-    textarea.value = text || "";
-    textarea.select();
-    document.execCommand("copy", true);
-    document.body.removeChild(textarea);
+    if (navigator.clipboard) {
+      // HTTPS环境
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      document.body.appendChild(textarea);
+      textarea.style.position = "absolute";
+      textarea.style.zIndex = "-1";
+      textarea.style.opacity = "0";
+      textarea.value = text || "";
+      textarea.select();
+      document.execCommand("copy", true);
+      document.body.removeChild(textarea);
+    }
   }
-}
 
 /**
  * 通过fetch获取二进制数据，并转为blob后通过a标签下载
