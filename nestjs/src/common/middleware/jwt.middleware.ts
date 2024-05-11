@@ -1,16 +1,14 @@
-import { ResponseUtil } from '../util/response.util';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
-import { JsonWebTokenError } from 'jsonwebtoken';
 import * as passport from 'passport';
 import { Strategy as JWTStrategy, VerifiedCallback } from 'passport-jwt';
-import { ProjectException, TokenMissed } from '../exception/global.expectation';
+import { TokenException, TokenMissed } from '../exception/global.expectation';
 
 /**
  * @Description: passport-jwt校验中间件
  * @Author: 小钦var
- * @Date: 2024/4/16 15:17
+ * @Date: 2024/5/11 14:37
  */
 @Injectable()
 export default class JwtMiddleware {
@@ -40,7 +38,7 @@ export default class JwtMiddleware {
         // done(null, payload) -> passport.success() -> 认证回调()
         async (req: Request, payload: IPayload, done: VerifiedCallback) => {
           if (!payload.email || !payload.name) {
-            done(new JsonWebTokenError('伪造JWT'), null);
+            done(new TokenException('伪造JWT'), null);
             return;
           }
 
@@ -66,13 +64,14 @@ export default class JwtMiddleware {
         // 错误处理
         const forbidden = err || info;
         if (forbidden) {
+          console.log(forbidden);
           let tip = '';
           if (info) {
             tip = info.message;
           } else {
             tip = err.message;
           }
-          throw new ProjectException(tip, 400);
+          next(new TokenException(tip));
         }
         req.user = user;
         next();

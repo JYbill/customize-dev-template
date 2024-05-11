@@ -34,9 +34,14 @@ async function bootstrap() {
         value: true,
         target: true,
       },
-      // 错误数据钩子
+      disableErrorMessages: true, // 为true时, 错误信息不回返回给前端 exception.response.message = 'Bad Request'
+      // exceptionFactory: 自定义异常钩子,优先级高于disableErrorMessages
       exceptionFactory: (errors) => {
-        logger.error('参数错误', errors);
+        if (process.env.ENV?.startsWith('prod')) {
+          logger.error('参数错误');
+        } else {
+          logger.error('参数错误', errors);
+        }
         return new ParamsMissedException('参数错误');
       },
     }),

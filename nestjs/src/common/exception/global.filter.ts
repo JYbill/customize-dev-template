@@ -34,6 +34,7 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
         response.status(status).json(ResponseUtil.error('接口未找到', status));
       } else if (exception instanceof BadRequestException) {
         this.logger.warn(`request error: ${exception.message}`);
+        this.logger.warn(exception);
         const status = exception.getStatus();
         response
           .status(status)
