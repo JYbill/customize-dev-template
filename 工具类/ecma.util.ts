@@ -14,7 +14,8 @@ import type { JWTPayload } from "jose";
 export type TPrimitive = number | string | boolean;
 
 // input accept参数,允许上传audio video image ppt pdf excel doc ...
-export const inputAccept = "audio/*,video/*,image/*,.csv,text/plain,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+export const inputAccept =
+  "audio/*,video/*,image/*,.csv,text/plain,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 // 获取url中图片名称的正则匹配
 export const imgFilenameRex = /\w+\.(png|jpg|jpeg|svg|webp|gif|ico)/i;
@@ -60,7 +61,7 @@ export class EcmaUtil {
       if (ret) {
         fmt = fmt.replace(
           ret[1],
-          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"),
+          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
         );
       }
     }
@@ -74,7 +75,10 @@ export class EcmaUtil {
    * @returns
    */
 
-  static dateFormatByEcma(date: Date | number, option?: Intl.DateTimeFormatOptions) {
+  static dateFormatByEcma(
+    date: Date | number,
+    option?: Intl.DateTimeFormatOptions
+  ) {
     return option
       ? new Intl.DateTimeFormat("zh-CN", option).format(date)
       : new Intl.DateTimeFormat("zh-CN", {
@@ -166,7 +170,11 @@ export class EcmaUtil {
    */
   // 定时器
   private static timer: NodeJS.Timeout | null;
-  static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
+  static throttle(
+    time: number,
+    func: (args: TPrimitive[]) => void,
+    ...args: TPrimitive[]
+  ): void {
     if (!EcmaUtil.timer) {
       console.log("允许执行", new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
@@ -298,7 +306,7 @@ export function onlyResolvesLast(fn) {
           if (fetchId === id) {
             reject(error);
           }
-        },
+        }
       );
     });
   };
@@ -346,24 +354,29 @@ export const isOdd = (n: number) => {
 import streamSaver from "streamsaver";
 
 type OversizeFileDownloadOption = {
-  url: string, processHandler?: () => void, limitSize?: number
-}
+  url: string;
+  processHandler?: () => void;
+  limitSize?: number;
+};
 type DownloadInfo = {
-  res: Response,
-  reader: ReadableStreamDefaultReader,
-  filename: string,
-  size: number,
-  fileTotalSize: number,
-  contentLength: number,
-}
+  res: Response;
+  reader: ReadableStreamDefaultReader;
+  filename: string;
+  size: number;
+  fileTotalSize: number;
+  contentLength: number;
+};
 
 /**
  * 排除keys中的字段
- * @param payload 
- * @param keys 
- * @returns 
+ * @param payload
+ * @param keys
+ * @returns
  */
-export function exclude<T, Key extends keyof T>(payload: T, keys: Key[]): Omit<T, Key> {
+export function exclude<T, Key extends keyof T>(
+  payload: T,
+  keys: Key[]
+): Omit<T, Key> {
   for (const key of keys) {
     delete payload[key];
   }
@@ -372,13 +385,13 @@ export function exclude<T, Key extends keyof T>(payload: T, keys: Key[]): Omit<T
 
 /**
  * 将数组中包含keys相关的字段排除
- * @param payloadList 
- * @param keys 
- * @returns 
+ * @param payloadList
+ * @param keys
+ * @returns
  */
 export function excludeAll<T, Key extends keyof T>(
   payloadList: T[],
-  keys: Key[],
+  keys: Key[]
 ): Omit<T, Key>[] {
   for (const payload of payloadList) {
     for (const key of keys) {
@@ -395,7 +408,7 @@ export function excludeAll<T, Key extends keyof T>(
  */
 export function pick<T, Key extends keyof T>(
   payload: T,
-  keys: Key[],
+  keys: Key[]
 ): Pick<T, Key> {
   const res: any = {};
   for (const key of keys) {
@@ -418,11 +431,52 @@ export function pick<T, Key extends keyof T>(
  * @param path
  */
 export function path2URI(assetsPrefix: string, path: string): string {
-    let uri = path;
-    const assetsStr = 'assets/';
-    uri = uri.replaceAll('\\', '/');
-    uri = uri.slice(uri.indexOf(assetsStr) + assetsStr.length);
-    uri = assetsPrefix + uri;
-    return uri;
-  }
-  
+  let uri = path;
+  const assetsStr = "assets/";
+  uri = uri.replaceAll("\\", "/");
+  uri = uri.slice(uri.indexOf(assetsStr) + assetsStr.length);
+  uri = assetsPrefix + uri;
+  return uri;
+}
+
+/**
+ * 根据a, b两经纬度计算球面距离(地球面)
+ */
+export function calcDistance(a, b) {
+    let ax: number | undefined;
+    let ay: number | undefined;
+    let bx: number | undefined;
+    let by: number | undefined;
+    for (const key in a) {
+        if (!ax) {
+            ax = a[key] * (Math.PI / 180);
+        } else if (!ay) {
+            ay = a[key] * (Math.PI / 180);
+        }
+    }
+    for (const key in b) {
+        if (bx == null) {
+            bx = b[key] * (Math.PI / 180);
+        
+        } else if (by == null) {
+            by = b[key] * (Math.PI / 180);
+    
+        }
+        
+    }
+
+    if (!ax || !ay || !bx || !by) throw new Error('a, b参数错误, 请检查！')
+
+    const sin_x1 = Math.sin(ax), cos_x1 = Math.cos(ax);
+    const sin_y1 = Math.sin(ay), cos_y1 = Math.cos(ay);
+    const sin_x2 = Math.sin(bx), cos_x2 = Math.cos(bx);
+    const sin_y2 = Math.sin(by), cos_y2 = Math.cos(by);
+    const cross_prod = cos_y1 * cos_x1 * cos_y2 * cos_x2 + cos_y1 * sin_x1 * cos_y2 * sin_x2 + sin_y1 * sin_y2;
+    if (cross_prod >= 1 || cross_prod <= -1) {
+        if (!(Math.abs(cross_prod) - 1 < 0.000001)) {
+            return false;
+        }
+        return cross_prod > 0 ? 0 : Math.PI;
+    }
+    return Math.acos(cross_prod);
+}
