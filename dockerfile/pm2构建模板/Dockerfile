@@ -11,12 +11,12 @@ EXPOSE 3000
 COPY . /app
 
 RUN npm config set registry https://registry.npmmirror.com
-RUN npm install pm2 -g && pm2 install pm2-logrotate
-# pm2 插件
-RUN pm2 set pm2-logrotate:max_size 200M && pm2 set pm2-logrotate:retain 60
 RUN npm install
+RUN npm install pm2 -g && pm2 install pm2-logrotate
+RUN pm2 set pm2-logrotate:max_size 200M && pm2 set pm2-logrotate:retain 60
+# 如果用到prisma必须先generate生成js、ts代码
+RUN npm run prisma:generate
 RUN npm run build
-RUN pm2 install pm2-logrotate
 
 # 容器启动时，启动应用服务
 CMD ["pm2", "start", "ecosystem.config.js", "--no-daemon"]
