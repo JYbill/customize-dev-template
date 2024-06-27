@@ -1,9 +1,8 @@
 /**
  * @Description: 结构化响应内容
- * @Author: 小钦var
  * @Date: 2024/6/26 9:53
  */
-module.exports = class ResponseUtil {
+export default class ResponseUtil {
   code;
   data;
   message;
@@ -31,4 +30,4 @@ module.exports = class ResponseUtil {
     const res = new ResponseUtil(null, message, code);
     return ResponseUtil.returnObject(res);
   }
-};
+}

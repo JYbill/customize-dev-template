@@ -3,7 +3,11 @@
   "version": "2.0.0",
   "private": "true",
   "imports": {
-    "#app/*": "./src/*"
+    "#app/*": "./src/*",
+    "#utils/*": "./src/utils/*",
+    "#lib/*": "./src/library/*",
+    "#service/*": "./src/service/*",
+    "#config": "./src/config/index.js"
   },
   "scripts": {
     "prepare": "husky",
