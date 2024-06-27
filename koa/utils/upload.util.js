@@ -1,6 +1,5 @@
 /**
  * @Description: multer uploader 工具
- * @Author: 小钦var
  * @Date: 2024/6/25 18:11
  */
 const crypto = require("crypto");

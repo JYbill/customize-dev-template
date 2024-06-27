@@ -1,10 +1,10 @@
 /**
  * @Description: koa-multer全局配置
- * @Author: 小钦var
  * @Date: 2024/6/25 17:51
  */
-const multer = require("@koa/multer");
-const path = require("node:path");
+import multer from "@koa/multer";
+import path from "node:path";
+
 // TODO
 // const { checkMimeType, checkFileExt } = require("../utils/upload.util");
 
@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
   },
 });
 
-module.exports = multer({
+export default multer({
   storage,
   fileFilter: (req, file, cb) => {
     cb(null, true);

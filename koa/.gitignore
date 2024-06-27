@@ -58,4 +58,6 @@ tmp/*
 .vscode/*
 /logs
 
-src/config/env/dev
+.env
+.development.env
+.production.env
