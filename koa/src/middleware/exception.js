@@ -1,11 +1,10 @@
 /**
  * @Description: 全局异常中间件
- * @Author: 小钦var
  * @Date: 2024/6/25 17:41
  */
-const ResponseUtil = require("#app/utils/response.util.js");
+import ResponseUtil from "#app/utils/response.util.js";
 
-module.exports = async function (ctx, next) {
+export default async function (ctx, next) {
   try {
     await next();
   } catch (err) {
@@ -18,4 +17,4 @@ module.exports = async function (ctx, next) {
     ctx.status = err.status || 500;
     ctx.body = ResponseUtil.error(err.message, err.code);
   }
-};
+}

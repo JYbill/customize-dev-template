@@ -1,5 +1,5 @@
-const Router = require("@koa/router");
-const uploader = require("../library/multer.js");
+import Router from "@koa/router";
+import uploader from "#lib/multer.js";
 
 const router = new Router({
   prefix: "/test",
@@ -26,4 +26,4 @@ router.get(
   },
 );
 
-module.exports = router;
+export { router };
