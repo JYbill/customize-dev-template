@@ -65,11 +65,7 @@ app.use(async (ctx, next) => {
 // 路由
 const { rootRouter } = await import("./controller/index.js");
 app.use(rootRouter.routes());
-app.use(
-  rootRouter.allowedMethods({
-    throw: true,
-  }),
-);
+app.use(rootRouter.allowedMethods());
 
 app.listen(config.app.port || 3000);
 console.log(`wzj-nodejs-v2 is running on http://localhost:${config.app.port}`);
