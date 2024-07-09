@@ -2,15 +2,14 @@
  * @Description: koa-multer全局配置
  * @Date: 2024/6/25 17:51
  */
+import { config } from "#config";
 import multer from "@koa/multer";
 import path from "node:path";
-
-// TODO
-// const { checkMimeType, checkFileExt } = require("../utils/upload.util");
+import HttpError from "#utils/exception.util.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const projectDir = process.env.PROJECT_DIR;
+    const projectDir = appConfig.projectPath;
     const storagePath = path.resolve(projectDir, "tmp");
     cb(null, storagePath);
   },
@@ -25,11 +24,5 @@ export default multer({
   storage,
   fileFilter: (req, file, cb) => {
     cb(null, true);
-    /*const { mimetype, originalname } = file;
-    if (checkMimeType(mimetype) && checkFileExt(originalname)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Not Allowed"));
-    }*/
   },
 });
