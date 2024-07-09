@@ -21,13 +21,20 @@ import { passport } from "#lib/passport/index.js";
 import { fileURLToPath } from "node:url";
 
 process.on("uncaughtException", (err) => {
-  console.log("uncaughtException", err);
+  logger.error("uncaughtException: %s", err.stack || err);
+});
+process.on("unhandledRejection", (err) => {
+  logger.error("unhandledRejection: %s", err.stack || err);
 });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = new koa();
+app.on("error", (koaErr, ctx) => {
+  logger.error("koa error: %s", koaErr.stack || koaErr);
+});
+
 // koa配置
 app.subdomainOffset = 0;
 
