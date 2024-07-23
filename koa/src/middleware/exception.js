@@ -4,14 +4,13 @@
  */
 import ResponseUtil from "#app/utils/response.util.js";
 import { globalLogger } from "#logger";
-import HttpError from "#utils/exception.util.js";
 
 const logger = globalLogger.child({ fileFlag: "middleware/exception.js" });
 
 export default async function (ctx, next) {
   try {
     await next();
-    // console.log(ctx.status, ctx.body, ctx.message); // debug
+    // console.log("exception.js", ctx.status, ctx.body, ctx.message); // debug
     switch (ctx.status) {
       case 404:
       case 405: {
@@ -19,10 +18,11 @@ export default async function (ctx, next) {
       }
     }
   } catch (err) {
-    const bodyParams = ctx.req.body || ctx.request.body;
-    const url = "url:" + ctx.originalUrl;
+    logger.error(err);
+    const url = ctx.originalUrl;
     const weixinXml = ctx.weixin_xml;
-    const postBody = "post_body:" + weixinXml ? weixinXml : bodyParams;
+    const bodyParams = ctx.body;
+    const postBody = weixinXml ? weixinXml : bodyParams;
 
     logger.error(
       "global exception url: %s, body: %s, reason: %s",
@@ -31,6 +31,6 @@ export default async function (ctx, next) {
       err.message,
     );
     ctx.status = err.status || 500;
-    ctx.body = ResponseUtil.error(err.message, err.code);
+    ctx.body = ResponseUtil.error(err.message, ctx.status);
   }
 }
