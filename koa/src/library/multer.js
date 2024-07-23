@@ -2,9 +2,12 @@
  * @Description: koa-multer全局配置
  * @Date: 2024/6/25 17:51
  */
-import { config } from "#config";
+import { config as appConfig } from "#config";
+
 import multer from "@koa/multer";
+
 import path from "node:path";
+
 import HttpError from "#utils/exception.util.js";
 
 const storage = multer.diskStorage({
