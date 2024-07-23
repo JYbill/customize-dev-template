@@ -2,13 +2,15 @@
  * @Description: multer uploader 工具
  * @Date: 2024/6/25 18:11
  */
-const crypto = require("crypto");
-const extname = require("path").extname;
+import crypto from "crypto";
 
-const appConfig = require("app/base").config;
-const ossConfig = appConfig.get("oss");
-const { callbackUrlPath } = appConfig.get("upload");
-const { baseUrl } = appConfig.get("application");
+import { config as appConfig } from "#config";
+
+import { extname } from "node:path";
+
+const ossConfig = appConfig.oss;
+const { callbackUrlPath } = appConfig.upload;
+const { baseUrl } = appConfig.application;
 const localUploadHost = `${baseUrl}${ossConfig.localUploadHost}`;
 
 const allowTypes = [
@@ -92,13 +94,23 @@ const checkFileExt = (fileName) => {
 
 const getCallbackParam = () => {
   const callbackUrl = `${baseUrl}/${callbackUrlPath}`;
-  const callbackBody = '{"bucket":${bucket},"object":${object},"etag":${etag},"size":${size},"mimeType":${mimeType}}';
+  const callbackBody =
+    '{"bucket":${bucket},"object":${object},"etag":${etag},"size":${size},"mimeType":${mimeType}}';
   const callbackBodyType = "application/json";
-  const callbackString = JSON.stringify({ callbackUrl, callbackBody, callbackBodyType });
+  const callbackString = JSON.stringify({
+    callbackUrl,
+    callbackBody,
+    callbackBodyType,
+  });
   return Buffer.from(callbackString).toString("base64");
 };
 
-const ossSignature = (maxSize = 314572800, expire = 120000, mimeType, needCallback) => {
+const ossSignature = (
+  maxSize = 314572800,
+  expire = 120000,
+  mimeType,
+  needCallback,
+) => {
   const end = new Date().getTime() + expire;
   const expiration = new Date(end).toISOString();
   const conditions = [["content-length-range", 0, maxSize]];
@@ -110,12 +122,18 @@ const ossSignature = (maxSize = 314572800, expire = 120000, mimeType, needCallba
     conditions,
   };
   policyString = JSON.stringify(policyString);
-  const policy = new Buffer(policyString).toString("base64");
-  const signature = crypto.createHmac("sha1", ossConfig.accessKeySecret).update(policy).digest("base64");
+  const policy = Buffer.from(policyString).toString("base64");
+  const signature = crypto
+    .createHmac("sha1", ossConfig.accessKeySecret)
+    .update(policy)
+    .digest("base64");
 
   const res = {
     signature,
-    host: ossConfig.storage === "local" ? localUploadHost : `https://${ossConfig.bucket}.${ossConfig.outerEndpoint}`,
+    host:
+      ossConfig.storage === "local"
+        ? localUploadHost
+        : `https://${ossConfig.bucket}.${ossConfig.outerEndpoint}`,
     policy,
     accessKeyId: ossConfig.accessKeyId,
     expireTime: end,
@@ -136,11 +154,10 @@ const ossSignature = (maxSize = 314572800, expire = 120000, mimeType, needCallba
 };
 
 const handleFilePath = (url) => {
-  return url.replace(new RegExp(localUploadHost, "gm"), ossConfig.localPrefixUrl);
+  return url.replace(
+    new RegExp(localUploadHost, "gm"),
+    ossConfig.localPrefixUrl,
+  );
 };
 
-module.exports = {
-  ossSignature,
-  checkFileExt,
-  handleFilePath,
-};
+export { ossSignature, checkFileExt, handleFilePath };

@@ -17,7 +17,9 @@
     "format": "prettier --write ./src/*",
     "lint": "eslint ./src/* --ext js,cjs,mjs,json --fix",
     "lint-staged": "lint-staged",
-    "dev": "node --watch ./src/index.js"
+    "start:prod": "pm2 start pm2.config.cjs",
+    "dev:debug": "cross-env NODE_ENV=development NODE_OPTIONS='--inspect' node --watch ./src/index.js",
+    "dev": "cross-env NODE_ENV=development node --watch ./src/index.js"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
