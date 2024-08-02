@@ -19,6 +19,9 @@ import zlib from "node:zlib";
 import { config } from "#config";
 import { passport } from "#lib/passport/index.js";
 import { fileURLToPath } from "node:url";
+import session from "koa-session";
+import { UrlAlphabetNanoid } from "#lib/nanoid/index.js";
+import { RedisStore } from "#lib/session/store.js";
 
 process.on("uncaughtException", (err) => {
   logger.error("uncaughtException: %s", err.stack || err);
@@ -52,6 +55,21 @@ app.use(
       flush: zlib.constants.Z_SYNC_FLUSH,
     },
   }),
+);
+app.use(
+  session(
+    {
+      key: "oauth.sid",
+      maxAge: ms("1d"),
+      genid: (ctx) => {
+        const nanoid = UrlAlphabetNanoid();
+        const prefix = config.redis.prefix;
+        return `${prefix}sid:${nanoid}`;
+      },
+      store: RedisStore,
+    },
+    app,
+  ),
 );
 // CORS 跨域
 app.use(
