@@ -9,8 +9,15 @@ export default async function (ctx, next) {
   ctx.state.wrapper = true; // 默认启用包裹
   await next();
   // 抛出异常时不会执行，异常全部交给最上游的`ExceptionMiddleware`处理
+  const response = ctx.response;
+  const headers = response.headers;
+  const contentType = headers["content-type"] ?? "";
 
   if (!ctx.state.wrapper) return; // 当前ctx上下文，已指定取消包裹
+
+  if ([301, 302, 304].includes(ctx.status)) return; // 忽略重定向、未更改
+
+  if (contentType.includes("text")) return; // 返回的是文本内容
 
   if (Buffer.isBuffer(ctx.body)) return; // 不处理Buffer
 
@@ -34,3 +41,4 @@ export default async function (ctx, next) {
   }
   ctx.body = ResponseUtil.success(responseData, undefined, statusCode);
 }
+
