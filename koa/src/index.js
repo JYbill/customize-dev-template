@@ -84,6 +84,13 @@ app.use(async (ctx, next) => {
   ctx.jkfDomain = ctx.subdomains.reverse().join(".");
   await next();
 });
+// SSR模板引擎
+app.use(
+  views(__dirname + "/views", {
+    autoRender: false,
+    extension: "ejs",
+  }),
+);
 
 // 认证 与 授权
 

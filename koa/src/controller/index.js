@@ -34,7 +34,7 @@ async function routerImportHandler(dirname) {
   const dirPath = path.resolve(__dirname, dirname);
   const routerFileList = fs
     .readdirSync(dirPath, { recursive: true })
-    .filter((filename) => filename !== "index.js" && filename.endsWith(".js"));
+    .filter((filename) => filename.endsWith(".js"));
   const dirURL = new URL(`../controller/${dirname}/`, import.meta.url).href;
   for (const routerFile of routerFileList) {
     const fileURL = new URL(routerFile, dirURL).href;
