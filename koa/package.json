@@ -2,19 +2,25 @@
   "name": "koa2-template",
   "version": "2.0.0",
   "private": "true",
+  "type": "module",
   "imports": {
     "#app/*": "./src/*",
     "#utils/*": "./src/utils/*",
     "#lib/*": "./src/library/*",
+    "#middleware/*": "./src/middleware/*",
     "#service/*": "./src/service/*",
-    "#config": "./src/config/index.js"
+    "#config": "./src/config/index.js",
+    "#enum/*": "./src/enum/*",
+    "#logger": "./src/library/logger/index.js"
   },
   "scripts": {
     "prepare": "husky",
     "format": "prettier --write ./src/*",
     "lint": "eslint ./src/* --ext js,cjs,mjs,json --fix",
     "lint-staged": "lint-staged",
-    "dev": "node --watch ./src/index.js"
+    "start:prod": "pm2 start pm2.config.cjs",
+    "dev:debug": "cross-env NODE_ENV=development NODE_OPTIONS='--inspect' node --watch ./src/index.js",
+    "dev": "cross-env NODE_ENV=development node --watch ./src/index.js"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
@@ -32,14 +38,23 @@
     "koa-morgan": "^1.0.1",
     "koa-passport": "^6.0.0",
     "koa-response-time": "^2.1.0",
-    "koa-unless": "^1.0.7"
+    "koa-unless": "^1.0.7",
+    "moment": "^2.30.1",
+    "winston": "^3.13.1",
+    "winston-transport": "^4.7.1",
+    "passport-jwt": "^4.0.1",
+    "nanoid": "^5.0.7",
+    "koa-session": "^6.4.0",
+    "ms": "^2.1.3",
+    "ejs": "^3.1.10",
+    "@ladjs/koa-views": "^9.0.0"
   },
   "devDependencies": {
-    "@types/archiver": "^6.0.2",
-    "@types/fluent-ffmpeg": "^2.1.24",
-    "@types/fs-extra": "^11.0.4",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/koa-session": "^6.4.5",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/koa": "^2.15.0",
+    "@types/ms": "^0.7.34",
     "@types/koa-compress": "^4.0.6",
     "@types/koa-passport": "^6.0.3",
     "@types/koa-response-time": "^2.1.5",
@@ -47,12 +62,12 @@
     "@types/koa__multer": "^2.0.7",
     "@types/koa__router": "^12.0.4",
     "@types/lodash": "^4.17.5",
-    "@types/md5": "^2.3.5",
     "@types/node": "^20.14.8",
     "@types/passport-jwt": "^4.0.1",
-    "@types/uuid": "^10.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-n": "^17.9.0",
     "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
@@ -61,5 +76,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": ">=22"
+  }
 }

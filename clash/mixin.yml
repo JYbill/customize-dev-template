@@ -1,0 +1,14 @@
+# ❗️配置一定要写全，这里的内容会完全覆盖TCP mode里面的配置
+mixin:
+    dns:
+        fake-ip-filter:
+            - +.stun.*.*
+            - +.stun.*.*.*
+            - +.stun.*.*.*.*
+            - +.stun.*.*.*.*.*
+            - "*.n.n.srv.nintendo.net"
+            - +.stun.playstation.net
+            - xbox.*.*.microsoft.com
+            - "*.*.xboxlive.com"
+            - apps.apple.com
+            - wzjtest.lan
