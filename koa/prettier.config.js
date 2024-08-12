@@ -5,6 +5,7 @@ export default {
   importOrderParserPlugins: ["classProperties"],
   importOrder: [
     "./config/env-loader.js", // ESM下使用dotenv加载环境变量必须放在首位
+    "#config",
     "^@koa",
     "^koa",
     "^node:(.*)$",

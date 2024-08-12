@@ -19,15 +19,25 @@ import zlib from "node:zlib";
 import { config } from "#config";
 import { passport } from "#lib/passport/index.js";
 import { fileURLToPath } from "node:url";
+import session from "koa-session";
+import { UrlAlphabetNanoid } from "#lib/nanoid/index.js";
+import { RedisStore } from "#lib/session/store.js";
 
 process.on("uncaughtException", (err) => {
-  console.log("uncaughtException", err);
+  logger.error("uncaughtException: %s", err.stack || err);
+});
+process.on("unhandledRejection", (err) => {
+  logger.error("unhandledRejection: %s", err.stack || err);
 });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = new koa();
+app.on("error", (koaErr, ctx) => {
+  logger.error("koa error: %s", koaErr.stack || koaErr);
+});
+
 // koa配置
 app.subdomainOffset = 0;
 
@@ -46,6 +56,21 @@ app.use(
     },
   }),
 );
+app.use(
+  session(
+    {
+      key: "oauth.sid",
+      maxAge: ms("1d"),
+      genid: (ctx) => {
+        const nanoid = UrlAlphabetNanoid();
+        const prefix = config.redis.prefix;
+        return `${prefix}sid:${nanoid}`;
+      },
+      store: RedisStore,
+    },
+    app,
+  ),
+);
 // CORS 跨域
 app.use(
   cors({
@@ -59,6 +84,13 @@ app.use(async (ctx, next) => {
   ctx.jkfDomain = ctx.subdomains.reverse().join(".");
   await next();
 });
+// SSR模板引擎
+app.use(
+  views(__dirname + "/views", {
+    autoRender: false,
+    extension: "ejs",
+  }),
+);
 
 // 认证 与 授权
 
