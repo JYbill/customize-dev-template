@@ -86,6 +86,19 @@ export function downVideo(url, name) {
 }
 
 /**
+ * 根据a标签下载url，并以downloadName文件名存储
+ * @param   {string}  url           下载url
+ * @param   {string}  downloadName  存储文件名
+ * @return  {void}
+ */
+export function downloadByATag(url, downloadName = Date.now().toString()) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = downloadName;
+    link.click();
+}
+
+/**
  *
  * @param str {string}
  * @returns
