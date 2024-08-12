@@ -1,6 +1,10 @@
 # ❗️配置一定要写全，这里的内容会完全覆盖TCP mode里面的配置
 mixin:
     dns:
+        enable: true
+        prefer-h3: true # 开启HTTP3
+        ipv6: true # 开启IPV6
+        enhanced-mode: fake-ip # DNS寻址会返回在一个fake-ip-range网段内，再由clash代理查询到真实IP地址
         fake-ip-filter:
             - +.stun.*.*
             - +.stun.*.*.*
@@ -12,3 +16,34 @@ mixin:
             - "*.*.xboxlive.com"
             - apps.apple.com
             - wzjtest.lan
+        default-nameserver: # 当nameserver DNS有域名时，通过default-nameserver去查下列DNS IP去查询DOH真实的IP
+            - 1.0.0.1
+            - 1.1.1.1
+            - 119.29.29.29 # 腾讯
+            - 114.114.114.114
+            # - 223.5.5.5
+            # - 119.29.29.29
+        nameserver: # 默认DOH（一般配置国内DNS）
+            - https://dns.alidns.com/dns-query
+            - https://dns.rubyfish.cn/dns-query
+            - https://223.5.5.5/dns-query
+            - https://dns.pub/dns-query # DNSPod
+        fallback: # 后备域名解析（一般配置境外DNS）
+            - https://1.0.0.1/dns-query
+            - https://1.1.1.1/dns-query
+            - https://dns.google/dns-query
+        # 满足以下条件的走"fallback"
+        fallback-filter:
+            geoip: true
+            geoip-code: CN# 默认CN，配置的国家缩写
+            # geosite: geosite视为污染站点，直接走fallback去查DNS
+            # ipcidr: 包含的网段视为污染，使用fallback去查DNS
+            # domain：包含的域名视为污染，使用fallback去查DNS
+            
+    tun: 
+        enable: true # 开启全局流量代理
+        stack: gvisor # 无特殊情况用mixed即可，system(效率性能最好)、gvisor(安全性更高)、mixed(中等)
+        auto-route: true # 自动将全局流量路由进入tun网卡
+        dns-hijack:
+            - any:53 # DNS劫持（TCP、UDP）
+        auto-detect-interface: true # 自动检测出口网卡
