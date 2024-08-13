@@ -20,10 +20,11 @@ mixin:
             - "*.*.xboxlive.com"
             - apps.apple.com
         default-nameserver: # 当nameserver DNS有域名时，通过default-nameserver去查下列DNS IP去查询DOH真实的IP
+            - 101.226.4.6 # 360DNS
             - 1.0.0.1
             - 1.1.1.1
-            - 119.29.29.29 # 腾讯
-            - 114.114.114.114
+            - 119.29.29.29 # 腾讯DNS
+            - 114.114.114.114 # 阿里DNS
             # - 223.5.5.5
             # - 119.29.29.29
         nameserver: # 默认DOH（一般配置国内DNS）
