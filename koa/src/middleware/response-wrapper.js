@@ -18,6 +18,7 @@ export default async function (ctx, next) {
   if ([301, 302, 304].includes(ctx.status)) return; // 忽略重定向、未更改
 
   if (contentType.includes("text")) return; // 返回的是文本内容
+  if (contentType.includes("application/x-www-form-urlencoded")) return; // form表单
 
   if (Buffer.isBuffer(ctx.body)) return; // 不处理Buffer
 
