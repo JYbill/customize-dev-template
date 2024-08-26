@@ -480,3 +480,29 @@ export function calcDistance(a, b) {
     }
     return Math.acos(cross_prod);
 }
+
+/**
+ * 根据num参数分割数组为二维数组
+ * @param list 
+ * @param num 默认10个一组
+ * @returns 
+ */
+export function groupByNum(list: any[], num: number = 10) {
+    const expireGroups = [];
+    let per10 = [];
+    const n = list.length;
+    for (let i = 0; i < n; i++) {
+      const el = list[i].valueOf();
+      if (i !== 0 && i % num === 0) {
+        expireGroups.push(per10);
+        per10 = [el];
+        continue;
+      } else if (i === n - 1) {
+        per10.push(el);
+        expireGroups.push(per10);
+        continue;
+      }
+      per10.push(el);
+    }
+    return expireGroups;
+  }
