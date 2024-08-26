@@ -11,22 +11,22 @@ dns:
     - 101.226.4.6 # 360
   proxy-server-nameserver: # 由代理服务器查询dns时，查询代理服务器的dns解析
     - 1.1.1.1
-    - 8.8.8.8
   # 优先于nameserver/fallback规则
   nameserver-policy:
-    'geosite:gfw,greatfire': [1.1.1.1] # 对geosite中的gfw、greatfire
     'geosite:cn': [211.137.58.20] # 对国内geosite
+    'rule-set:icloud,apple,direct,applications': [202.103.44.150]
+    'geosite:gfw,greatfire': [1.1.1.1] # 对geosite中的gfw、greatfire
+    # 💡 rule-set要求：behavior必须为domain/classical，且仅生效域名部分！！！
+    # 对于"rule-providers"规则表中的"gfw"下所有的域名全部走指定的DNS
+    'rule-set:gfw': [1.1.1.1, 8.8.8.8]
     # 'geosite:geolocation-!cn': [1.1.1.1] # 对于"非"国内geosite
     # "geosite:category-ads-all": rcode://success # 对于"category-ads-all"规则DNS全部返回
-
-    # 💡 rule-set要求：behavior必须为domain/classical，且仅生效域名部分！！！
-    # 'rule-set:gfw': [1.1.1.1] # 对于"rule-providers"规则表中的"gfw"下所有的域名全部走指定的DNS
   # 默认DNS
   nameserver:
     - 202.103.44.150 # 湖北电信DNS
     - 211.137.58.20 # 湖北移动DNS
     # - 101.226.4.6 # 360
-    - 119.29.29.29 # 腾讯
+    # - 119.29.29.29 # 腾讯
   # 国外DNS
   fallback: 
     - 8.8.8.8
