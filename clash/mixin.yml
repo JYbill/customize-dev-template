@@ -14,7 +14,7 @@ dns:
     - 8.8.8.8
   # 优先于nameserver/fallback规则
   nameserver-policy:
-    # 'geosite:gfw,greatfire': [1.1.1.1] # 对geosite中的gfw、greatfire
+    'geosite:gfw,greatfire': [1.1.1.1] # 对geosite中的gfw、greatfire
     'geosite:cn': [211.137.58.20] # 对国内geosite
     # 'geosite:geolocation-!cn': [1.1.1.1] # 对于"非"国内geosite
     # "geosite:category-ads-all": rcode://success # 对于"category-ads-all"规则DNS全部返回
