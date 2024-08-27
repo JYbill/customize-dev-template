@@ -19,7 +19,7 @@
 
     node16、nodeNext: 
       1. 强制使用相同名称的"moduleResolution"设置
-      2. 强制启用"esModuleInterop"
+      2. 强制启用"esModuleInterop"，所以"import * as obj from './obj'"改为"import obj from './obj'"
     node16强制"target"为"es2022"+
     nodeNext强制"target"为"esnext"+
 
