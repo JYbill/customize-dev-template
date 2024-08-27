@@ -26,6 +26,7 @@
     ⚠️ "es2015-esnext"不要和"moduleResolution": "node/nodeNext"一起使用。如果想使用ESM模块规则，应该在最近的package.json中定义"type": "module"即可。
 
     推荐：node v12+ 使用"node16"或"nodeNext"无论用CJS还是ESM 👍
+    注意：commonjs不支持import()动态引入，如果需要用动态导入import()，则需要esnext、node16 or nodeNext
     */
     /*
       使用自定义模块分辨，设置环境
