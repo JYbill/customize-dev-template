@@ -88,8 +88,4 @@ export class PrismaModule extends ConfigurableModuleClass {
     config.isGlobal ??= true;
     config.debugging ??= false;
   }
-
-  async getName() {
-    return 'PrismaModule';
-  }
 }
