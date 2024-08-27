@@ -16,17 +16,16 @@
     /*
     （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     提示：node16与nodeNext: 表示node.js双模块系统（支持ESM与CJS），目前他俩表示一致，未来如果模块化内容有更新，则nodeNext表示最新的模块化特性！
+    提示：commonjs不支持import()动态引入
 
     node16、nodeNext: 
       1. 强制使用相同名称的"moduleResolution"设置
-      2. 强制启用"esModuleInterop"
+      2. 强制启用"esModuleInterop"，所以"import * as obj from './obj'"改为"import obj from './obj'"
     node16强制"target"为"es2022"+
     nodeNext强制"target"为"esnext"+
 
     ⚠️ "es2015-esnext"不要和"moduleResolution": "node/nodeNext"一起使用。如果想使用ESM模块规则，应该在最近的package.json中定义"type": "module"即可。
-
     推荐：node v12+ 使用"node16"或"nodeNext"无论用CJS还是ESM 👍
-    注意：commonjs不支持import()动态引入，如果需要用动态导入import()，则需要esnext、node16 or nodeNext
     */
     /*
       使用自定义模块分辨，设置环境
