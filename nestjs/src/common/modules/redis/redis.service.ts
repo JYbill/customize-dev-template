@@ -1,6 +1,17 @@
 import Redis from 'ioredis';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-export const redis = new Redis(process.env['REDIS_URL']);
-redis.on('error', (err) => {
-  console.log('[ioRedis error]', err);
-});
+@Injectable()
+export class RedisService extends Redis {
+  private readonly logger = new Logger(RedisService.name);
+
+  constructor(private readonly configService: ConfigService<IEnv>) {
+    super(configService.get('REDIS_URL'), {
+      keyPrefix: configService.get('REDIS_PREFIX'),
+    });
+    this.on('error', async (error) => {
+      this.logger.error(error);
+    });
+  }
+}
