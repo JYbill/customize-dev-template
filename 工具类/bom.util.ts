@@ -12,21 +12,21 @@
  * @param text
  */
 export async function copyTxt(text: string): Promise<void> {
-    if (navigator.clipboard) {
-      // HTTPS环境
-      await navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement("textarea");
-      document.body.appendChild(textarea);
-      textarea.style.position = "absolute";
-      textarea.style.zIndex = "-1";
-      textarea.style.opacity = "0";
-      textarea.value = text || "";
-      textarea.select();
-      document.execCommand("copy", true);
-      document.body.removeChild(textarea);
-    }
+  if (navigator.clipboard) {
+    // HTTPS环境
+    await navigator.clipboard.writeText(text);
+  } else {
+    const textarea = document.createElement("textarea");
+    document.body.appendChild(textarea);
+    textarea.style.position = "absolute";
+    textarea.style.zIndex = "-1";
+    textarea.style.opacity = "0";
+    textarea.value = text || "";
+    textarea.select();
+    document.execCommand("copy", true);
+    document.body.removeChild(textarea);
   }
+}
 
 /**
  * 通过fetch获取二进制数据，并转为blob后通过a标签下载
@@ -48,7 +48,7 @@ export async function fetchDownloadBlob(apiUrl, query) {
   const url = window.URL.createObjectURL(
     new Blob([blob], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    }),
+    })
   );
   const link = document.createElement("a");
   link.style.display = "none";
@@ -72,7 +72,9 @@ export function downVideo(url, name) {
     if (xhr.readyState === 4 && xhr.status === 200) {
       let blob = this.response;
       // 转换一个blob链接
-      let u = window.URL.createObjectURL(new Blob([blob], { type: "video/mp4" })); // 视频的type是video/mp4，图片是image/jpeg
+      let u = window.URL.createObjectURL(
+        new Blob([blob], { type: "video/mp4" })
+      ); // 视频的type是video/mp4，图片是image/jpeg
       let a = document.createElement("a");
       a.download = name; // 设置的文件名
       a.href = u;
@@ -92,10 +94,10 @@ export function downVideo(url, name) {
  * @return  {void}
  */
 export function downloadByATag(url, downloadName = Date.now().toString()) {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = downloadName;
-    link.click();
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = downloadName;
+  link.click();
 }
 
 /**
@@ -216,5 +218,40 @@ export function printPicture(imgList) {
  * @returns {number}
  */
 export function statisticsLSTotal() {
-  return Object.entries(localStorage).map(v => v.join('')).join('').length;
+  return Object.entries(localStorage)
+    .map((v) => v.join(""))
+    .join("").length;
+}
+
+/**
+ * 清理WebWorkers
+ */
+export function clearServiceWorkers() {
+  const { serviceWorker } = navigator;
+  if (serviceWorker.getRegistrations) {
+    serviceWorker.getRegistrations().then((sws) => {
+      sws.forEach((sw) => {
+        sw.unregister();
+      });
+    });
+  }
+  serviceWorker.getRegistration().then((sw) => {
+    if (sw) sw.unregister();
+  });
+}
+
+/**
+ * 清理web Cache
+ */
+async function clearWebCache() {
+  if (window.caches) {
+    await caches
+      .keys()
+      .then((keys) => {
+        keys.forEach((key) => {
+          caches.delete(key);
+        });
+      })
+      .catch((e) => console.error(e));
+  }
 }
