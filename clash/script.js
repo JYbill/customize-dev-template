@@ -5,7 +5,9 @@
  * @return  {[type]}
  */
 function main(config, profileName) {
-    const activeProfileName = "🚀 节点选择";
+    // 魔戒:'🚀 节点选择'
+    // TGA:'♻️ 手动切换'
+    const activeProfileName = '♻️ 手动切换';
   
     // 创建代理
     const proxyUSAList = config.proxies
