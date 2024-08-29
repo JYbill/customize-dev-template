@@ -325,6 +325,8 @@ module.exports = function (env, argv) {
      * auto则允许：localhost、host、client.webSocketURL.hostname 访问
      * all则表示允许所有且跳过host检查，不检查 host 的应用程序容易受到 DNS 重绑定攻击
      * - https: 默认 false 。启用HTTPS协议，webpack内置测试证书
+     * - changeOrigin: 默认false，将Host请求头设置为"target"参数内容。（http-proxy-middleware参数）
+     *      - changeOrigin场景：nginx设置Host虚拟域名来判断是否允许访问，此时changeOrigin应为true
      * - compress: 默认 false。 是否启用gzip压缩
      *
      * - client webSocket客户端相关配置
@@ -335,7 +337,7 @@ module.exports = function (env, argv) {
     devServer: {
       historyApiFallback: {
         rewrites: [
-          { from: /^\/user/, to: "/user.html" }, // 匹配到"/user"时返回user.html
+          { from: /^\/user/, to: "/user.html" }, // 匹配到"/user"时返回user.html 是打算的撒上
           { from: /./, to: "/index.html" }, // "*" 所有输入都返回index.html
         ],
       },
