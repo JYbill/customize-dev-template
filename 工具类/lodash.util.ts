@@ -17,10 +17,28 @@ export const objectToCamelCase = (object) => {
 export const isFalsy = (value) => _.isEmpty(value);
 
 /**
- * 根据omitList排除指定的字段，并返回全新的对象
- * omitObject({a: 1, b: 2, c: 3}, ['a', 'b']) -> {c: 3}
+ * pick / omit包装工具
  * @param object
- * @param omitList
- * @return {Pick<object, Exclude<keyof object, [undefined][number]>>}
+ * @param options { isPick, fields }: { isPick: boolean, fields: string[] }
  */
-export const omitObject = (object, omitList) => _.omit(object, omitList);
+export const pickOrOmitWrapper = (object, options) => {
+    const { isPick, fields } = options;
+    if (typeof isPick !== "boolean" || fields?.length <= 0) {
+      throw new Error("pickOrOmitWrapper options error");
+    }
+    if (isPick) {
+      return _.pick(object, fields);
+    } else {
+      return _.omit(object, fields);
+    }
+  };
+
+  /**
+ * 数组转k-v对象
+ * @param array
+ * @param fieldOrCallback
+ * @return {Dictionary<unknown>}
+ */
+export const array2Map = (array, fieldOrCallback) => {
+    return _.keyBy(array, fieldOrCallback);
+  };
