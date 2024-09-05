@@ -142,3 +142,9 @@ rule-providers:
     path: ./ruleset/dev-direct.yaml
     format: yaml
     interval: 86400
+  daily-foreign:
+    type: file
+    behavior: classical
+    path: ./ruleset/daily-foreign.yaml
+    format: yaml
+    interval: 86400
