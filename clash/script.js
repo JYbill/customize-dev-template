@@ -21,7 +21,7 @@ function main(config, profileName) {
     interval: 86400,
   });
   config["rules"].unshift(
-    // 第一层：直连
+    // 第一层：内容较少的规则
     `DOMAIN,clash.razord.top,DIRECT`,
     `DOMAIN,yacd.haishan.me,DIRECT`,
     `RULE-SET,dev-direct,DIRECT`,
@@ -31,17 +31,17 @@ function main(config, profileName) {
     `RULE-SET,icloud,DIRECT`,
     `RULE-SET,apple,DIRECT`,
     `RULE-SET,direct,DIRECT`,
-    `GEOSITE,CN,DIRECT`,
-    // 第二层：代理
     `RULE-SET,daily-foreign,${activeProfileName}`,
     `DOMAIN-KEYWORD,gemini,${aiProxyGroup}`,
     `GEOSITE,github,${activeProfileName}`,
     `RULE-SET,google,${activeProfileName}`,
     `GEOSITE,openai,${aiProxyGroup}`,
     `GEOSITE,anthropic,${aiProxyGroup}`,
+    // 第二层：内容较多的规则
+    `GEOSITE,CN,DIRECT`,
+    `RULE-SET,proxy,${activeProfileName}`, // 一定放在靠后的内容，包含openai、gemini，这些应该走专属AI代理
     `GEOSITE,gfw,${activeProfileName}`,
     `GEOSITE,greatfire,${activeProfileName}`,
-    `RULE-SET,proxy,${activeProfileName}`, // 一定放在靠后的内容，包含openai、gemini，这些应该走专属AI代理
     // 第三层：IP分流
     `RULE-SET,lancidr,DIRECT,no-resolve`,
     `RULE-SET,cncidr,DIRECT,no-resolve`,
