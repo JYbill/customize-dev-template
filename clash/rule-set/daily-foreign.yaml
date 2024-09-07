@@ -1,2 +1,4 @@
 payload:
   - DOMAIN,raycast.com
+  - DOMAIN-SUFFIX,icoa.cn
+  - DOMAIN-SUFFIX,icoa.vip
