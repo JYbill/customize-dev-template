@@ -21,13 +21,14 @@ function main(config, profileName) {
     interval: 86400,
   });
   config["rules"].unshift(
+    // 第零层：拒绝层
+    `RULE-SET,reject,REJECT`,
     // 第一层：内容较少的规则
     `DOMAIN,clash.razord.top,DIRECT`,
     `DOMAIN,yacd.haishan.me,DIRECT`,
     `RULE-SET,dev-direct,DIRECT`,
     `RULE-SET,applications,DIRECT`,
     `RULE-SET,private,DIRECT`,
-    `RULE-SET,reject,REJECT`,
     `RULE-SET,icloud,DIRECT`,
     `RULE-SET,apple,DIRECT`,
     `RULE-SET,direct,DIRECT`,

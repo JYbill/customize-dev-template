@@ -17,12 +17,15 @@ dns:
     - 1.1.1.1
   # 优先于nameserver/fallback规则
   nameserver-policy:
-    'geosite:cn': [211.137.58.20] # 对国内geosite
-    'rule-set:icloud,apple,direct,applications': [202.103.44.150]
-    'geosite:gfw,greatfire': [1.1.1.1] # 对geosite中的gfw、greatfire
+    # 国外网站避免DNS污染
+    'geosite:gfw,greatfire': [1.1.1.1, 8.8.8.8] 
+    'rule-set:gfw': [1.1.1.1, 8.8.8.8]
+    'rule-set:daily-foreign': [1.1.1.1, 8.8.8.8]
+    # 国内走国内快速连接
+    'geosite:cn': [119.29.29.29]
+    'rule-set:icloud,apple,direct,applications': [119.29.29.29]
     # 💡 rule-set要求：behavior必须为domain/classical，且仅生效域名部分！！！
     # 对于"rule-providers"规则表中的"gfw"下所有的域名全部走指定的DNS
-    'rule-set:gfw': [1.1.1.1, 8.8.8.8]
     # 'geosite:geolocation-!cn': [1.1.1.1] # 对于"非"国内geosite
     # "geosite:category-ads-all": rcode://success # 对于"category-ads-all"规则DNS全部返回
   # 默认DNS
