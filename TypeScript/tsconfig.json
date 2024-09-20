@@ -282,7 +282,27 @@
     }
      */
 
-    // 完全删除，以下的两种导入方式，替换弃用以前的"importsNotUsedAsValues"、"preserveValueImports"
+     
+    // 如何对待类型导入，取值如下
+    // "remove": 移除所有类型导入
+    // "preserve": 保留所有类型导入
+    // "error": 值作用于类型上时
+    /*
+        // myModule.ts
+        export interface Address {
+            street: string;
+            city: string;
+        }
+
+        // index.ts
+        import { SomeType } from './myModule'; // ❌ 这里需要使用 import type { SomeType } from './myModule';
+        const x: SomeType = 'hello';
+    */
+    // "importsNotUsedAsValues": "error",
+
+
+
+    // 完全删除，以下的两种导入方式，替换弃用以前的"importsNotUsedAsValues"、"preserveValueImports"、"isolatedModules"
     // import type Person from "...";
     // import type { Person } from "...";
     // "verbatimModuleSyntax": "", // Typescript v5.0+
