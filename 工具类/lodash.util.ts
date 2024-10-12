@@ -19,7 +19,15 @@ export const isFalsy = (value) => _.isEmpty(value);
 /**
  * pick / omit包装工具
  * @param object
- * @param options { isPick, fields }: { isPick: boolean, fields: string[] }
+ * @param options 类型{ isPick, fields }: { isPick: boolean, fields: string[] }
+ * @example
+ *   pickOrOmitWrapper({ ... }, {
+ *     isPick: true, // true:提取；false：剔除（默认）
+ *     fields: [
+ *       "id", // courseId
+ *       "teacher_id",
+ *     ]
+ *   })
  */
 export const pickOrOmitWrapper = (object, options) => {
     const { isPick, fields } = options;
