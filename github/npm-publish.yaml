@@ -3,16 +3,20 @@ name: publish npm repos CI
 on:
   push:
     branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
-
+    # 指定环境
+    environment: common
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [22.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -20,10 +24,16 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        always-auth: true
         cache: 'npm'
-    - run: npm install
+        registry-url: 'https://registry.npmjs.org'
+
+    - run: npm ci
     - run: npm run build
+
     # 使用npm token发布
-    - run: npm publish
+    - name: publish to npm repos
+      run: npm publish
       env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM }}
+
