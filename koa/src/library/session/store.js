@@ -3,6 +3,9 @@ import { GlobalRedis } from "#lib/redis/index.js";
 export const RedisStore = {
   async get(key) {
     const session = await GlobalRedis.get(key);
+    if (isFalsy(session)) {
+      return null;
+    }
     return JSON.parse(session);
   },
   async set(key, value, maxAge, { changed, ctx, rolling }) {
