@@ -10,11 +10,33 @@ EXPOSE 3000
 # 复制源码
 COPY . /app
 
+# npm配置
 RUN npm config set registry https://registry.npmmirror.com
-RUN npm install
+# 安装pm2
 RUN npm install pm2 -g && pm2 install pm2-logrotate
 RUN pm2 set pm2-logrotate:max_size 200M && pm2 set pm2-logrotate:retain 60
-# 如果用到prisma必须先generate生成js、ts代码
+# 安装生产依赖且不再执行生命周期钩子（如：prepare: "husky"）
+RUN npm install --omit=dev --ignore-scripts
+
+# 更新容器内的环境
+RUN apk update \
+  && apk upgrade \
+  && apk add --no-cache --virtual .gyp \
+  python3 \
+  make \
+  g++ \
+  && apk del .gyp
+RUN apk add --no-cache bash \
+  bash-doc \
+  bash-completion \
+  yasm \
+  ffmpeg \
+  vim \
+  && rm -rf /var/cache/apk/* \
+  && /bin/bash
+
+
+# 如果用到prisma必须先generate生成js、ts代码再进行构建（否则无法通过tsc类型检查）
 RUN npm run prisma:generate
 RUN npm run build
 
