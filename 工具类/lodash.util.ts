@@ -14,7 +14,14 @@ export const objectToCamelCase = (object) => {
  * @param value
  * @return {boolean}
  */
-export const isFalsy = (value) => _.isEmpty(value);
+export const isFalsy = (value) => {
+    // 对象
+    if (_.isObjectLike(value)) {
+      return _.isEmpty(value);
+    } else {
+      return Boolean(value) === false;
+    }
+  };
 
 /**
  * pick / omit包装工具
