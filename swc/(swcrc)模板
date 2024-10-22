@@ -1,0 +1,37 @@
+/*
+从TS迁移过来之前，最好将`tsconfig.json`如下选项开启，有助于避免编译错误
+{
+    isolatedModules: true, // SWC与该选项的编译行为一致
+    importsNotUsedAsValues: "error", // SWC无法分辨import导入的是值还是类型，这样确保导入类型加入正确的 import type {} fromn 'xxx'
+    esModuleInterop: true, // 导入互操作性
+    verbatimModuleSyntax: true,
+    useDefineForClassFields: // 参考：https://www.typescriptlang.org/tsconfig/#useDefineForClassFields
+}
+💡 SWC只做编译，不做类型检查，如果需要类型检查请用TSC
+*/
+{
+    "$schema": "https://swc.rs/schema.json",
+    "sourceMaps": true,
+
+    // 模块化规则
+    "module": {
+      "type": "commonjs",
+
+      // 忽略动态倒入，推荐开启，现代版本的nodejs都支持动态导入
+      // ⚠️ 如果是纯ESM，则一定要开启该选项
+      "ignoreDynamic": true 
+    },
+
+    // JS编译规则
+    "jsc": {
+      "target": "esnext", // 编译目标JS版本
+      // 编译解释器
+      "parser": {
+        "syntax": "typescript",
+        "decorators": true, // 启用装饰器解析
+        "dynamicImport": true // 启用动态倒入解析
+      },
+      "baseUrl": "./" // 根路径
+    },
+    "minify": false // 是否启用压缩
+  }
