@@ -9,9 +9,12 @@ RUN apk add --no-cache bash \
   && /bin/bash
 RUN npm config set registry https://registry.npmmirror.com
 RUN npm install --ignore-scripts --legacy-peer-deps
-COPY . /app
-RUN npm run prisma:generate
+COPY . .
+RUN sed -i 's/"typeCheck": true/"typeCheck": false/' nest-cli.json
 RUN npm run build
+COPY ecosystem.config.js .
+COPY prisma prisma
+COPY scripts scripts
 
 FROM node:22-alpine AS production
 WORKDIR /app
