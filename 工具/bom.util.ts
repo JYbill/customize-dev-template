@@ -255,3 +255,52 @@ async function clearWebCache() {
       .catch((e) => console.error(e));
   }
 }
+
+/**
+ * Cookie适配器：用于适配HTTPS和非HTTPS环境或去cookie
+ */
+class CookieAdapter {
+    private isHttps = true;
+    private cookieCore: any;
+    private data = new Map<string, string>();
+  
+    constructor() {
+      this.isHttps = !!window.cookieStore;
+      console.log('d', this.isHttps);
+      if (window.cookieStore) {
+        this.cookieCore = window.cookieStore;
+      } else {
+        this.cookieCore = document.cookie;
+        this.data = new Map();
+        this.cookieCore.split('; ').forEach((item: string) => {
+          const [key, value] = item.split('=');
+          this.data.set(key, value);
+        });
+      }
+    }
+  
+    /**
+     * 获取值
+     * @param key
+     */
+    async getValue(key: string) {
+      if (this.isHttps) {
+        const valueData = await this.cookieCore.get(key);
+        return valueData.value;
+      }
+  
+      return this.data.get(key);
+    }
+  
+    /**
+     * 移除
+     * @param key
+     */
+    async delete(key: string) {
+      if (this.isHttps) {
+        return await this.cookieCore.delete(key);
+      }
+  
+      return this.data.delete(key);
+    }
+  }
