@@ -3,11 +3,15 @@
  * @Author: 小钦var
  * @Date: 2023/10/12 10:29
  */
-import { Expose, plainToInstance } from 'class-transformer';
-import { IsNumber, IsString, validateSync } from 'class-validator';
-import * as path from 'node:path';
+import { Expose, plainToInstance } from "class-transformer";
+import { IsNumber, IsString, validateSync } from "class-validator";
+import path from "node:path";
 
 class EnvConfig implements IEnv {
+  @Expose()
+  @IsString()
+  APP_NAME: string;
+
   @Expose()
   @IsString()
   DATABASE_URL: string;
@@ -23,6 +27,10 @@ class EnvConfig implements IEnv {
   @Expose()
   @IsString()
   REDIS_URL: string;
+
+  @Expose()
+  @IsString()
+  REDIS_PREFIX: string;
 
   @Expose()
   @IsString()
@@ -51,6 +59,62 @@ class EnvConfig implements IEnv {
   @Expose()
   @IsString()
   APP_ROOT: string;
+
+  @Expose()
+  @IsString()
+  ASSETS_PREFIX: string;
+
+  @Expose()
+  @IsString()
+  FRONT_HOST: string;
+
+  @Expose()
+  @IsString()
+  CB_SECRET_KEY: string;
+
+  @Expose()
+  @IsString()
+  COURSE_CATALOGUE_NAME: string;
+
+  @Expose()
+  @IsNumber()
+  COURSE_CATALOGUE_ID: number;
+
+  @Expose()
+  @IsString()
+  SPOC_HOST: string;
+
+  @Expose()
+  @IsString()
+  CLIENT_ID: string;
+
+  @Expose()
+  @IsString()
+  CLIENT_SECRET: string;
+
+  @Expose()
+  @IsString()
+  CALL_BACK: string;
+
+  @Expose()
+  @IsString()
+  OAUTH_URL: string;
+
+  @Expose()
+  @IsString()
+  TOKEN_URL: string;
+
+  @Expose()
+  @IsString()
+  OAUTH_USERINFO_URL: string;
+
+  @Expose()
+  @IsString()
+  OAUTH_HOST: string;
+
+  @Expose()
+  @IsString()
+  SESSION_SECRET: string;
 }
 
 export function validateConfig(config: Record<string, unknown>) {
@@ -66,7 +130,7 @@ export function validateConfig(config: Record<string, unknown>) {
     throw new Error(errors.toString());
   }
 
-  validatedConfig.APP_ROOT = path.resolve(__dirname, '../../');
+  validatedConfig.APP_ROOT = path.resolve(__dirname, "../../");
   console.log(validatedConfig.APP_ROOT);
   return validatedConfig;
 }
