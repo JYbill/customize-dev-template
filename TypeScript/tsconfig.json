@@ -138,6 +138,27 @@
     "importHelpers": true,
 
     // 是否将每个文件作为单独的模块，默认true，它不可以和`declaration`同时设定
+    /*
+        作用1：无法将类型当作值导出
+        // someType为一个类型
+        import { someType, someFunction } from "someModule";
+        export { someType, someFunction }; ❌ 当导出一个类型时将会报错
+        export { someFunction }; ✅
+        原因：兼容单文件解析器，虽然TS知道哪些是值哪些是类型，但有些单文件编译器并不能知道。如果允许导出类型，单文件编译器会将someType类型移除，但该文件又导出不存在的someType值，所以会报错
+
+        作用2：所有ts文件必须使用模块化，否则报错（.d.ts文件除外）
+
+        作用3：禁止使用const enum
+        declare const enum Numbers {
+            Zero = 0,
+            One = 1,
+        }
+        console.log(Numbers.Zero + Numbers.One);
+        // 转译之后
+        "use strict";
+        console.log(0 + 1);
+        现象：对于单文件编译器，其他文件中定义的"const enum"会被转移，但到使用的地方实际上并不知道具体的值，所以使用的地方会被保留Numbers枚举对象，但根本不存在该对象所以会报错
+    */
     // "isolatedModules": true,
 
     // --------------------------  类型检查选项 start --------------------------
@@ -301,11 +322,21 @@
     // "importsNotUsedAsValues": "error",
 
 
+    /*
+        import { a } from "./a.js" // 编译时，TS无法检测到a值被使用，所以会直接删除掉这条导入语句
+        eval("console.log(new Animal().isDangerous())");
+    */
+    // "preserveValueImports": true, // 保留所有的值导入，即使看起来可能无任何作用
 
-    // 完全删除，以下的两种导入方式，替换弃用以前的"importsNotUsedAsValues"、"preserveValueImports"、"isolatedModules"
-    // import type Person from "...";
-    // import type { Person } from "...";
-    // "verbatimModuleSyntax": "", // Typescript v5.0+
+    // 是"importsNotUsedAsValues"、"preserveValueImports"、"isolatedModules"的超集
+    // 除了这三个属性的功能外，还对跨模块化引入做了措施
+    /*
+        对于cjs模块化
+        import foo = require("foo"); -> const foo = require("foo");
+        export = { foo, bar, baz }; -> module.exports = { foo, bar, baz };
+        使用ESM写法编译之后的仍然为ESM语法，不会进行转译；这样的目的是让开发人员明确知道在使用何种模块化规范！
+    */
+    // "verbatimModuleSyntax": true, // Typescript v5.0+
   }
 
   // --------------------------  选择、排除编译文件 start  --------------------------
