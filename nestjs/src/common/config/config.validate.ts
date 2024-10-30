@@ -131,6 +131,5 @@ export function validateConfig(config: Record<string, unknown>) {
   }
 
   validatedConfig.APP_ROOT = path.resolve(__dirname, "../../");
-  console.log(validatedConfig.APP_ROOT);
   return validatedConfig;
 }
