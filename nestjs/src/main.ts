@@ -1,27 +1,45 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-
-import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/exception/global.filter';
-import { ProjectExceptionFilter } from './common/exception/project.filter';
-import { ParamsMissedException } from './common/exception/global.expectation';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { Logger, ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "@/app.module";
+import { GlobalExceptionFilter } from "@/common/exception/global.filter";
+import { ProjectExceptionFilter } from "@/common/exception/project.filter";
+import { ParamsMissedException } from "@/common/exception/global.expectation";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { ConfigService } from "@nestjs/config";
+import session from "express-session";
+import helmet from "helmet";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
 
-  // 入口日志器
+  const configService = app.get(ConfigService<IEnv>);
   const logger = new Logger(bootstrap.name);
 
+  const apiPrefix = configService.get("API_PREFIX");
+  const port = configService.get("PORT");
+  const sessionSecrets = configService.get("SESSION_SECRETS");
+
   // 全局配置
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  app.useGlobalFilters(
-    new GlobalExceptionFilter(),
-    new ProjectExceptionFilter(),
+  app.setGlobalPrefix(apiPrefix);
+  app.use(
+    session({
+      secret: JSON.parse(sessionSecrets),
+      resave: false,
+      saveUninitialized: false,
+    }),
   );
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          "form-action": null,
+        },
+      },
+    }),
+  );
+  app.useGlobalFilters(new GlobalExceptionFilter(), new ProjectExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // JS字面量对象转换为class
@@ -34,24 +52,19 @@ async function bootstrap() {
         value: true,
         target: true,
       },
-      disableErrorMessages: true, // 为true时, 错误信息不回返回给前端 exception.response.message = 'Bad Request'
-      // exceptionFactory: 自定义异常钩子,优先级高于disableErrorMessages
       exceptionFactory: (errors) => {
-        if (process.env.ENV?.startsWith('prod')) {
-          logger.error('参数错误');
+        if (process.env.ENV?.startsWith("prod")) {
+          logger.error("参数错误");
         } else {
-          logger.error('参数错误', errors);
+          logger.error("参数错误", errors);
         }
-        return new ParamsMissedException('参数错误');
+        return new ParamsMissedException("参数错误");
       },
     }),
   );
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/`,
-  );
+  await app.listen(port || 3000);
+  logger.log(`🚀 Application is running on: http://localhost:${port}/${apiPrefix}/`);
 }
 
 bootstrap();

@@ -61,9 +61,23 @@ import AdminMiddleware from './common/middleware/admin.middleware';
         };
       },
     }),
-    UserModule,
-    RepositoryModule,
-    MenuModule,
+    RedisModule.forRootAsync({
+      useFactory: (configService: ConfigService<IEnv>) => {
+        return {
+          isGlobal: true,
+          readyLog: true,
+          errorLog: true,
+          config: {
+            host: configService.get("REDIS_HOST"),
+            port: configService.get("REDIS_PORT"),
+            password: configService.get("REDIS_PASSWORD"),
+            enableAutoPipelining: true,
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+    UserModule
   ],
 })
 export class AppModule implements NestModule {

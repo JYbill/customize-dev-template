@@ -24,10 +24,9 @@ RUN npm config set registry https://registry.npmmirror.com
 RUN npm i pm2 -g
 RUN pm2 install pm2-logrotate
 RUN pm2 set pm2-logrotate:max_size 200M && pm2 set pm2-logrotate:retain 60
-RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps
+RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps && npm cache clean --force
 COPY --from=builder /app/ecosystem.config.js .
 COPY --from=builder /app/prisma prisma
-COPY --from=builder /app/scripts scripts
 COPY --from=builder /app/dist dist
 RUN npm run prisma:generate
 # 清理缓存文件

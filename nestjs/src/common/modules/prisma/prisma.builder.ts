@@ -1,33 +1,26 @@
-import { ConfigurableModuleBuilder } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import { ConfigurableModuleBuilder } from "@nestjs/common";
+import type { Prisma } from "@prisma/client";
 
-/**
- * PrismaModule 配置接口
- */
-export interface IPrismaModule {
-  isGlobal?: boolean;
+export type IPrismaModule = {
+  isGlobal?: boolean; // 默认为true
   debugging?: boolean; // debug模式，默认false
-  prismaOption?: Prisma.PrismaClientOptions; // 同步时使用
-  prismaOptFactory?: (
-    ...args: (string | number | boolean)[]
-  ) => Prisma.PrismaClientOptions | Promise<Prisma.PrismaClientOptions>; // 异步或同步使用
-}
-
-export type OptionType = Omit<
-  IPrismaModule,
-  'isGlobal' | 'prismaOption' | 'prismaOptFactory'
->;
+  prismaOpt?: Prisma.PrismaClientOptions;
+};
 
 /**
  * 模块构建器
  */
-export const { ConfigurableModuleClass, OPTIONS_TYPE, ASYNC_OPTIONS_TYPE } =
+const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE, ASYNC_OPTIONS_TYPE } =
   new ConfigurableModuleBuilder<IPrismaModule>()
-    .setClassMethodName('forRoot')
+    .setExtras(
+      {
+        isGlobal: true,
+      },
+      (definition) => ({ ...definition }),
+    )
     .build();
+export { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN };
 
-/**
- * Inject ID
- */
-export const PRISMA_MODULE_INJECT_ID = 'PRISMA_MODULE_INJECT_ID';
-export const PRISMA_OTHER_OPT_INJECT_ID = 'PRISMA_OTHER_OPT_INJECT_ID';
+// 类型
+export type PrismaOptType = typeof OPTIONS_TYPE;
+export type PrismaASyncOptType = typeof ASYNC_OPTIONS_TYPE;
