@@ -1,5 +1,5 @@
 {
-  "**/*.{js,ts}": [
+  "*.{js,ts}": [
     "npm run format",
     "npm run lint"
   ]
