@@ -1,4 +1,4 @@
-import { ResponseUtil } from '../util/response.util';
+import { ResponseUtil } from "../util/response.util";
 import {
   ArgumentsHost,
   BadRequestException,
@@ -7,8 +7,8 @@ import {
   HttpException,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 /**
  * @Description: 全局异常处理器
@@ -30,25 +30,23 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
       // 正常业务代码抛出的异常
       if (exception instanceof NotFoundException) {
         this.logger.warn(exception.message);
-        const status = exception.getStatus();
-        response.status(status).json(ResponseUtil.error('接口未找到', status));
+        response.status(404).json(ResponseUtil.error("接口未找到", 0));
       } else if (exception instanceof BadRequestException) {
         this.logger.warn(`request error: ${exception.message}`);
-        this.logger.warn(exception);
+        this.logger.warn(exception.getResponse());
+        // console.error("query error:", exception);
         const status = exception.getStatus();
-        response
-          .status(status)
-          .json(ResponseUtil.error('请求格式错误', status));
+        const [errorMessage] = exception.getResponse()["message"] || "请求格式错误";
+        response.status(status).json(ResponseUtil.error(errorMessage, 0));
       } else {
         this.logger.error(exception.stack);
-        const status = exception.getStatus();
-        response.status(status).json(ResponseUtil.error(undefined, status));
+        response.status(500).json(ResponseUtil.error(undefined, 0));
       }
     } catch (err: unknown) {
       const error = err as Error;
       // 代码错误
       this.logger.error(error);
-      response.status(500).json(ResponseUtil.error(undefined, 500));
+      response.status(500).json(ResponseUtil.error("拦截代码存在边界情况", 0));
     }
   }
 }

@@ -1,3 +1,4 @@
+import { HttpStatus } from '@midwayjs/core';
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "@/app.module";
@@ -8,6 +9,8 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
 import session from "express-session";
 import helmet from "helmet";
+import Redis from "ioredis";
+import RedisStore from "connect-redis";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -20,6 +23,10 @@ async function bootstrap() {
   const apiPrefix = configService.get("API_PREFIX");
   const port = configService.get("PORT");
   const sessionSecrets = configService.get("SESSION_SECRETS");
+  const redisPrefix = configService.get("REDIS_PREFIX");
+  const redisHost = configService.get("REDIS_HOST");
+  const redisPort = configService.get("REDIS_PORT");
+  const redisPassword = configService.get("REDIS_PASSWORD");
 
   // 全局配置
   app.setGlobalPrefix(apiPrefix);
@@ -27,11 +34,21 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: ["1"],
   });
+  // session
+  const redisStoreClient = new RedisStore({
+    client: new Redis({
+      host: redisHost,
+      port: redisPort,
+      password: redisPassword,
+    }),
+    prefix: `${redisPrefix}sid:`,
+  });
   app.use(
     session({
       secret: JSON.parse(sessionSecrets),
       resave: false,
       saveUninitialized: false,
+      store: redisStoreClient,
     }),
   );
   app.use(
@@ -56,14 +73,16 @@ async function bootstrap() {
         value: true,
         target: true,
       },
-      exceptionFactory: (errors) => {
+      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      stopAtFirstError: true,
+      /* exceptionFactory: (errors) => {
         if (process.env.ENV?.startsWith("prod")) {
           logger.error("参数错误");
         } else {
           logger.error("参数错误", errors);
         }
         return new ParamsMissedException("参数错误");
-      },
+      }, */
     }),
   );
 

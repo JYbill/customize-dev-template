@@ -1,14 +1,8 @@
-import { ResponseUtil } from '../util/response.util';
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+import { ResponseUtil } from "../util/response.util";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from "@nestjs/common";
+import { Request, Response } from "express";
 
-import { ProjectException } from './global.expectation';
+import { ProjectException } from "./global.expectation";
 
 /**
  * @Description: 业务异常处理器
@@ -27,6 +21,6 @@ export class ProjectExceptionFilter implements ExceptionFilter<HttpException> {
     request.pass = false;
     this.logger.error(exception.stack);
     const status = exception.getStatus();
-    response.status(status).json(ResponseUtil.error(exception.message, status));
+    response.status(status).json(ResponseUtil.error(exception.message, 0));
   }
 }

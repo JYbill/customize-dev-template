@@ -16,7 +16,7 @@ const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE, ASYNC_OPTIO
       {
         isGlobal: true,
       },
-      (definition) => ({ ...definition }),
+      (definition, extras) => ({ ...definition, global: extras.isGlobal }),
     )
     .build();
 export { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN };

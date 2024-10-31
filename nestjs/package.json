@@ -49,7 +49,8 @@
     "express-session": "^1.18.0",
     "dotenv-cli": "^7.4.2",
     "@liaoliaots/nestjs-redis": "^10.0.0",
-    "helmet": "^8.0.0"
+    "helmet": "^8.0.0",
+    "connect-redis": "^7.1.1"
   },
   "devDependencies": {
     "@swc/cli": "0.4.1-nightly.20240914",
