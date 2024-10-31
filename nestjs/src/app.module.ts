@@ -9,10 +9,10 @@ import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import JwtMiddleware from './common/middleware/jwt.middleware';
 import { JwtModule } from '@nestjs/jwt';
-import * as process from 'process';
-import { RepositoryModule } from './repository/repository.module';
-import { MenuModule } from './menu/menu.module';
+import process from 'process';
 import AdminMiddleware from './common/middleware/admin.middleware';
+import { NanoidModule } from "@/common/modules/nanoid/nanoid.module";
+import { GotModule } from "@/common/modules/got/got.module";
 
 @Module({
   imports: [
@@ -77,6 +77,8 @@ import AdminMiddleware from './common/middleware/admin.middleware';
       },
       inject: [ConfigService],
     }),
+    NanoidModule,
+    GotModule,
     UserModule
   ],
 })
