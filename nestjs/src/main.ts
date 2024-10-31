@@ -23,6 +23,10 @@ async function bootstrap() {
 
   // 全局配置
   app.setGlobalPrefix(apiPrefix);
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: ["1"],
+  });
   app.use(
     session({
       secret: JSON.parse(sessionSecrets),
