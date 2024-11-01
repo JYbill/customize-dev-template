@@ -256,7 +256,7 @@
     /* 实验性选项 */
     // 用于指定是否启用实验性的装饰器特性
     // "experimentalDecorators": true,
-    // 用于指定是否为装饰器提供元数据支持
+    // 是否为装饰器提供类型元数据支持
     // "emitDecoratorMetadata": true,
 
     // （编译时）允许TS文件使用特定于的扩展名（如 .ts、.mts 或 .tsx）相互导入，需开启noEmit或emitDeclarationOnly时才生效，由第三方构建工具处理这些模块
