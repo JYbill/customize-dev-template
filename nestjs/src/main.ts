@@ -1,16 +1,15 @@
-import { HttpStatus } from '@midwayjs/core';
-import { Logger, ValidationPipe } from "@nestjs/common";
+import { HttpStatus, Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "@/app.module";
 import { GlobalExceptionFilter } from "@/common/exception/global.filter";
 import { ProjectExceptionFilter } from "@/common/exception/project.filter";
-import { ParamsMissedException } from "@/common/exception/global.expectation";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
 import session from "express-session";
 import helmet from "helmet";
 import Redis from "ioredis";
 import RedisStore from "connect-redis";
+import ms from "ms";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -27,12 +26,12 @@ async function bootstrap() {
   const redisHost = configService.get("REDIS_HOST");
   const redisPort = configService.get("REDIS_PORT");
   const redisPassword = configService.get("REDIS_PASSWORD");
+  const rememberExpire = configService.get<string>("SESSION_REMEMBER_EXPIRE");
+  const rememberExpireTTL = ms(rememberExpire);
 
   // 全局配置
-  app.setGlobalPrefix(apiPrefix);
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: ["1"],
   });
   // session
   const redisStoreClient = new RedisStore({
@@ -42,11 +41,14 @@ async function bootstrap() {
       password: redisPassword,
     }),
     prefix: `${redisPrefix}sid:`,
+    ttl: rememberExpireTTL,
+    disableTouch: false,
   });
   app.use(
     session({
       secret: JSON.parse(sessionSecrets),
       resave: false,
+      rolling: false,
       saveUninitialized: false,
       store: redisStoreClient,
     }),
@@ -75,14 +77,6 @@ async function bootstrap() {
       },
       errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       stopAtFirstError: true,
-      /* exceptionFactory: (errors) => {
-        if (process.env.ENV?.startsWith("prod")) {
-          logger.error("参数错误");
-        } else {
-          logger.error("参数错误", errors);
-        }
-        return new ParamsMissedException("参数错误");
-      }, */
     }),
   );
 
