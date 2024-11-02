@@ -21,6 +21,6 @@ export class ProjectExceptionFilter implements ExceptionFilter<HttpException> {
     request.pass = false;
     this.logger.error(exception.stack);
     const status = exception.getStatus();
-    response.status(status).json(ResponseUtil.error(exception.message, 0));
+    response.status(status).json(ResponseUtil.error(exception.message));
   }
 }

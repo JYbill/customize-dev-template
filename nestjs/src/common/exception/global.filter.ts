@@ -30,23 +30,30 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
       // 正常业务代码抛出的异常
       if (exception instanceof NotFoundException) {
         this.logger.warn(exception.message);
-        response.status(404).json(ResponseUtil.error("接口未找到", 0));
+        response.status(404).json(ResponseUtil.error("接口未找到"));
       } else if (exception instanceof BadRequestException) {
         this.logger.warn(`request error: ${exception.message}`);
         this.logger.warn(exception.getResponse());
-        // console.error("query error:", exception);
+        console.error("query error:", exception);
         const status = exception.getStatus();
-        const [errorMessage] = exception.getResponse()["message"] || "请求格式错误";
-        response.status(status).json(ResponseUtil.error(errorMessage, 0));
+        if (exception.getResponse()["message"] instanceof Array) {
+          // 错误描述数组
+          const [errorMessage] = exception.getResponse()["message"] || "请求格式错误";
+          response.status(status).json(ResponseUtil.error(errorMessage));
+        } else {
+          // 错误描述字符串
+          const errorMessage = exception.getResponse()["message"] || "请求格式错误";
+          response.status(status).json(ResponseUtil.error(errorMessage));
+        }
       } else {
         this.logger.error(exception.stack);
-        response.status(500).json(ResponseUtil.error(undefined, 0));
+        response.status(500).json(ResponseUtil.error(undefined));
       }
     } catch (err: unknown) {
       const error = err as Error;
       // 代码错误
       this.logger.error(error);
-      response.status(500).json(ResponseUtil.error("拦截代码存在边界情况", 0));
+      response.status(500).json(ResponseUtil.error("拦截代码存在边界情况"));
     }
   }
 }
