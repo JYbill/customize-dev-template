@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prepare": "husky",
-    "prisma:validate": "prisma validate",
+    "prisma:validate": "dotenv -e env/.development.env -- prisma validate",
     "prisma:generate": "prisma generate",
     "prisma:push": "dotenv -e env/.development.env -- prisma db push",
     "prisma:pull": "dotenv -e env/.development.env -- prisma db pull",

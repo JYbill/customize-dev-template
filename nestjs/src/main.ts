@@ -46,6 +46,7 @@ async function bootstrap() {
   });
   app.use(
     session({
+      name: "oauth.sid",
       secret: JSON.parse(sessionSecrets),
       resave: false,
       rolling: false,
