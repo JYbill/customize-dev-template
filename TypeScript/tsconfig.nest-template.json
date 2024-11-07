@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+      "module": "NodeNext",
+      "declaration": true,
+      "removeComments": false,
+      "allowSyntheticDefaultImports": true,
+      "target": "ESNext",
+      "sourceMap": true,
+      "outDir": "./dist",
+      "baseUrl": "./",
+      "incremental": true,
+
+      // lint
+      "skipLibCheck": true,
+      "strictNullChecks": false,
+      "noImplicitAny": false,
+      "strictBindCallApply": false,
+      "forceConsistentCasingInFileNames": false,
+      "noFallthroughCasesInSwitch": false,
+      "noUnusedLocals": false,
+      "noUnusedParameters": false,
+
+      // 装饰器
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+  
+      // 别名
+      "paths": {
+        "@/*": ["src/*"]
+      },
+  
+      // 兼容swc部分
+      "isolatedModules": true,
+      "esModuleInterop": true
+    }
+  }
+  

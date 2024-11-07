@@ -77,6 +77,10 @@ import { GotModule } from "@/common/modules/got/got.module";
       },
       inject: [ConfigService],
     }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: false },
+    }),
     NanoidModule,
     GotModule,
     UserModule
@@ -84,6 +88,8 @@ import { GotModule } from "@/common/modules/got/got.module";
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {
+    // CLS中间件，手动注册避免因为nestjs路由版本控制，导致cls无法正确全局注册问题
+    consumer.apply(ClsMiddleware).forRoutes("*");
     consumer.apply(LoggerMiddleware).forRoutes('*');
     consumer
       .apply(JwtMiddleware)
