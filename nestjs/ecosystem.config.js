@@ -10,10 +10,16 @@ module.exports = {
       watch: false, // 不启用监听
       max_restarts: 1, // 最大重启次数
       max_memory_restart: '2G', // 超出内存即重启
+
+      // 日志相关
+      error_file: "logs/err.log",
+      out_file: "logs/out.log",
+      merge_logs: true,
+      log_date_format: "YYYY-MM-DD HH:mm Z",
+
+      // 环境变量
       env: {
-        // 环境变量
-        ENV: 'production',
-        PORT: 3000,
+        NODE_ENV: 'production',
       },
     },
   ],
