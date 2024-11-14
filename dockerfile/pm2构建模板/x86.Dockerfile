@@ -1,12 +1,6 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json .
-RUN apk update && apk upgrade
-RUN apk add --no-cache bash \
-  bash-doc \
-  bash-completion \
-  vim \
-  && /bin/bash
 RUN npm config set registry https://registry.npmmirror.com
 RUN npm install --ignore-scripts --legacy-peer-deps
 COPY . .
@@ -28,6 +22,11 @@ RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps && npm cache clea
 COPY --from=builder /app/ecosystem.config.js .
 COPY --from=builder /app/prisma prisma
 COPY --from=builder /app/dist dist
+RUN apk update && apk add --no-cache bash \
+bash-doc \
+bash-completion \
+vim \
+&& /bin/bash
 RUN npm run prisma:generate
 # 清理缓存文件
 RUN rm -rf /tmp/* && rm -rf /var/tmp/*
