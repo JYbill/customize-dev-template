@@ -30,13 +30,14 @@
     1. node v12+ 使用"node16"或"nodeNext"（即可使用cjs也可以用esm）
     2. package.json中定义"type": "module"
     */
+    "module": "NodeNext",
     /*
       使用自定义模块分辨，设置环境
       "module": [".ios", ".native", ""]
       import * as foo from './foo';
       首先检查./foo.ios.ts, 其次./foo.native.ts, 最后./foo.ts.
     */
-    "module": "NodeNext",
+    "moduleSuffixes": [],
 
     /* 
       模块查找规则（编译时期）
