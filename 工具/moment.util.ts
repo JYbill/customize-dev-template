@@ -2,6 +2,16 @@ import moment from "moment";
 
 export class MomentUtil {
   /**
+   * 统一时间格式
+   * @param date
+   * @param format "HH:mm:ss.SSS"
+   * @return {string}
+   */
+  static unifyTime(date, format) {
+    return moment(date, format).format("HH:mm:ss.SSS");
+  }
+
+  /**
    * 统一时间日期格式
    */
   static unifyDateTime(date) {
@@ -15,6 +25,40 @@ export class MomentUtil {
    */
   static unifyDate(date) {
     return moment(date).format("YYYY-MM-DD");
+  }
+
+  /**
+   * 获取下一分钟最开始的时间
+   * @param date
+   * @return {string}
+   */
+  static getTimeOfEndMinute(date) {
+    date = moment(date).add(1, "minute").startOf("minute");
+    return MomentUtil.unifyDateTime(date);
+  }
+
+  /**
+   * 根据格式，获取总秒数 "00:01:00"(HH:mm:ss.SSS) -> 60s
+   * @param timeStr
+   * @param format
+   * @return {number}
+   */
+  static getSecondsByFormat(timeStr, format = "HH:mm:ss.SSS") {
+    return moment.duration(MomentUtil.unifyTime(timeStr, "HH:mm:ss.SSS")).asSeconds();
+  }
+
+  /**
+   * 获取datetime，从unit开始，"date"即为
+   * @return {moment.Moment}
+   */
+  static getDateTimeOfUnit({ datetime, unit = "date" }) {
+    let result = null;
+    if (datetime) {
+      result = moment(datetime);
+    } else {
+      result = moment();
+    }
+    return result.startOf(unit);
   }
 
   /**
@@ -48,27 +92,13 @@ export class MomentUtil {
    * @param units 默认需要设置的单位["year", "month", "date"]
    * @return {string}
    */
-  static setDateByOriginDate(
-    targetDate,
-    originDate,
-    units = ["year", "month", "date"],
-  ) {
+  static setDateByOriginDate(targetDate, originDate, units = ["year", "month", "date"]) {
     originDate = moment(originDate);
     let resultDate = moment(targetDate);
     for (const unit of units) {
       resultDate.set(unit, originDate[unit]());
     }
     return MomentUtil.unifyDateTime(resultDate);
-  }
-
-  /**
-   * 获取下一分钟最开始的时间
-   * @param date
-   * @return {string}
-   */
-  static getTimeOfEndMinute(date) {
-    date = moment(date).add(1, "minute").startOf("minute");
-    return MomentUtil.unifyDateTime(date);
   }
 
   /**
