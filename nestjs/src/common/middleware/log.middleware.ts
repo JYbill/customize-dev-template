@@ -1,52 +1,32 @@
-import { ResponseUtil } from "../util/response.util";
-import {
-  ArgumentsHost,
-  BadRequestException,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
-import { Request, Response } from "express";
+import { Injectable, Logger } from "@nestjs/common";
+import { NextFunction, Request, Response } from "express";
 
 /**
- * @Description: 全局异常处理器
+ * @Description: 日志中间件
  * @Author: 小钦var
- * @Date: 2024年05月07日 10:07:48
+ * @Date: 2024/4/16 9:06
  */
-@Catch()
-export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
-  private readonly logger: Logger = new Logger(GlobalExceptionFilter.name);
+@Injectable()
+export default class LoggerMiddleware {
+  private readonly logger: Logger = new Logger(LoggerMiddleware.name);
 
-  catch(exception: HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const request = ctx.getRequest<Request>();
-    const response = ctx.getResponse<Response>();
+  use(req: Request, res: Response, next: NextFunction) {
+    const start = Date.now();
+    res.on('finish', () => {
+      const method = req.method;
+      const statusCode = res.statusCode;
+      const referer = res.getHeader('referer');
+      const uri = req.originalUrl;
+      const spend = Date.now() - start;
+      const reqIP = req.ip || req.ips[0]; // 首先信任代理头，其次信任连接IP，如果无代理则命中socket.remote.ip
+      const logMessage = `[${method}:${statusCode}] ${reqIP} | referer=${referer || ''} | URI=${uri} | spend=${spend}ms | pass=${req.pass !== false}`;
+      this.logger.log(logMessage);
 
-    request.pass = false;
-
-    try {
-      // 正常业务代码抛出的异常
-      if (exception instanceof NotFoundException) {
-        this.logger.warn(exception.message);
-        const status = exception.getStatus();
-        response.status(status).json(ResponseUtil.error("接口未找到", status));
-      } else if (exception instanceof BadRequestException) {
-        this.logger.warn(`request error: ${exception.message}`);
-        this.logger.warn(exception.getResponse());
-        const status = exception.getStatus();
-        const [errorMessage] = exception.getResponse()["message"] || "请求格式错误";
-        response.status(status).json(ResponseUtil.error(errorMessage, status));
-      } else {
-        this.logger.error(exception.stack);
-        response.status(500).json(ResponseUtil.error(undefined, 500));
+      // 30x 重定向日志
+      if ([301, 302].includes(statusCode)) {
+        this.logger.log(`[${method}] [${statusCode}] Redirect URL: ${res.getHeader('location')}`);
       }
-    } catch (err: unknown) {
-      const error = err as Error;
-      // 代码错误
-      this.logger.error(error);
-      response.status(500).json(ResponseUtil.error(undefined, 500));
-    }
+    });
+    next();
   }
 }
