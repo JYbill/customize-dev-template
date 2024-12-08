@@ -10,9 +10,11 @@
   */
 
   "compilerOptions": {
-    // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
-    "target": "ES2022",
+    // 作用：增量编译，只对更改的文件进行编译，从而提高编译速度
+    "incremental": true,
 
+    // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
+    "target": "ESNext",
     /*
     （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     提示：node16与nodeNext: 表示node.js双模块系统（支持ESM与CJS），目前他俩表示一致，未来如果模块化内容有更新，则nodeNext表示最新的模块化特性！
@@ -24,16 +26,18 @@
     node16强制"target"为"es2022"+
     nodeNext强制"target"为"esnext"+
 
-    ⚠️ "es2015-esnext"不要和"moduleResolution": "node/nodeNext"一起使用。如果想使用ESM模块规则，应该在最近的package.json中定义"type": "module"即可。
-    推荐：node v12+ 使用"node16"或"nodeNext"无论用CJS还是ESM 👍
+    💡 如果想使用nodejs的ESM规则
+    1. node v12+ 使用"node16"或"nodeNext"（即可使用cjs也可以用esm）
+    2. package.json中定义"type": "module"
     */
+    "module": "NodeNext",
     /*
       使用自定义模块分辨，设置环境
       "module": [".ios", ".native", ""]
       import * as foo from './foo';
       首先检查./foo.ios.ts, 其次./foo.native.ts, 最后./foo.ts.
     */
-    "module": "NodeNext",
+    "moduleSuffixes": [],
 
     /* 
       模块查找规则（编译时期）
@@ -45,6 +49,42 @@
     "rootDir": "./src",
     // 用来指定输出文件夹，值为一个文件夹路径字符串，输出的文件都将放置在这个文件夹
     "outDir": "./dist",
+        /* 
+    // 打包工具经过配置后下面的引入可以都生效
+    import * as utils from "./utils";     
+    import * as utils from "./utils.mjs";
+    */
+    // 基准目录：
+    /*
+    baseUrl
+        ├── ex.ts
+        ├── hello
+        │   └── world.ts
+        └── tsconfig.json
+
+      // 设置之后以当前目录为基准目录
+      // 未设置：import { helloWorld } from "./hello/world";
+      import { helloWorld } from "hello/world";
+      console.log(helloWorld);
+    */
+    // "baseUrl": "./"
+
+    // 用于设置模块名到基于baseUrl的路径映射的`别名`
+    /*
+      // 你可以告诉TS文件解析器路径别名，⚠️ 仅起到路径解析，如果使用其他构建工具进行打包，需在再其他构建工具(如：webpack、vite)中也要配置别名，这里只是起到类型检测的作用！
+      {
+        "compilerOptions": {
+          "baseUrl": "src",
+          "paths": {
+              "app/*": ["app/*"],
+              "config/*": ["app/_config/*"],
+              "tests/*": ["tests/*"]
+          },
+      }
+    */
+    // "paths": {},
+    // 在构建时编译器会将这个路径列表中的路径内容都放到一个文件夹中
+    // "rootDirs": [],
 
     /**
     作用：强制执行某些约束，能够确定项目是否构建
@@ -81,7 +121,7 @@
      */
     "esModuleInterop": true,
 
-    // 导入文件采用大小写一致，false允许忽略大小写
+    // 导入文件采用大小写一致，如果不一致则抛出错误，false允许忽略大小写
     "forceConsistentCasingInFileNames": true,
 
     // 跳过第三方库检查的类型检查
@@ -108,10 +148,8 @@
     "declaration": false,
     // 是否为声明文件.d.ts生成.map文件
     "declarationMap": true,
-    // 是否允许导入json模块，默认：false
+    // 是否允许导入json模块，默认：false，导入类型为any
     "resolveJsonModule": true,
-    // 为 true 时，它会隐式地将 catch 中的任何变量设置为 unknown 而不是 any
-    // "useUnknownInCatchVariables": false,
 
     // 检测到一定会执行return代码后，后面如果还有代码会报错
     "allowUnreachableCode": true,
@@ -161,12 +199,36 @@
     */
     // "isolatedModules": true,
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // --------------------------  类型检查选项 start --------------------------
     "strict": true, // 严格类型检查模式, 为true开启下面包含的所有检查，默认false
-    "noImplicitAny": true, // 不允许type类型为any，包括自动推断为any也会报错
-    "alwaysStrict": true, // 并且在编译之后的 JS 文件中加入"use strict"，用来告诉浏览器该 JS 为严格模式
-    "strictNullChecks": true, // null和 undefined 值不能赋值给非这两种类型的值，如`const str: string;` 报错
-    // 会更彻底地检查函数参数
+    "noImplicitAny": true, // 不允许为变量、参数定义为any类型，包括自动推断为any也会报错
+    "strictNullChecks": true, // null和 undefined 值不能赋值给非这两种类型的值，如`const str: string;`会报错
+    "alwaysStrict": true, // 在编译之后的JS文件中加入"use strict"，从而在运行时捕获更多错误
+    // 不允许出现未使用的变量
+    "noUnusedLocals": false,
+    // 不允许出现未使用的变量(范围仅在函数型参和函数内部)
+    // "noUnusedParameters": false,
+    // 保证所有函数返回值都显示声明return
+    "noImplicitReturns": true,
+    // switch语句中缺少`break`或`return`关键字，这个编译选项就会生成错误
+    "noFallthroughCasesInSwitch": true,
+    // this关键字推断为any时则会抛出错误
+    "noImplicitThis": true,
     /* 
       interface Animal {
         name: string;
@@ -178,63 +240,36 @@
       let getAnimalName = (animal: Animal) => animal.name;
 
      getDogName = getAnimalName; // Okay (狗是动物，所以可以变成动物，广范围可以接受窄范围)
-     getAnimalName = getDogName; // Okay (默认okay，开启后即bad，动物无法变成狗，窄范围无法接收广范围)
+     getAnimalName = getDogName; // Okay (默认okay，开启后即bad，动物无法变成狗，子类无法"泛化"为父类)
      */
-    "strictFunctionTypes": true, // 默认false，是否严格检查函数的逆变多态
-    "strictPropertyInitialization": true, // 确保在构造函数中初始化所有类属性，否则报错，或者可以定义为String | undefined
-    "strictBindCallApply": true, // 不正确使用call()、bind() 和 apply() 函数时会报错，如：传参...
-    // --------------------------  类型检查选项 end  --------------------------
+     "strictFunctionTypes": true, // 默认false，禁止函数的泛化行为
+     "strictPropertyInitialization": true, // 确保在构造函数中初始化所有类属性，否则报错，或者可以定义为String | undefined
+     "strictBindCallApply": true, // 严格检查函数call()、bind()、apply()时的行为，不正确使用call()、bind() 和 apply() 函数时会报错，如：传参...
+     "useUnknownInCatchVariables": false, // 为true时，它会隐式地将catch中的任何变量设置为unknown而不是any
 
-    // 额外检查
-    // 不允许出现未使用的变量
-    "noUnusedLocals": false,
-    // 不允许出现未使用的变量(范围仅在函数型参和函数内部)
-    // "noUnusedParameters": false,
-    // 保证所有函数返回值都显示声明return
-    "noImplicitReturns": true,
-    // switch语句中缺少`break`或`return`关键字，这个编译选项就会生成错误
-    "noFallthroughCasesInSwitch": true,
-    // 不正确地使用 this 关键字的情况下或在不清楚 this 所指的位置的地方提示错误
-    "noImplicitThis": true,
+     // 这块内容不再属于"strict"选项相关内容，而是单独的
+     "noUncheckedIndexedAccess": true, // 检查访问对象时，属性是否在对象类型中定义，如果没有则抛出错误
+     "noImplicitOverride": true, // 任何被覆盖的方法都必须使用override关键字
+    // --------------------------  类型检查选项 end --------------------------
 
-    /* 
-    // 打包工具经过配置后下面的引入可以都生效
-    import * as utils from "./utils";     
-    import * as utils from "./utils.mjs";
-    */
 
-    // 基准目录：
-    /*
-    baseUrl
-        ├── ex.ts
-        ├── hello
-        │   └── world.ts
-        └── tsconfig.json
 
-      // 设置之后以当前目录为基准目录
-      // 未设置：import { helloWorld } from "./hello/world";
-      import { helloWorld } from "hello/world";
-      console.log(helloWorld);
-    */
-    // "baseUrl": "./"
 
-    // 用于设置模块名到基于baseUrl的路径映射的`别名`
-    /*
-      // 你可以告诉TS文件解析器路径别名，⚠️ 仅起到路径解析，如果使用其他构建工具进行打包，需在再其他构建工具(如：webpack、vite)中也要配置别名，这里只是起到类型检测的作用！
-      {
-        "compilerOptions": {
-          "baseUrl": "src",
-          "paths": {
-              "app/*": ["app/*"],
-              "config/*": ["app/_config/*"],
-              "tests/*": ["tests/*"]
-          },
-      }
-    */
-    // "paths": {},
 
-    // 在构建时编译器会将这个路径列表中的路径内容都放到一个文件夹中
-    // "rootDirs": [],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // 用来指定声明文件或文件夹的路径列表，如果指定了此项，则只有在这里列出的声明文件才会被加载, 默认所有"**/node_modules/**/@types/*"包都将包含在你的编译过程中
     // "typeRoots": [],
     // 用来指定需要包含的模块，只有在这里列出的模块声明文件才会被加载进来
