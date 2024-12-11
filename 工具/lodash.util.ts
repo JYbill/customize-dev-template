@@ -15,13 +15,20 @@ export const objectToCamelCase = (object) => {
  * @return {boolean}
  */
 export const isFalsy = (value) => {
-    // 对象
-    if (_.isObjectLike(value)) {
-      return _.isEmpty(value);
-    } else {
-      return Boolean(value) === false;
-    }
-  };
+  // 对象
+  if (_.isObjectLike(value)) {
+    return _.isEmpty(value);
+  } else {
+    return Boolean(value) === false;
+  }
+};
+
+/**
+ * isFalsy的取反，目的语义化
+ * @param value
+ * @return {boolean}
+ */
+export const isTrusty = (value) => !isFalsy(value);
 
 /**
  * pick / omit包装工具
@@ -37,23 +44,23 @@ export const isFalsy = (value) => {
  *   })
  */
 export const pickOrOmitWrapper = (object, options) => {
-    const { isPick, fields } = options;
-    if (typeof isPick !== "boolean" || fields?.length <= 0) {
-      throw new Error("pickOrOmitWrapper options error");
-    }
-    if (isPick) {
-      return _.pick(object, fields);
-    } else {
-      return _.omit(object, fields);
-    }
-  };
+  const { isPick, fields } = options;
+  if (typeof isPick !== "boolean" || fields?.length <= 0) {
+    throw new Error("pickOrOmitWrapper options error");
+  }
+  if (isPick) {
+    return _.pick(object, fields);
+  } else {
+    return _.omit(object, fields);
+  }
+};
 
-  /**
+/**
  * 数组转k-v对象
  * @param array
  * @param fieldOrCallback
  * @return {Dictionary<unknown>}
  */
 export const array2Map = (array, fieldOrCallback) => {
-    return _.keyBy(array, fieldOrCallback);
-  };
+  return _.keyBy(array, fieldOrCallback);
+};
