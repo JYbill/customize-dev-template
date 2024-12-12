@@ -27,6 +27,8 @@
 
     // 兼容swc部分
     "isolatedModules": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    // "verbatimModuleSyntax": true, // 由于区分CJS/ESM模块化的写法，暂不开启
+    // "importsNotUsedAsValues": "error", // 不允许倒入类型时，不使用type关键字
   }
 }
