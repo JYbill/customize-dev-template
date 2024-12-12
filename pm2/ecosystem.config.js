@@ -4,7 +4,7 @@ module.exports = {
         name: 'resource-partal-and-manage', // 名称
         script: './dist/main.js', // nest入口文件
         cwd: './', // 工作目录
-        // instances: -1, // 默认 -1：cup - 1
+        instances: -1, // -1：cup - 1
         exec_mode: 'cluster',
         autorestart: true, // 发生异常自动重启
         watch: false, // 不启用监听
