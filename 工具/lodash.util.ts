@@ -30,6 +30,16 @@ export const isFalsy = (value) => {
  */
 export const isTrusty = (value) => !isFalsy(value);
 
+  /**
+   * 根据omitList排除指定的字段，并返回全新的对象
+   * omitObject({a: 1, b: 2, c: 3}, ['a', 'b']) -> {c: 3}
+   * @param object
+   * @param omitList
+   */
+  export function omitObject<T extends object, K extends keyof T>(object: T, omitList: K[]) {
+    return _.omit(object, omitList);
+  }
+
 /**
  * pick / omit包装工具
  * @param object
