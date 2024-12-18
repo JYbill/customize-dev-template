@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NextFunction, Request, Response } from 'express';
-import * as passport from 'passport';
+import type { NextFunction, Request, Response } from 'express';
+import passport from 'passport';
 import { Strategy as JWTStrategy, VerifiedCallback } from 'passport-jwt';
 import { TokenException, TokenMissed } from '../exception/global.expectation';
 
@@ -20,10 +20,10 @@ export default class JwtMiddleware {
           // 1. 获取Token的方法
           jwtFromRequest: (req: Request) => {
             if (!req.headers.authorization?.includes('Bearer ')) {
-              throw new TokenMissed();
+              return ''; // passport.error() -> 认证回调
             }
             // 这里可以自定义，但是返回的结果一定是JWT，否则passport-jwt进行校验，失败则抛出异常
-            // 抛出异常就会执行passport.fail() -> 下一个策略，没有时调用认证回调函数()
+            // 抛出异常就会执行passport.fail() -> 下一个策略，调用next(error)
             return req.headers['authorization'].split('Bearer ')[1];
           },
           ignoreExpiration: false,
@@ -36,7 +36,7 @@ export default class JwtMiddleware {
         // 这里最好写同步写法，不要async/await，因为passport-jwt中并未对异步做支持，要用异步就用Promise
         // done(err) -> passport.error() -> 认证回调()
         // done(null, payload) -> passport.success() -> 认证回调()
-        async (req: Request, payload: IPayload, done: VerifiedCallback) => {
+        (req: Request, payload: IPayload, done: VerifiedCallback) => {
           if (!payload.email || !payload.name) {
             done(new TokenException('伪造JWT'), null);
             return;
@@ -56,15 +56,10 @@ export default class JwtMiddleware {
         session: false,
       },
       // 3. 认证完成回调
-      function authCallback(
-        err: Error,
-        user: IPayload,
-        info: { message: string },
-      ) {
+      function authCallback(err: Error, user: IPayload, info: { message: string }) {
         // 错误处理
         const forbidden = err || info;
         if (forbidden) {
-          console.log(forbidden);
           let tip = '';
           if (info) {
             tip = info.message;
