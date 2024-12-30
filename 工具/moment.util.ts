@@ -2,6 +2,16 @@ import moment from "moment";
 
 export class MomentUtil {
   /**
+   * 检查日期时间是否符合格式化参数
+   * @param datetime 日期时间
+   * @param formatQuery 格式化参数
+   * @return {boolean}
+   */
+  static isValidByFormat(datetime, formatQuery = "HH:mm:ss.SSS") {
+    return moment(datetime, formatQuery, true).isValid();
+  }
+
+  /**
    * 统一时间格式
    * @param date
    * @param format "HH:mm:ss.SSS"
