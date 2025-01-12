@@ -28,15 +28,16 @@ export class PrismaService
     super(prismaOpt.prismaOpt);
 
     // debug详细内容
-    if (prismaOpt.debugging) {
+    if (this.prismaOpt.debugging) {
       this.$on("query", (event: Prisma.QueryEvent) => {
         const date = new Date(event.timestamp);
-        this.logger.debug("请求时间: ", date.toLocaleTimeString());
-        this.logger.debug("耗时: ", event.duration + "ms");
-        this.logger.debug("DB SQL: ", event.query);
+        this.logger.debug(`请求时间: ${date.toLocaleTimeString()}`);
+        this.logger.debug(`耗时: ${event.duration + "ms"}`);
+        this.logger.debug(`DB SQL: ${event.query}`);
         if (!event.target.includes("mongodb")) {
-          this.logger.debug("SQL 参数: ", event.params);
+          this.logger.debug(`SQL 参数: ${event.params}`);
         }
+        this.logger.debug("\n");
       });
     }
   }
