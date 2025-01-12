@@ -46,20 +46,13 @@ import { GotModule } from "@/common/modules/got/got.module";
       },
       preview: false,
     }),
-    PrismaModule.forRootAsync({
-      useFactory: (): IPrismaModule => {
-        return {
-          isGlobal: true,
-          // debugging: true,
-          async prismaOptFactory() {
-            const prismaOption: Prisma.PrismaClientOptions = {};
-            if (process.env['ENV'] === 'development') {
-              prismaOption.log = ['query', 'info', 'warn', 'error'];
-            }
-            return prismaOption;
-          },
-        };
+    PrismaModule.register({
+      isGlobal: true,
+      prismaOpt: {
+        errorFormat: "pretty",
+        log: [{ level: "query", emit: "event" }],
       },
+      debugging: false, // 按需开启debug调试SQL，以及清理慢SQL（⚠️ SQL过多可能刷屏）
     }),
     RedisModule.forRootAsync({
       useFactory: (configService: ConfigService<IEnv>) => {
