@@ -1,0 +1,16 @@
+# 通用模板
+services:
+  wzj-nodejs-v2:
+    image: xxx
+    container_name: xxx
+    restart: unless-stopped
+    ports:
+      - ""
+    volumes:
+      - $PWD/env:/app/src/env
+      - $PWD/pm2.config.cjs:/app/pm2.config.cjs
+      - $PWD/logs:/app/logs
+      - /data/oss:/app/public
+      - /etc/localtime:/etc/localtime
+      # vim配置
+      - /etc/vimrc:/etc/vim/vimrc
