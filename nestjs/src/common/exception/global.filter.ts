@@ -28,13 +28,12 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
 
     try {
       // 正常业务代码抛出的异常
+      this.logger.error(exception.stack || exception);
       if (exception instanceof NotFoundException) {
-        this.logger.warn(exception.message);
         response.status(404).json(ResponseUtil.error("接口未找到"));
       } else if (exception instanceof BadRequestException) {
         this.logger.warn(`request error: ${exception.message}`);
         this.logger.warn(exception.getResponse());
-        console.error("query error:", exception);
         const status = exception.getStatus();
         if (exception.getResponse()["message"] instanceof Array) {
           // 错误描述数组
@@ -46,7 +45,6 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
           response.status(status).json(ResponseUtil.error(errorMessage));
         }
       } else {
-        this.logger.error(exception.stack);
         response.status(500).json(ResponseUtil.error(undefined));
       }
     } catch (err: unknown) {
