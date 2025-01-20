@@ -12,19 +12,23 @@ export default class LoggerMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const start = Date.now();
-    res.on('finish', () => {
+    res.on("finish", () => {
       const method = req.method;
       const statusCode = res.statusCode;
-      const referer = res.getHeader('referer');
+      const referer = req.get("Referer");
       const uri = req.originalUrl;
       const spend = Date.now() - start;
       const reqIP = req.ip || req.ips[0]; // 首先信任代理头，其次信任连接IP，如果无代理则命中socket.remote.ip
-      const logMessage = `[${method}:${statusCode}] ${reqIP} | referer=${referer || ''} | URI=${uri} | spend=${spend}ms | pass=${req.pass !== false}`;
-      this.logger.log(logMessage);
+      const logMessage = `[${method}:${statusCode}] ${reqIP} | referer=${referer || ""} | URI=${uri} | spend=${spend}ms | pass=${req.pass !== false}`;
+      if (req.pass) {
+        this.logger.log(logMessage);
+      } else {
+        this.logger.error(logMessage);
+      }
 
       // 30x 重定向日志
       if ([301, 302].includes(statusCode)) {
-        this.logger.log(`[${method}] [${statusCode}] Redirect URL: ${res.getHeader('location')}`);
+        this.logger.log(`[${method}] [${statusCode}] Redirect URL: ${res.getHeader("location")}`);
       }
     });
     next();
