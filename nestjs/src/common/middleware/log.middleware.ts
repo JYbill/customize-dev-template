@@ -20,7 +20,7 @@ export default class LoggerMiddleware {
       const spend = Date.now() - start;
       const reqIP = req.ip || req.ips[0]; // 首先信任代理头，其次信任连接IP，如果无代理则命中socket.remote.ip
       const logMessage = `[${method}:${statusCode}] ${reqIP} | referer=${referer || ""} | URI=${uri} | spend=${spend}ms | pass=${req.pass !== false}`;
-      if (req.pass) {
+      if (req.pass !== false) {
         this.logger.log(logMessage);
       } else {
         this.logger.error(logMessage);
