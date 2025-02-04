@@ -17,11 +17,11 @@ import { GotModule } from "@/common/modules/got/got.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
-        envFilePath: '.env',
-        isGlobal: true,
-        cache: true,
-        expandVariables: true,
-        validate: validateConfig,
+      envFilePath: [process.env.NODE_ENV === "production" ? "env/.production.env" : "env/.development.env", "env/.env"],
+      isGlobal: true,
+      cache: true,
+      expandVariables: true,
+      validate: validateConfig,
     }),
     JwtModule.register({
       global: true,
