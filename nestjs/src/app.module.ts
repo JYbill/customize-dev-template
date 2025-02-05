@@ -30,20 +30,30 @@ import { GotModule } from "@/common/modules/got/got.module";
         expiresIn: process.env['JWT_EXPIRE'],
       },
     }),
-    MailerModule.forRoot({
-      transport: {
-        host: 'smtp.qq.com',
-        port: 587,
-        requireTLS: true,
-        auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_CODE,
-        },
+    MailerModule.forRootAsync({
+      async useFactory(configService: ConfigService<IEnv>) {
+        const MAIL_USER = configService.get("MAIL_USER");
+        const MAIL_CODE = configService.get("MAIL_CODE");
+        const MAIL_HOST = configService.get("MAIL_HOST");
+        const MAIL_PORT = configService.get("MAIL_PORT");
+        const config: MailerOptions = {
+          transport: {
+            host: MAIL_HOST,
+            port: MAIL_PORT,
+            requireTLS: true,
+            auth: {
+              user: MAIL_USER,
+              pass: MAIL_CODE,
+            },
+          },
+          defaults: {
+            from: `'No Reply' <no-reply@${MAIL_USER}>`,
+          },
+          preview: false,
+        };
+        return config;
       },
-      defaults: {
-        from: '"No Reply" <no-reply@localhost>',
-      },
-      preview: false,
+      inject: [ConfigService<IEnv>],
     }),
     PrismaModule.register({
       isGlobal: true,
@@ -73,6 +83,7 @@ import { GotModule } from "@/common/modules/got/got.module";
       global: true,
       middleware: { mount: false },
     }),
+    MailerUtilModule,
     NanoidModule,
     GotModule,
     UserModule
