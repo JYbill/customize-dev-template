@@ -34,8 +34,7 @@ import { GotModule } from "@/common/modules/got/got.module";
       transport: {
         host: 'smtp.qq.com',
         port: 587,
-        ignoreTLS: true,
-        secure: false,
+        requireTLS: true,
         auth: {
           user: process.env.MAIL_USER,
           pass: process.env.MAIL_CODE,
