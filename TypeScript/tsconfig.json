@@ -41,7 +41,9 @@
 
     /* 
       模块查找规则（编译时期）
-      "bundler" v5.0+ 不使用bundler打包，适用于写npm包启用，让构建工具去处理引入写法，"target": "esnext"和"moduleResolution": "node"一起使用。
+      "bundler" v5.0+ 使用构建工具找包策略，允许省略文件扩展名让构建工具处理
+      "node16"/"nodenext": 用于Node.js环境，支持ES模块和CommonJS👍
+      "classic": 默认值，老项目浏览器环境，支持ES模块和UMD
     */
     // "moduleResolution": "NodeNext",
 
