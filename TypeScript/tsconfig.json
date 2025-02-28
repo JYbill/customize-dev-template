@@ -124,7 +124,7 @@
     // 导入文件采用大小写一致，如果不一致则抛出错误，false允许忽略大小写
     "forceConsistentCasingInFileNames": true,
 
-    // 跳过第三方库检查的类型检查
+    // 开启，会跳过lib的ts检查，以及所有的.d.ts的检查
     "skipLibCheck": true,
 
     // 包含一组内建JS接口的类型定义，如"DOM"...，默认包括target相匹配的api类型定义
