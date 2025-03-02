@@ -41,7 +41,7 @@
 
     /* 
       模块查找规则（编译时期）
-      "bundler" v5.0+ 使用构建工具找包策略，允许省略文件扩展名让构建工具处理
+      "bundler" v5.0+ 模拟构建工具查找模块的行为，如：允许省略文件扩展名让构建工具处理，默认从.ts、.tsx、.d.ts、.js、.jsx、.json、.cjs、.mjs寻找模块
       "node16"/"nodenext": 用于Node.js环境，支持ES模块和CommonJS👍
       "classic": 默认值，老项目浏览器环境，支持ES模块和UMD
     */
