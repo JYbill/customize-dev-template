@@ -3,8 +3,9 @@ pnpm add @nestjs-cls/transactional @nestjs-cls/transactional-adapter-prisma nest
 pnpm add @nestjs/config @nestjs/mapped-types class-transformer class-validator ioredis express-session connect-redis @liaoliaots/nestjs-redis
 pnpm add @nestjs-modules/mailer nodemailer
 pnpm add jsonwebtoken @nestjs/jwt passport passport-jwt
-pnpm add helmet
+pnpm add helmet ms nanoid @sesamecare-oss/redlock
 
 # 开发时依赖
 pnpm add -D dotenv-cli prisma @prisma/client @swc/cli @swc/core
-pnpm add -D @types/express @types/node @types/express-session @types/jsonwebtoken @types/multer @types/passport @types/passport-jwt husky lint-staged
+pnpm add -D @types/express @types/node @types/express-session @types/jsonwebtoken @types/multer @types/passport @types/passport-jwt @types/helmet @types/ms
+pnpm add -D husky lint-staged
