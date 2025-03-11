@@ -46,7 +46,7 @@ async function bootstrap() {
   });
   app.use(
     session({
-      name: "oauth.sid",
+      name: "oauth.sid", // cookie key
       secret: JSON.parse(sessionSecrets),
       resave: false,
       rolling: false,
