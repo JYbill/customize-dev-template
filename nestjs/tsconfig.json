@@ -12,10 +12,10 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
 
     // add
@@ -31,6 +31,6 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     // "verbatimModuleSyntax": true, // 由于区分CJS/ESM模块化的写法，暂不开启
-    // "importsNotUsedAsValues": "error", // 不允许倒入类型时，不使用type关键字
+    // "importsNotUsedAsValues": "error", // 不允许倒入类型时，不使用type关键字(最新版TS已移除，需要开启使用verbatimModuleSyntax属性)
   }
 }
