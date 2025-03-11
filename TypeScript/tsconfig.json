@@ -15,6 +15,7 @@
 
     // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
     "target": "ESNext",
+
     /*
     （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     提示：node16与nodeNext: 表示node.js双模块系统（支持ESM与CJS），目前他俩表示一致，未来如果模块化内容有更新，则nodeNext表示最新的模块化特性！
@@ -31,6 +32,18 @@
     2. package.json中定义"type": "module"
     */
     "module": "NodeNext",
+
+    /* 
+      模块查找规则（类型检查、编译时期）
+      - tsc命令：依赖该规则查找策略
+      - 构建工具的插件：仅作为类型检查让查找策略与构建工具一致。真正的查找策略由构建工具完成
+      "bundler" v5.0+ 模拟构建工具查找模块的行为，如：允许省略文件扩展名让构建工具处理，默认从.ts、.tsx、.d.ts、.js、.jsx、.json、.cjs、.mjs寻找模块
+      "node16"/"nodenext": 用于Node.js环境，支持ES模块和CommonJS👍
+      "classic": 默认值，老项目浏览器环境，支持ES模块和UMD
+    */
+    // "moduleResolution": "NodeNext",
+
+
     /*
       使用自定义模块分辨，设置环境
       "module": [".ios", ".native", ""]
@@ -38,14 +51,6 @@
       首先检查./foo.ios.ts, 其次./foo.native.ts, 最后./foo.ts.
     */
     "moduleSuffixes": [],
-
-    /* 
-      模块查找规则（编译时期）
-      "bundler" v5.0+ 模拟构建工具查找模块的行为，如：允许省略文件扩展名让构建工具处理，默认从.ts、.tsx、.d.ts、.js、.jsx、.json、.cjs、.mjs寻找模块
-      "node16"/"nodenext": 用于Node.js环境，支持ES模块和CommonJS👍
-      "classic": 默认值，老项目浏览器环境，支持ES模块和UMD
-    */
-    // "moduleResolution": "NodeNext",
 
     // 用来指定编译文件的根目录，编译器会在根目录查找入口文件
     "rootDir": "./src",
