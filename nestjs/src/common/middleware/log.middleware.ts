@@ -28,7 +28,7 @@ export default class LoggerMiddleware {
 
       // 30x 重定向日志
       if ([301, 302].includes(statusCode)) {
-        this.logger.log(`[${method}] [${statusCode}] Redirect URL: ${res.getHeader("location")}`);
+        this.logger.log(`[${method}] [${statusCode}] Redirect URL: ${res.getHeader("location") as string}`);
       }
     });
     next();
