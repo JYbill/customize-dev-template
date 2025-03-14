@@ -213,6 +213,54 @@
 
 
 
+    // --------------------------  编译输出相关 start --------------------------
+    /*
+    target >= ES2022默认为true
+    🤔 target ES2022不再会编译class字段，会视为原生环境即支持。而ES2022之前会认为原生暂不支持仍然需要构建成JS产物
+    ```ts
+    class Base {
+        set data(value: string) {
+            console.log("data changed to " + value);
+        }
+    }
+    class Derived extends Base {
+        constructor() {
+            this.data = 10;
+        }
+    }
+    const test = new Derived();
+    ```
+    在上面例子中useDefineForClassFields为false时，test.data = 8会触发Base的set data()，这与ECMAscript规范不同
+    useDefineForClassFields为true时，会编译为如下代码，此时与test.data = 8不再会触发Base的set data()
+    ```ts
+    class Derived extends Base {
+        constructor() {
+            // ⚠️ 此时this.data实际拥有自己的set、get方法，此时与ECMAscript规范保持一致
+            Object.defineProperty(this, "data", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 10,
+            });
+        }
+    }
+    ```
+    */
+    "useDefineForClassFields": true,
+    // --------------------------  编译输出相关 end --------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
