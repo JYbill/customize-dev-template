@@ -19,14 +19,14 @@ async function bootstrap() {
   const configService = app.get(ConfigService<IEnv>);
   const logger = new Logger(bootstrap.name);
 
-  const apiPrefix = configService.get("API_PREFIX");
-  const port = configService.get("PORT");
-  const sessionSecrets = configService.get("SESSION_SECRETS");
-  const redisPrefix = configService.get("REDIS_PREFIX");
-  const redisHost = configService.get("REDIS_HOST");
-  const redisPort = configService.get("REDIS_PORT");
-  const redisPassword = configService.get("REDIS_PASSWORD");
-  const rememberExpire = configService.get<string>("SESSION_REMEMBER_EXPIRE");
+  const apiPrefix = configService.getOrThrow<string>("API_PREFIX");
+  const port = configService.getOrThrow<number>("PORT");
+  const sessionSecrets = configService.getOrThrow<string>("SESSION_SECRETS");
+  const redisPrefix = configService.getOrThrow<string>("REDIS_PREFIX");
+  const redisHost = configService.getOrThrow<string>("REDIS_HOST");
+  const redisPort = configService.getOrThrow<number>("REDIS_PORT");
+  const redisPassword = configService.getOrThrow<string>("REDIS_PASSWORD");
+  const rememberExpire = configService.getOrThrow<string>("SESSION_REMEMBER_EXPIRE") as ms.StringValue;
   const rememberExpireTTL = ms(rememberExpire);
 
   // 全局配置
@@ -46,7 +46,7 @@ async function bootstrap() {
   });
   app.use(
     session({
-      name: "oauth.sid",
+      name: "oauth.sid", // cookie key
       secret: JSON.parse(sessionSecrets),
       resave: false,
       rolling: false,

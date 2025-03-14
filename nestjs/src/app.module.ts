@@ -13,6 +13,7 @@ import process from 'process';
 import AdminMiddleware from './common/middleware/admin.middleware';
 import { NanoidModule } from "@/common/modules/nanoid/nanoid.module";
 import { GotModule } from "@/common/modules/got/got.module";
+import { UndiciModule } from "@/common/modules/undici/undici.module";
 
 @Module({
   imports: [
@@ -80,20 +81,28 @@ import { GotModule } from "@/common/modules/got/got.module";
       inject: [ConfigService],
     }),
     ClsModule.forRoot({
-      global: true,
-      middleware: { mount: false },
+        global: true,
+        middleware: { mount: false },
+        plugins: [
+            new ClsPluginTransactional({
+            adapter: new TransactionalAdapterPrisma({
+                prismaInjectionToken: PRISMA_TOKEN,
+            }),
+            enableTransactionProxy: true,
+            }),
+        ],
     }),
     MailerUtilModule,
     NanoidModule,
     GotModule,
-    UserModule
+    UserModule,
+    UndiciModule,
   ],
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {
-    // CLS中间件，手动注册避免因为nestjs路由版本控制，导致cls无法正确全局注册问题
-    consumer.apply(ClsMiddleware).forRoutes("*");
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(ClsMiddleware).forRoutes("*splat");
+    consumer.apply(LoggerMiddleware).forRoutes("*splat");
     consumer
       .apply(JwtMiddleware)
       .forRoutes(

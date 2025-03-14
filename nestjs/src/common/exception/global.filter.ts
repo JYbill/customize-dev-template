@@ -37,11 +37,11 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
         const status = exception.getStatus();
         if (exception.getResponse()["message"] instanceof Array) {
           // 错误描述数组
-          const [errorMessage] = exception.getResponse()["message"] || "请求格式错误";
+          const [errorMessage] = (exception.getResponse()["message"] as string) || "请求格式错误";
           response.status(status).json(ResponseUtil.error(errorMessage));
         } else {
           // 错误描述字符串
-          const errorMessage = exception.getResponse()["message"] || "请求格式错误";
+          const errorMessage = (exception.getResponse()["message"] as string) || "请求格式错误";
           response.status(status).json(ResponseUtil.error(errorMessage));
         }
       } else {

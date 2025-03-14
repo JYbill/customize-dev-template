@@ -19,9 +19,9 @@ version_id=`git rev-parse HEAD`
 echo "version_id:${version_id}"
 tag_id=${version_id:0:10}
 
-# service_name="..."
+service_name="backend-oauth"
 service_image_name="${service_name}-img"
-docker build -f "${platform}.Dockerfile" -t ${service_image_name} .
+docker build --progress=plain -f "${platform}.Dockerfile" -t ${service_image_name} .
 image_id=`docker images ${service_image_name} | awk '{ print $3 }' | sed -n '2p'`
 echo "image_id:${image_id}"
 
@@ -29,9 +29,14 @@ docker_tag="${platform}-${branch_name//\//-}_${tag_id}"
 echo "docker_tag:${docker_tag}"
 if [[ "$push_to_aliyun" == "true" ]]; then
   echo "docker start push"
-  # docker login ...
-  # docker tag ${image_id} ${tag}
-  # docker push ${image_id}:${tag}
+  # 内网
+  docker login --username=public --password=123456 192.168.88.115:8082
+  docker tag ${image_id} 192.168.88.115:8082/${service_name}:${docker_tag}
+  docker push 192.168.88.115:8082/${service_name}:${docker_tag}
+  # 外网
+  docker login --username=dailyinteraction --password=docker123wzj registry.cn-hangzhou.aliyuncs.com
+  docker tag ${image_id} registry.cn-hangzhou.aliyuncs.com/weizhujiao/${service_name}:${docker_tag}
+  docker push registry.cn-hangzhou.aliyuncs.com/weizhujiao/${service_name}:${docker_tag}
   if [ $? -ne 0 ]; then
     echo "docker push fail!"
     exit 1

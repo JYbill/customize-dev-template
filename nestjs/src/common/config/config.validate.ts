@@ -8,6 +8,11 @@ import { IsNumber, IsString, validateSync } from "class-validator";
 import path from "node:path";
 
 class EnvConfig implements IEnv {
+
+  @Expose()
+  @IsString()
+  APP_ROOT: string;
+
   @Expose()
   @IsString()
   APP_NAME: string;
