@@ -1,4 +1,4 @@
-import { ResponseUtil } from "../util/response.util";
+import { ResponseUtil } from "@/common/util/response.util";
 import {
   ArgumentsHost,
   BadRequestException,
@@ -28,8 +28,8 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
 
     try {
       // 正常业务代码抛出的异常
-      this.logger.error(exception.stack || exception);
       if (exception instanceof NotFoundException) {
+        this.logger.warn(`404 NOT FOUND: ${exception.message}`);
         response.status(404).json(ResponseUtil.error("接口未找到"));
       } else if (exception instanceof BadRequestException) {
         this.logger.warn(`request error: ${exception.message}`);
@@ -45,6 +45,7 @@ export class GlobalExceptionFilter implements ExceptionFilter<HttpException> {
           response.status(status).json(ResponseUtil.error(errorMessage));
         }
       } else {
+        this.logger.error(exception.stack || exception);
         response.status(500).json(ResponseUtil.error(undefined));
       }
     } catch (err: unknown) {
