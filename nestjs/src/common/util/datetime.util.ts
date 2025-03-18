@@ -25,4 +25,13 @@ export class DatetimeUtil {
   static zeroPointDateTime(date: DateArg<Date>) {
     return dateFns.format(date, "yyyy-MM-dd 00:00:00");
   }
+
+    /**
+   * 活钱timestamp前n分钟的日期对象
+   * @param timestamp
+   * @param n
+   */
+   static beforeNMinute(timestamp: number | string, n = 5) {
+     return dateFns.subMinutes(new Date(timestamp), n);
+   }
 }
