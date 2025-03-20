@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * @Description: 日志中间件
@@ -12,9 +12,9 @@ export default class LoggerMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const start = Date.now();
-    res.on("finish", () => {
+    res.on("close", () => {
       const method = req.method;
-      const statusCode = res.statusCode;
+      const statusCode = res.statusCode ?? 0; // 0表示用户主动断开连接
       const referer = req.get("Referer");
       const uri = req.originalUrl;
       const spend = Date.now() - start;
