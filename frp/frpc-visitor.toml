@@ -1,0 +1,14 @@
+# frpc 连接frps的配置
+serverAddr = "服务器IP"
+serverPort = 7000
+auth.token = "令牌"
+
+[[visitors]]
+name = "p2p_ssh_visitor"
+type = "xtcp"
+serverName = "p2p_ssh"
+secretKey = "abcdefg"
+bindAddr = "127.0.0.1"
+bindPort = 6000
+# 为true时，会保持TCP隧道的连接（🤔可能通过发空包保活），如果为false过一会儿可能会断开
+keepTunnelOpen = true
