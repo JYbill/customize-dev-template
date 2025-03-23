@@ -1,0 +1,11 @@
+services:
+  lobe-chat:
+    image: lobehub/lobe-chat
+    container_name: lobe-chat
+    restart: unless-stopped
+    ports:
+      - '3210:3210'
+    environment:
+      OPENAI_API_KEY: openAiKey
+      OPENAI_PROXY_URL: proxyURL
+      ACCESS_CODE: 123456 # 访问项目的密码
