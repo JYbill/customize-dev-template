@@ -1,15 +1,24 @@
-serverAddr = "x.x.x.x" 
+# frpc 连接frps的配置
+serverAddr = "服务器IP"
 serverPort = 7000
+auth.token = "令牌"
 
-# 配置文件写法
-# ClientCommonConfig可以直接写配置
-# transport 属于ClientTransportConfig，而poolCount属于其子属性
-# 所以需要用"transport.poolCount"表示
-transport.poolCount = 10
-auth.token = "token-value"
+# 默认为true，启用TCP多路复用，frps.toml必须保持一致frpc.toml
+transport.tcpMux = true
 
 [[proxies]]
-name = "test"
-type = "http"
-localPort = 3300
-customDomains = ["x.x.x.x"]
+# ssh内网穿透：目标服务SSH --映射-- 远程服务器端口 <- 本地机器访问
+name = "ssh"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 22
+remotePort = 19006
+
+[[proxies]]
+# xtcp SSH P2P连接（这里是remote client配置，visitor配置请参考frpc-visitor.toml配置文件）
+# 通过NAT打洞，实现本地端 与 目标端进行P2P XTCP直连
+name = "p2p_ssh"
+type = "xtcp"
+secretKey = "abcdefg"
+localIP = "127.0.0.1"
+localPort = 22

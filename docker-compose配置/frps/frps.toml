@@ -2,15 +2,26 @@ bindAddr = "0.0.0.0" # 服务端监听地址，用于接收 frpc 的连接，默
 bindPort = 7000 # 服务端监听端口，默认值为 7000。
 vhostHTTPPort = 19005 # 访问该端口转发到内网HTTP
 enablePrometheus = true # 启用普普罗米修斯监控（需要同时启用了 webServer 后才会生效）
+# frps允许的端口
+allowPorts = [
+  { start = 2000, end = 3000 }, # 2000-3000
+  { single = 3001 }, # 3001
+  { single = 3003 },
+  { start = 4000, end = 50000 }
+]
 
 # 配置文件写法
 # ClientCommonConfig可以直接写配置
 # transport 属于ClientTransportConfig，而poolCount属于其子属性
 # 所以需要用"transport.poolCount"表示
-auth.token = "token-value"
+auth.token = "令牌"
 
 # web 面板
 webServer.addr = "0.0.0.0" # web控制台允许访问的ip
 webServer.port = 19003 # web面板的端口
-webServer.user = "username"
-webServer.password = "123456"
+webServer.user = "user"
+webServer.password = "密码"
+
+# 默认为true，启用TCP多路复用，frps.toml必须保持一致frpc.toml
+# 功能：同一frpc的所有逻辑连接都被复用到同一个TCP连接中
+transport.tcpMux = true

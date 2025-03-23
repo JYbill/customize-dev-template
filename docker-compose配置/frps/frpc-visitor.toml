@@ -1,0 +1,14 @@
+# frpc 连接frps的配置
+serverAddr = "服务器IP"
+serverPort = 7000
+auth.token = "令牌"
+
+[[visitors]]
+name = "p2p_ssh_visitor"
+type = "xtcp"
+serverName = "p2p_ssh" # 对应frps注册的name，需要与目标段一致
+secretKey = "abcdefg" # XTCP协议加密解密密钥
+bindAddr = "127.0.0.1"
+bindPort = 6000 # 本地机器在与目标机器建立连接后，该端口作为映射端口。即本地:6000 -> 目标:22，此时可以进行ssh连接访问localhost:6000即能访问到目标端口
+# 为true时，会保持TCP隧道的连接（🤔可能通过发空包保活），如果为false过一会儿可能会断开
+keepTunnelOpen = true
