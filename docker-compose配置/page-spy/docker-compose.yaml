@@ -1,0 +1,10 @@
+services:
+  pageSpy:
+    image: ghcr.io/huolalatech/page-spy-web:v1.9.6
+    container_name: page-spy
+    restart: on-failure:3
+    ports:
+      - "6752:6752"
+    volumes:
+      - $PWD/log:/app/log
+      - $PWD/data:/app/data

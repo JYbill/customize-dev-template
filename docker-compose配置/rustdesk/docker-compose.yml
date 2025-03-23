@@ -1,0 +1,21 @@
+services:
+  hbbs:
+    container_name: hbbs
+    image: rustdesk/rustdesk-server:latest
+    command: hbbs
+    restart: on-failure:3
+    volumes:
+      - $PWD/data:/root
+    network_mode: "host"
+    depends_on:
+      - hbbr
+
+
+  hbbr:
+    container_name: hbbr
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    restart: unless-stopped

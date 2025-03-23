@@ -1,0 +1,15 @@
+services:
+    alist:
+        image: 'xhofe/alist:latest-ffmpeg'
+        container_name: alist
+        volumes:
+            - '/etc/alist:/opt/alist/data'
+        ports:
+            - '5244:5244'
+        environment:
+            # PUID用户Id、PGID用户组ID，避免主机操作系统和容器之间可能出现的权限问题
+            - PUID=1000
+            - PGID=1000
+            - UMASK=022
+            - TZ=Asia/Shanghai
+        restart: unless-stopped

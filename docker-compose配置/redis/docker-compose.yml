@@ -1,0 +1,12 @@
+services:
+  redis:
+    image: redis:7.4.1-alpine
+    container_name: redis
+    command: redis-server /etc/redis/redis.conf
+    volumes:
+      - $PWD/data:/data
+      - $PWD/redis.conf:/etc/redis/redis.conf
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    privileged: true # ontainer内的root拥有真正的root权限，否则只是普通用户

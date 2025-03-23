@@ -1,0 +1,82 @@
+version: '3.7'
+
+services:
+  mongodb1:
+    image: mongo
+    restart: on-failure
+    container_name: mongo1
+    volumes:
+      - ./db/mongo1:/data/db # 数据存放目录
+      # keyfile：用于集群之间的认证
+      - /data/mongodb.key:/data/mongodb.key
+      # 配置目录
+      - ./config/mongo1:/data/configdb
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+    networks:
+      - mongoNet
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint: 
+      - bash 
+      - -c 
+      - | 
+        chmod 400 /data/mongodb.key 
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+
+        
+
+  mongodb2:
+    image: mongo
+    restart: on-failure
+    container_name: mongo2
+    volumes:
+      - ./db/mongo2:/data/db
+      - /data/mongodb.key:/data/mongodb.key
+      - ./config/mongo2:/data/configdb
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+    networks:
+      - mongoNet
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /data/mongodb.key 
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+
+  mongodb3:
+    image: mongo
+    restart: on-failure
+    container_name: mongo3
+    volumes:
+      - ./db/mongo3:/data/db
+      - /data/mongodb.key:/data/mongodb.key
+      - ./config/mongo3:/data/configdb
+    ports:
+      - 27019:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+    networks:
+      - mongoNet
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /data/mongodb.key 
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+    
+networks:
+  mongoNet:
+    driver: bridge

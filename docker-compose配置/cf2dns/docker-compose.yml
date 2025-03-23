@@ -1,0 +1,8 @@
+services:
+  cf2dns:
+    image: dddb/cf2dns
+    container_name: cf2dns
+    restart: on-failure:3
+    volumes:
+      - $PWD/config.ini:/cf2dns/src/config.ini
+      - $PWD/logs:/cf2dns/logs

@@ -1,0 +1,15 @@
+serverAddr = "x.x.x.x" 
+serverPort = 7000
+
+# 配置文件写法
+# ClientCommonConfig可以直接写配置
+# transport 属于ClientTransportConfig，而poolCount属于其子属性
+# 所以需要用"transport.poolCount"表示
+transport.poolCount = 10
+auth.token = "token-value"
+
+[[proxies]]
+name = "test"
+type = "http"
+localPort = 3300
+customDomains = ["x.x.x.x"]

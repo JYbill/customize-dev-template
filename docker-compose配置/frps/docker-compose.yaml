@@ -1,0 +1,12 @@
+services:
+  frps:
+    image: snowdreamtech/frps:0.61.0-alpine
+    container_name: frps
+    restart: on-failure:3
+    network_mode: host
+    volumes:
+      - $PWD/frps.toml:/etc/frp/frps.toml
+    ports:
+      - '7000:7000'
+      - '19003:19003'
+      - '19005:19005'
