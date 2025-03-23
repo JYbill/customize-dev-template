@@ -1,0 +1,42 @@
+services: # 容器列表
+  hbbs: # 镜像名
+    container_name: hbbs # 容器名
+    image: rustdesk/rustdesk-server:latest # 对应镜像与其版本
+    
+    
+    volumes: # 挂载卷轴
+      - /home/ubuntu/docker/rustdesk:/root
+      # 设置容器对挂载卷轴的权限(即对宿主机的操作权限)
+      - /data:/data:rw # 容器只有读写权限
+      - /etc/localtime:/etc/localtime:ro # 只有只读权限
+      # 读取环境变量DOCKER_VOLUME_DIRECTORY，如果不存在则为"."即"./volumes/etcd:/etcd"
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+      
+    
+    network_mode: "host" # 网络
+    depends_on: # 依赖于hbbr容器启动后，才启动hbbs
+      - hbbr
+      
+    privileged: true # 允许访问宿主机所有权限
+    
+    # 重启规则
+    # always：总是重启，不推荐
+    # unless-stopped：崩溃或退出停止了，则会自动重启；而手动退出则不会👍
+    # on-failure: n：发生错误后自动最多重启n次
+    restart: unless-stopped
+    
+    # 从docker.env读取环境变量
+    env_file:
+      - docker.env
+    environment:
+    	- TZ=Asia/Shanghai
+    
+    # 一个网络端口部署3个副本实例，需要配合docker swarm启动
+    deploy:
+      replicas: 3
+
+# 设置网络
+# 访问：http://my_network:port
+networks:
+  default:
+    name: my_network

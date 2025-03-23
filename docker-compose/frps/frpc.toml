@@ -6,6 +6,9 @@ auth.token = "令牌"
 # 默认为true，启用TCP多路复用，frps.toml必须保持一致frpc.toml
 transport.tcpMux = true
 
+# STUN打洞服务
+# natHoleStunServer = ""
+
 [[proxies]]
 # ssh内网穿透：目标服务SSH --映射-- 远程服务器端口 <- 本地机器访问
 name = "ssh"
@@ -17,6 +20,7 @@ remotePort = 19006
 [[proxies]]
 # xtcp SSH P2P连接（这里是remote client配置，visitor配置请参考frpc-visitor.toml配置文件）
 # 通过NAT打洞，实现本地端 与 目标端进行P2P XTCP直连
+# ⚠️ 官方指定的stun服务，好像只有stun功能而没有turn中继功能，也就是stun打洞失败即无法连接而无法使用中间人传输的能力
 name = "p2p_ssh"
 type = "xtcp"
 secretKey = "abcdefg"

@@ -3,7 +3,11 @@ serverAddr = "服务器IP"
 serverPort = 7000
 auth.token = "令牌"
 
+# STUN打洞服务
+# natHoleStunServer = ""
+
 [[visitors]]
+# ⚠️ 官方指定的stun服务，好像只有stun功能而没有turn中继功能，也就是stun打洞失败即无法连接而无法使用中间人传输的能力
 name = "p2p_ssh_visitor"
 type = "xtcp"
 serverName = "p2p_ssh" # 对应frps注册的name，需要与目标段一致
