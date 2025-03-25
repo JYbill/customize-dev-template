@@ -4,11 +4,10 @@ import { Prisma } from ".prisma/client";
 import { Logger } from "@nestjs/common";
 import { PrismaClientKnownRequestError } from ".prisma/client/runtime/library";
 import { DBExpectation } from "@/common/exception/global.expectation";
-import type { TransactionHost } from "@nestjs-cls/transactional";
 import type { TransactionalAdapterPrisma } from "@nestjs-cls/transactional-adapter-prisma";
 
 export type PrismaExt = Awaited<ReturnType<typeof prismaFactory>>;
-export type PrismaTxHost = TransactionHost<TransactionalAdapterPrisma<PrismaExt>>;
+export type PrismaTx = TransactionalAdapterPrisma<PrismaExt>;
 
 const logger = new Logger("Prisma");
 export const prismaFactory = async (config: PrismaConfigType) => {
