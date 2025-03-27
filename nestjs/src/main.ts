@@ -18,6 +18,13 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<IEnv>);
   const logger = new Logger(bootstrap.name);
+  const processLogger = new Logger("process handler");
+  process.on("unhandledRejection", (err: Error) => {
+    processLogger.error("unhandledRejection", err);
+  });
+  process.on("uncaughtException", (err: Error) => {
+    processLogger.error("uncaughtException", err);
+  });
 
   const apiPrefix = configService.getOrThrow<string>("API_PREFIX");
   const port = configService.getOrThrow<number>("PORT");

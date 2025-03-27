@@ -26,3 +26,11 @@ type = "xtcp"
 secretKey = "abcdefg"
 localIP = "127.0.0.1"
 localPort = 22
+
+[[proxies]]
+# 自定义内网http地址
+name = "dify web server"
+type = "http"
+localIP = "192.168.88.115"
+localPort = 1234
+customDomains = ["1.2.3.4"] # 远程服务器的域名允许写IP，如果你用1.2.3.4访问就写ip

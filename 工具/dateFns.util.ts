@@ -11,6 +11,14 @@ export class DatetimeUtil {
   }
 
   /**
+   * 统一格式为ISO字符串
+   * @param date
+   */
+  static unifyDateTimeISO(date: DateArg<Date>): string {
+    return dateFns.formatISO(date);
+  }
+
+  /**
    * 统一日期格式
    * @param date
    */
