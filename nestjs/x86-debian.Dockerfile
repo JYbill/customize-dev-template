@@ -18,6 +18,16 @@ RUN npm run prisma:generate
 
 FROM node:22-slim AS production
 WORKDIR /app
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    bind9-dnsutils \
+    bash \
+    bash-completion \
+    vim \
+    openssl \
+    curl \
+    tcpdump \
+    net-tools
 ENV NODE_ENV production
 COPY --from=builder /app/package.json .
 RUN npm config set registry http://192.168.88.115:8081/repository/npm-proxy/ # 备用 RUN npm config set registry https://registry.npmmirror.com
@@ -28,15 +38,6 @@ RUN npm install --omit=dev --ignore-scripts --legacy-peer-deps && npm cache clea
 COPY --from=builder /app/ecosystem.config.js .
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/dist dist
-RUN apt-get update && apt-get install -y \
-    bind9-dnsutils \
-    bash \
-    bash-completion \
-    vim \
-    openssl \
-    curl \
-    tcpdump \
-    net-tools
 
 # 清理缓存文件
 RUN rm -rf /tmp/* && rm -rf /var/tmp/*

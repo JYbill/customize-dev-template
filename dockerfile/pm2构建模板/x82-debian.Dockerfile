@@ -13,6 +13,16 @@ RUN npm run prisma:generate
 
 FROM node:22-slim AS production
 WORKDIR /app
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    bind9-dnsutils \
+    bash \
+    bash-completion \
+    vim \
+    openssl \
+    curl \
+    tcpdump \
+    net-tools
 ENV NODE_ENV production
 COPY --from=builder /app/package.json .
 RUN npm config set registry https://registry.npmmirror.com
@@ -24,17 +34,6 @@ COPY --from=builder /app/ecosystem.config.js .
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/scripts scripts
 COPY --from=builder /app/dist dist
-
-# 使用bash
-RUN apt-get update && apt-get install -y \
-    bind9-dnsutils \
-    bash \
-    bash-completion \
-    vim \
-    openssl \
-    curl \
-    tcpdump
-RUN openssl version
 
 # 清理缓存文件
 RUN rm -rf /var/lib/apt/lists/*
