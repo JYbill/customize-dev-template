@@ -1,16 +1,9 @@
 import { Global, Module } from "@nestjs/common";
-import undici from "undici";
+import { UndiciService } from "@/common/modules/undici/undici.service";
 
-export const UNDICI = Symbol("undici");
-export type UndiciType = typeof undici;
 @Global()
 @Module({
-  providers: [
-    {
-      provide: UNDICI,
-      useValue: undici,
-    },
-  ],
-  exports: [UNDICI],
+  providers: [UndiciService],
+  exports: [UndiciService],
 })
 export class UndiciModule {}

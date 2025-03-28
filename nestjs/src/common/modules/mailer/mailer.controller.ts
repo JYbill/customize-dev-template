@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { SendService } from "@/modules/mailer/mailer.service";
+import { SendService } from "@/common/modules/mailer/mailer.service";
 
 @Controller("mailer")
 export class MailerController {
