@@ -1,0 +1,16 @@
+[Unit]
+Description=frpc
+Documentation=
+After=network.target iptables.service firewalld.service ip6tables.service ipset.service nftables.service
+PartOf=firewalld.service
+
+[Service]
+Type=simple
+ExecStart=/home/data/wzj/frpc/frpc -c /home/data/wzj/frpc/frpc.toml
+RuntimeDirectory=frpc
+PIDFile=/run/frpc/frpc.pid
+Restart=on-failure
+RestartPreventExitStatus=0
+
+[Install]
+WantedBy=multi-user.target

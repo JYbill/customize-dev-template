@@ -1,0 +1,34 @@
+[Unit]
+Description=服务名
+Documentation=man:fail2ban(1)
+# After：希望在这些service之后启动
+After=network.target iptables.service firewalld.service ip6tables.service ipset.service nftables.service
+# PartOf：表示属于某个service的一部分
+PartOf=firewalld.service
+
+[Service]
+# simple表示是一个简单的守护进程
+Type=simple
+Environment="PYTHONNOUSERSITE=1"
+# 启动命令
+ExecStart=/usr/bin/fail2ban-server -xf start
+# 停止命令
+ExecStop=/usr/bin/fail2ban-client stop
+# 重新加载命令
+ExecReload=/usr/bin/fail2ban-client reload
+# 在/run/*下创建进程sock文件
+RuntimeDirectory=fail2ban
+# pid文件名
+PIDFile=/run/fail2ban/fail2ban.pid
+# Restart：on-failure如果服务异常退出，自动重启
+Restart=on-failure
+# 0:如果是正常退出则不重启
+RestartPreventExitStatus=0
+Environment="PYTHONNOUSERSITE=yes"
+
+[Install]
+# WantedBy目的：创建开机自启的软链接，只有创建了软链接才能开机自启，否则只能手动systemctl start x
+    # multi-user.target：多用户命令行下
+    # graphical.target：图形界面下
+    # default.target：多用户命令行下 和 图形界面下
+WantedBy=multi-user.target
