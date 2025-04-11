@@ -33,6 +33,7 @@ const logger = createLogger({
     /*new ReportTransport({ level: "error" }),*/
     // 同步打印
     new transports.Console({
+      stderrLevels: ["error"],
       format: isDev ? colorize({ all: true }) : uncolorize(),
     }),
   ],
