@@ -99,5 +99,14 @@ const { rootRouter } = await import("./controller/index.js");
 app.use(rootRouter.routes());
 app.use(rootRouter.allowedMethods());
 
-app.listen(config.app.port || 3000);
-console.log(`wzj-nodejs-v2 is running on http://localhost:${config.app.port}`);
+// HTTP服务
+const httpServer = http.createServer(app.callback());
+
+// WS服务
+SocketIOContainer.init(httpServer);
+
+httpServer.listen(config.application.port, () => {
+  logger.info(`wzj-nodejs-v2 is running on http://localhost:${config.application.port || 3000}`);
+  logger.info(`wzj-nodejs-v2 is running on ws://localhost:${config.application.port || 3000}`);
+});
+
