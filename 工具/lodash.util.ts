@@ -17,6 +17,9 @@ export const objectToCamelCase = (object) => {
 export const isFalsy = (value) => {
   // 对象
   if (_.isObjectLike(value)) {
+    if (value instanceof Date) {
+      return isNaN(new Date().getTime());
+    }
     return _.isEmpty(value);
   } else {
     return Boolean(value) === false;
@@ -30,15 +33,15 @@ export const isFalsy = (value) => {
  */
 export const isTrusty = (value) => !isFalsy(value);
 
-  /**
-   * 根据omitList排除指定的字段，并返回全新的对象
-   * omitObject({a: 1, b: 2, c: 3}, ['a', 'b']) -> {c: 3}
-   * @param object
-   * @param omitList
-   */
-  export function omitObject<T extends object, K extends keyof T>(object: T, omitList: K[]) {
-    return _.omit(object, omitList);
-  }
+/**
+ * 根据omitList排除指定的字段，并返回全新的对象
+ * omitObject({a: 1, b: 2, c: 3}, ['a', 'b']) -> {c: 3}
+ * @param object
+ * @param omitList
+ */
+export function omitObject<T extends object, K extends keyof T>(object: T, omitList: K[]) {
+  return _.omit(object, omitList);
+}
 
 /**
  * pick / omit包装工具
