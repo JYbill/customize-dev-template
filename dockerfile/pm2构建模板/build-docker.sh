@@ -13,7 +13,7 @@ done
 shift $(($OPTIND - 1))
 
 echo "platform:${platform}"
-branch_name=`git name-rev --name-only HEAD`
+branch_name=`git symbolic-ref --short HEAD`
 echo "present_branch_name:${branch_name}"
 version_id=`git rev-parse HEAD`
 echo "version_id:${version_id}"

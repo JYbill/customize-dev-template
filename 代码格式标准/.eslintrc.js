@@ -51,6 +51,7 @@ module.exports = {
   },
 
   rules: {
+    eqeqeq: ["error", "always"], // 强制使用 === 和 !==
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "prettier/prettier": [
