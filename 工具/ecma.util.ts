@@ -59,10 +59,7 @@ export class EcmaUtil {
     for (const k in opt) {
       ret = new RegExp("(" + k + ")").exec(fmt);
       if (ret) {
-        fmt = fmt.replace(
-          ret[1],
-          ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0")
-        );
+        fmt = fmt.replace(ret[1], ret[1].length === 1 ? opt[k] : opt[k].padStart(ret[1].length, "0"));
       }
     }
     return fmt;
@@ -75,10 +72,7 @@ export class EcmaUtil {
    * @returns
    */
 
-  static dateFormatByEcma(
-    date: Date | number,
-    option?: Intl.DateTimeFormatOptions
-  ) {
+  static dateFormatByEcma(date: Date | number, option?: Intl.DateTimeFormatOptions) {
     return option
       ? new Intl.DateTimeFormat("zh-CN", option).format(date)
       : new Intl.DateTimeFormat("zh-CN", {
@@ -170,11 +164,7 @@ export class EcmaUtil {
    */
   // 定时器
   private static timer: NodeJS.Timeout | null;
-  static throttle(
-    time: number,
-    func: (args: TPrimitive[]) => void,
-    ...args: TPrimitive[]
-  ): void {
+  static throttle(time: number, func: (args: TPrimitive[]) => void, ...args: TPrimitive[]): void {
     if (!EcmaUtil.timer) {
       console.log("允许执行", new Date().getMilliseconds());
       // 执行到这里说明没有定时器, 执行并添加定时器
@@ -207,34 +197,95 @@ export class EcmaUtil {
   }
 
   /**
-   * 解析jwt并返回解析结果
-   * @param token 完整token数据
-   * @param authHeader Auth: Barber字段
-   * @returns
+   * 根据a, b两经纬度计算球面距离(地球面)
    */
-  static parseJWT(token: string, authHeader = "bearer"): JWTPayload {
-    if (token.length <= 1) {
-      throw new Error("token is null.");
+  static calcDistance(a, b) {
+    let ax: number | undefined;
+    let ay: number | undefined;
+    let bx: number | undefined;
+    let by: number | undefined;
+    for (const key in a) {
+      if (!ax) {
+        ax = a[key] * (Math.PI / 180);
+      } else if (!ay) {
+        ay = a[key] * (Math.PI / 180);
+      }
     }
-    let jwtString: string = token;
-    // 存在authHeader即去除authHeader
-    if (jwtString.includes(authHeader)) {
-      jwtString = token.replace(authHeader, "");
+    for (const key in b) {
+      if (bx == null) {
+        bx = b[key] * (Math.PI / 180);
+      } else if (by == null) {
+        by = b[key] * (Math.PI / 180);
+      }
     }
 
-    const payload = jose.decodeJwt(jwtString);
-    return payload;
+    if (!ax || !ay || !bx || !by) throw new Error("a, b参数错误, 请检查！");
+
+    const sin_x1 = Math.sin(ax),
+      cos_x1 = Math.cos(ax);
+    const sin_y1 = Math.sin(ay),
+      cos_y1 = Math.cos(ay);
+    const sin_x2 = Math.sin(bx),
+      cos_x2 = Math.cos(bx);
+    const sin_y2 = Math.sin(by),
+      cos_y2 = Math.cos(by);
+    const cross_prod = cos_y1 * cos_x1 * cos_y2 * cos_x2 + cos_y1 * sin_x1 * cos_y2 * sin_x2 + sin_y1 * sin_y2;
+    if (cross_prod >= 1 || cross_prod <= -1) {
+      if (!(Math.abs(cross_prod) - 1 < 0.000001)) {
+        return false;
+      }
+      return cross_prod > 0 ? 0 : Math.PI;
+    }
+    return Math.acos(cross_prod);
   }
 
   /**
-   * ES2020 String.prototype.replaceAll方法的替代方案
-   * 替换全部
-   * @param target
-   * @param targetStr
-   * @param replaceStr
+   * 根据num参数分割数组为二维数组
+   * @param list
+   * @param num 默认10个一组
+   * @returns
    */
-  static replaceAll(target: string, targetStr: string, replaceStr: string) {
-    return target.split(targetStr).join(replaceStr);
+  static groupByNum(list: any[], num: number = 10) {
+    const expireGroups = [];
+    let per10 = [];
+    const n = list.length;
+    for (let i = 0; i < n; i++) {
+      const el = list[i].valueOf();
+      if (i !== 0 && i % num === 0) {
+        expireGroups.push(per10);
+        per10 = [el];
+        continue;
+      } else if (i === n - 1) {
+        per10.push(el);
+        expireGroups.push(per10);
+        continue;
+      }
+      per10.push(el);
+    }
+    return expireGroups;
+  }
+
+  /**
+   * 将树结构扁平化为一个数组，且从保证顺序为[父1, 子1, 子2..., 父2, 子1, ...]的顺序
+   * @param tree - 需要扁平化的树结构。
+   * @param childKey - 用于访问子节点的键（默认为 'children'）。
+   * @returns {any[]} 一个以节点 ID 为键、节点对象为值的 Map。
+   */
+  static flattenTreeToArray(tree, childKey = "children") {
+    const list = [];
+
+    function traverse(nodes) {
+      for (const node of nodes) {
+        list.push(node);
+        const children = node[childKey];
+        if (Array.isArray(children)) {
+          traverse(children);
+        }
+      }
+    }
+
+    traverse(tree);
+    return list;
   }
 }
 
@@ -351,32 +402,13 @@ export const isOdd = (n: number) => {
   return n % 2 === 1 || n % 2 === -1;
 };
 
-import streamSaver from "streamsaver";
-
-type OversizeFileDownloadOption = {
-  url: string;
-  processHandler?: () => void;
-  limitSize?: number;
-};
-type DownloadInfo = {
-  res: Response;
-  reader: ReadableStreamDefaultReader;
-  filename: string;
-  size: number;
-  fileTotalSize: number;
-  contentLength: number;
-};
-
 /**
  * 排除keys中的字段
  * @param payload
  * @param keys
  * @returns
  */
-export function exclude<T, Key extends keyof T>(
-  payload: T,
-  keys: Key[]
-): Omit<T, Key> {
+export function exclude<T, Key extends keyof T>(payload: T, keys: Key[]): Omit<T, Key> {
   for (const key of keys) {
     delete payload[key];
   }
@@ -389,10 +421,7 @@ export function exclude<T, Key extends keyof T>(
  * @param keys
  * @returns
  */
-export function excludeAll<T, Key extends keyof T>(
-  payloadList: T[],
-  keys: Key[]
-): Omit<T, Key>[] {
+export function excludeAll<T, Key extends keyof T>(payloadList: T[], keys: Key[]): Omit<T, Key>[] {
   for (const payload of payloadList) {
     for (const key of keys) {
       delete payload[key];
@@ -406,10 +435,7 @@ export function excludeAll<T, Key extends keyof T>(
  * @param payload
  * @param keys payload的字段集合
  */
-export function pick<T, Key extends keyof T>(
-  payload: T,
-  keys: Key[]
-): Pick<T, Key> {
+export function pick<T, Key extends keyof T>(payload: T, keys: Key[]): Pick<T, Key> {
   const res: any = {};
   for (const key of keys) {
     res[key] = payload[key];
@@ -438,71 +464,3 @@ export function path2URI(assetsPrefix: string, path: string): string {
   uri = assetsPrefix + uri;
   return uri;
 }
-
-/**
- * 根据a, b两经纬度计算球面距离(地球面)
- */
-export function calcDistance(a, b) {
-    let ax: number | undefined;
-    let ay: number | undefined;
-    let bx: number | undefined;
-    let by: number | undefined;
-    for (const key in a) {
-        if (!ax) {
-            ax = a[key] * (Math.PI / 180);
-        } else if (!ay) {
-            ay = a[key] * (Math.PI / 180);
-        }
-    }
-    for (const key in b) {
-        if (bx == null) {
-            bx = b[key] * (Math.PI / 180);
-        
-        } else if (by == null) {
-            by = b[key] * (Math.PI / 180);
-    
-        }
-        
-    }
-
-    if (!ax || !ay || !bx || !by) throw new Error('a, b参数错误, 请检查！')
-
-    const sin_x1 = Math.sin(ax), cos_x1 = Math.cos(ax);
-    const sin_y1 = Math.sin(ay), cos_y1 = Math.cos(ay);
-    const sin_x2 = Math.sin(bx), cos_x2 = Math.cos(bx);
-    const sin_y2 = Math.sin(by), cos_y2 = Math.cos(by);
-    const cross_prod = cos_y1 * cos_x1 * cos_y2 * cos_x2 + cos_y1 * sin_x1 * cos_y2 * sin_x2 + sin_y1 * sin_y2;
-    if (cross_prod >= 1 || cross_prod <= -1) {
-        if (!(Math.abs(cross_prod) - 1 < 0.000001)) {
-            return false;
-        }
-        return cross_prod > 0 ? 0 : Math.PI;
-    }
-    return Math.acos(cross_prod);
-}
-
-/**
- * 根据num参数分割数组为二维数组
- * @param list 
- * @param num 默认10个一组
- * @returns 
- */
-export function groupByNum(list: any[], num: number = 10) {
-    const expireGroups = [];
-    let per10 = [];
-    const n = list.length;
-    for (let i = 0; i < n; i++) {
-      const el = list[i].valueOf();
-      if (i !== 0 && i % num === 0) {
-        expireGroups.push(per10);
-        per10 = [el];
-        continue;
-      } else if (i === n - 1) {
-        per10.push(el);
-        expireGroups.push(per10);
-        continue;
-      }
-      per10.push(el);
-    }
-    return expireGroups;
-  }

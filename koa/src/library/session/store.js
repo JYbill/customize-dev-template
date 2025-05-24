@@ -1,4 +1,11 @@
+import { config } from "#config";
+
 import { GlobalRedis } from "#lib/redis/index.js";
+import { globalLogger } from "#logger";
+import { isFalsy } from "#utils/lodash.util.js";
+
+const logger = globalLogger.child({ fileFlag: "session" });
+const sessionConfig = config.session;
 
 export const RedisStore = {
   async get(key) {
@@ -10,14 +17,13 @@ export const RedisStore = {
   },
   async set(key, value, maxAge, { changed, ctx, rolling }) {
     try {
+      if (typeof maxAge === "string") {
+        maxAge = sessionConfig.SESSION_MAX_AGE;
+      }
       const exist = await GlobalRedis.exists(key);
       if (!exist) {
         // 新建操作
-        const result = await GlobalRedis.psetex(
-          key,
-          maxAge,
-          JSON.stringify(value),
-        );
+        const result = await GlobalRedis.psetex(key, maxAge, JSON.stringify(value));
         return result;
       }
       // 更新操作
