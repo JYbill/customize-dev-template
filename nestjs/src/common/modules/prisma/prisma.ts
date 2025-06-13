@@ -29,6 +29,21 @@ export const prismaFactory = async (config: PrismaConfigType) => {
         },
 
         /**
+         * （未实现）递归过滤已被逻辑删除的数据
+         */
+        async findManyExcludeDeleted<Module>(this: Module, filter: Prisma.Args<Module, "findMany">, excludeDel = true): Promise<Module> {
+          const context = Prisma.getExtensionContext(this) as Module;
+
+          /* 实现：将所有关联查询都过滤逻辑删除的数据
+          while (whereFilter.select) {
+            whereFilter = whereFilter.select;
+          }
+          */
+          const data = await context["findMany"](filter);
+          return data;
+        },
+
+        /**
          * 对象排除
          * @param payload
          * @param keys
