@@ -267,6 +267,23 @@
     ```
     */
     "useDefineForClassFields": true,
+
+    /*
+    所有以"./"、"../"开头的ts文件导入，编译器将转换成对应的js文件(ts->js, mts->mjs, cts->cjs)
+
+    依赖于"paths"别名的路径，不会被转换
+    "paths": {
+        "@/*": ["./src/*"]
+    }
+    import * as utilities from "@/utilities.ts"; // 不会被转换
+
+    package.json中的"exports"或"imports"字段的路径不会被转换
+    "imports": {
+        "#root/*": "./dist/*"
+    }
+    import * as utilities from "#root/utilities.ts"; // 不会被转换
+    */
+    "rewriteRelativeImportExtensions": true, // v5.7+ 导入如果以ts(ts、mts、cts)结尾，tsc将会自动转换
     // --------------------------  编译输出相关 end --------------------------
 
 
