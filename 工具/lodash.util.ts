@@ -14,7 +14,10 @@ export const objectToCamelCase = (object) => {
  * @param value
  * @return {boolean}
  */
-export const isFalsy = (value) => {
+type Falsy<T> = T extends false | 0 | "" | null | undefined | 0n | never[] | Record<string, never>
+  ? T
+  : never;
+export const isFalsy = <T>(value: T): value is Falsy<T> => {
   // 对象
   if (_.isObjectLike(value)) {
     if (value instanceof Date) {
@@ -22,16 +25,18 @@ export const isFalsy = (value) => {
     }
     return _.isEmpty(value);
   } else {
-    return Boolean(value) === false;
+    return !value;
   }
 };
 
 /**
  * isFalsy的取反，目的语义化
  * @param value
- * @return {boolean}
  */
-export const isTrusty = (value) => !isFalsy(value);
+type Truthy<T> = T extends false | 0 | "" | null | undefined | 0n | never[] | Record<string, never>
+  ? never
+  : T;
+export const isTrusty = <T>(value: T): value is Truthy<T> => !isFalsy(value);
 
 /**
  * 根据omitList排除指定的字段，并返回全新的对象
