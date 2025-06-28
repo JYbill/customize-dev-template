@@ -10,8 +10,10 @@
   */
 
   "compilerOptions": {
-    // 作用：增量编译，只对更改的文件进行编译，从而提高编译速度
+    // 作用：增量编译，只对更改的文件进行编译，从而提高编译速度(对设置了noEmit只检查类型是也有效)
     "incremental": true,
+    // 指定incremental开启时，存放增量编译信息的文件路径
+    "tsBuildInfoFile": ".cache/.tsbuildinfo",
 
     // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
     "target": "ESNext",
