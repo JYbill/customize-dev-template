@@ -464,3 +464,26 @@ export function path2URI(assetsPrefix: string, path: string): string {
   uri = assetsPrefix + uri;
   return uri;
 }
+
+/**
+ * 判断value是否为合法值，只有NAN、undefined、null、Invalid Date视为无效值
+ */
+export function isValidValue<T>(value: T): boolean {
+  // 处理undefined和null
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  // 处理NaN
+  if (typeof value === "number" && isNaN(value)) {
+    return false;
+  }
+
+  // 处理Invalid Date
+  if (value instanceof Date && isNaN(value.getTime())) {
+    return false;
+  }
+
+  // 其他所有值都视为有效值
+  return true;
+}
