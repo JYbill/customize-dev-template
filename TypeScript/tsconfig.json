@@ -331,7 +331,7 @@
      getDogName = getAnimalName; // Okay (狗是动物，所以可以变成动物，广范围可以接受窄范围)
      getAnimalName = getDogName; // Okay (默认okay，开启后即bad，动物无法变成狗，子类无法"泛化"为父类)
      */
-     "strictFunctionTypes": true, // 默认false，禁止函数的泛化行为
+     "strictFunctionTypes": true, // 默认false，禁止函数的从子类型泛化为父类
      "strictPropertyInitialization": true, // 确保在构造函数中初始化所有类属性，否则报错，或者可以定义为String | undefined
      "strictBindCallApply": true, // 严格检查函数call()、bind()、apply()时的行为，不正确使用call()、bind() 和 apply() 函数时会报错，如：传参...
      "useUnknownInCatchVariables": false, // 为true时，它会隐式地将catch中的任何变量设置为unknown而不是any
