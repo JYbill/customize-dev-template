@@ -5,6 +5,11 @@ auth.token = "令牌"
 
 # 默认为true，启用TCP多路复用，frps.toml必须保持一致frpc.toml
 transport.tcpMux = true
+# 启用KCP协议连接frps
+transport.protocol = "kcp"
+# 启用QUIC协议连接frps
+# transport.protocol = "quic"
+
 
 # STUN打洞服务
 # natHoleStunServer = ""

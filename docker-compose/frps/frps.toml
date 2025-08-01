@@ -1,5 +1,13 @@
 bindAddr = "0.0.0.0" # 服务端监听地址，用于接收 frpc 的连接，默认监听 0.0.0.0。
 bindPort = 7000 # 服务端监听端口，默认值为 7000。
+# 启用KCP协议，底层使用UDP，优点是比TCP更快，缺点是需要多消耗10%到20%的带宽
+# kcpBindPort = 7000
+# 启用QUIC协议，底层使用UDP
+# quicBindPort = 7000
+
+# 每个代理可用的最大连接数
+transport.maxPoolCount = 20
+
 vhostHTTPPort = 19005 # 访问该端口转发到内网HTTP
 enablePrometheus = true # 启用普普罗米修斯监控（需要同时启用了 webServer 后才会生效）
 # frps允许的端口
