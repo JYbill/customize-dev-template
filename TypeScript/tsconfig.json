@@ -363,7 +363,31 @@
     // "typeRoots": [],
     // 用来指定需要包含的模块，如果在代码中导入过的类型无需使用该属性，未导入但又想使用才需要
     // "types": [],
-    // 允许从没有默认导出的模块中默认导入
+    
+    /*
+       允许从没有默认导出的模块中，使用默认导出语法
+       目的：为了babel兼容性，babel这类工具会将没有默认导出的模块，额外生成默认导出
+       
+       // utilFunction.js
+       const getStringLength = (str) => str.length; 
+       module.exports = {
+         getStringLength,
+       };
+
+       // index.ts
+       // 为false❌：...has no default export
+       // 为true✅
+       import utils from "./utilFunctions";
+
+       通过babel utilFunction.js会额外编译
+       module.exports = allFunctions;
+       module.exports.default = allFunctions;
+
+       以下情况默认标记为true，如果以下条件不满足则默认为false
+       1. esModuleInterop为true
+       2. module为"system"
+       3. moduleResolution为"bundler"
+     */
     // "allowSyntheticDefaultImports": false,
 
     // --------------------------  source map start  --------------------------
