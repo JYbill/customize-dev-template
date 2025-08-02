@@ -7,8 +7,6 @@ PartOf=firewalld.service
 [Service]
 Type=simple
 ExecStart=/home/data/wzj/frpc/frpc -c /home/data/wzj/frpc/frpc.toml
-RuntimeDirectory=frpc
-PIDFile=/run/frpc/frpc.pid
 Restart=on-failure
 RestartPreventExitStatus=0
 

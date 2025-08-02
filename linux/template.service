@@ -1,5 +1,5 @@
 [Unit]
-Description=服务名
+Description=描述该service的内容
 Documentation=man:fail2ban(1)
 # After：希望在这些service之后启动
 After=network.target iptables.service firewalld.service ip6tables.service ipset.service nftables.service
@@ -7,19 +7,29 @@ After=network.target iptables.service firewalld.service ip6tables.service ipset.
 PartOf=firewalld.service
 
 [Service]
-# simple表示是一个简单的守护进程
+# simple表示ExecStart主进程在前台运行
+# forking表示ExecStart主进程以"--daemon"守护进程方式在后台启动，且会创建一个pid进程文件
 Type=simple
+# oneshot表示执行完ExecStart即退出，适合一次性初始化任务
+# notify表示执行完ExecStart会使用sd_notify()（systemd用户空间函数）用于通知systemd告知执行完毕通知。方便某些服务监听systemd能够做一些流程处理
 Environment="PYTHONNOUSERSITE=1"
+
+# 指定启动用户
+User=root
+
 # 启动命令
 ExecStart=/usr/bin/fail2ban-server -xf start
 # 停止命令
 ExecStop=/usr/bin/fail2ban-client stop
 # 重新加载命令
 ExecReload=/usr/bin/fail2ban-client reload
+
+# 只有在Type=forking才有作用
 # 在/run/*下创建进程sock文件
 RuntimeDirectory=fail2ban
 # pid文件名
 PIDFile=/run/fail2ban/fail2ban.pid
+
 # Restart：on-failure如果服务异常退出，自动重启
 Restart=on-failure
 # 0:如果是正常退出则不重启
