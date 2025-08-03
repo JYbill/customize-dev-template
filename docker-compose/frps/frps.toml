@@ -5,6 +5,8 @@ bindPort = 7000 # 服务端监听端口，默认值为 7000。
 # 启用QUIC协议，底层使用UDP
 # quicBindPort = 7000
 
+# 类似于HTTP/2多路复用，同一frpc、frps的流量全部在一个TCP连接中
+transport.tcpMux = false
 # 每个代理可用的最大连接数
 transport.maxPoolCount = 20
 
