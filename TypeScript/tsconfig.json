@@ -96,7 +96,7 @@
     // "rootDirs": [],
 
     /**
-    作用：强制执行某些约束，能够确定项目是否构建
+    作用：强制执行某些约束，能够确定tsconfig.json是否属于模块
     当为true时
       1. 如果不存在`rootDir`字段，则为当前tsconfig.json文件目录，如果存在则为`rootDir`的值；
       2. 必须包含`include`或`files`数组字段，否则抛出错误
@@ -272,20 +272,44 @@
 
     /*
     所有以"./"、"../"开头的ts文件导入，编译器将转换成对应的js文件(ts->js, mts->mjs, cts->cjs)
-
-    依赖于"paths"别名的路径，不会被转换
+    1. 依赖于"paths"别名的路径，不会被转换
     "paths": {
         "@/*": ["./src/*"]
     }
     import * as utilities from "@/utilities.ts"; // 不会被转换
-
-    package.json中的"exports"或"imports"字段的路径不会被转换
+    2. package.json中的"exports"或"imports"字段的路径不会被转换
     "imports": {
         "#root/*": "./dist/*"
     }
     import * as utilities from "#root/utilities.ts"; // 不会被转换
+
+    // 如果希望使用exports并支持rewriteRelativeImportExtensions的转换，可以这么使用
+    // my-package/package.json
+    {
+        "name": "my-package",
+        "exports": {
+            ".": {
+                "@my-package/development": "./src/index.ts",
+                "import": "./lib/index.js"
+            },
+            "./*": {
+                "@my-package/development": "./src/*.ts",
+                "import": "./lib/*.js"
+            }
+        }
+    }
+    // 以如下条件进行运行
+    node --conditions=@my-package/development
     */
+    // 该库的目的在于：在保证最大兼容性条件下（构建工具使用别名写法不会转换），tsc能够将ts转换成对应的js文件。
     "rewriteRelativeImportExtensions": true, // v5.7+ 导入如果以ts(ts、mts、cts)结尾，tsc将会自动转换
+
+    // 对当前tsconfig.json定义引用，即如果要编译当前项目则先编译references内的所有tsconfig.json文件，这样方便划分不同的项目
+    // 如果有"increment"增量编译选项，那么增量编译是对不同tsconfig模块进行划分的，而会因为子tsconfig重新编译而导致父tsconfig重新编译，减少重复构建，提高效率
+    // tsc构建或类型检查时，递归检查并增量执行(如果有increment配置)子依赖tsconfig.lib.json文件，再执行根tsconfig.json文件
+    "references": [
+        { "path": "./tsconfig.lib.json" }
+    ]
     // --------------------------  编译输出相关 end --------------------------
 
 
@@ -434,7 +458,7 @@
     styles.cookieBanner; // string
      */
 
-    // 导包时，首选package.json下的exports或imports字段中的指定字段
+    // 根据当前包名对exports进行导包时，指定当前环境，并导入对应的文件，下面例子导入的为foo.mjs文件
     // "customConditions": ["custom"], // Typescript v5.0+
     /* 
     生效条件，moduleResolution: ["node16", "nodeNext", "bundler"]
