@@ -159,7 +159,7 @@ module.exports = function (env, argv) {
      * - crossOriginLoading：Webpack输出的部分代码块可能需要异步加载，如果涉及跨域请求则需要配置了，取值：false | "anonymous" 不带凭证的跨域 | "use-credentials" 带凭证的跨域
      *
      * - library: 根据入口配置导出库的名称，⚠️ entry为数组时，只有最后一个文件会被暴露，详细参考：[output.library详细官方文档](https://webpack.docschina.org/configuration/output/#outputlibrary)
-     * - library.type: 暴露方式。var、commonjs、json...
+     * - library.type: 让构建产物支持导出，。var、commonjs2、json、esm(🧪实验性)...。注意，仅限于导出的模块化，导入依旧是cjs
      * - library.export: 指定哪一个方法/模块导出应该被暴露为一个库。默认为undefined，将会导出整个（命名空间）对象
      *
      * - pathinfo: 所包含模块信息相关的注释，development环境默认开启，production默认为false
@@ -433,6 +433,7 @@ module.exports = function (env, argv) {
          *    - minChunks: 模块被引用2次以上的才抽离
          *    - priority: cacheGroups内自定义组的优先级、权重
          *    - cacheGroups: 自定义分割规则
+         *      - 可以使用上面定义的选项
          *      - reuseExistingChunk: 默认true。如果当前chunk包含已从主bundle中拆分出的模块，则它将被重用，而不是生成新的模块。
          */
         automaticNameDelimiter: "-",
