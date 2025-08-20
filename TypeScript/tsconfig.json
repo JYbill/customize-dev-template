@@ -4,11 +4,6 @@
   // ⚠️ 继承来的同名配置会覆盖当前文件定义的配置(typescript 3.2+)
   // "extends": "",
 
-  // "reference": []
-  /*
-    作用：将TS构建为更小的片段的一种方法。使用reference可以极大地缩短编译和编辑器交互时间，分割不同目录下配置文件的内容
-  */
-
   "compilerOptions": {
     // 作用：增量编译，只对更改的文件进行编译，从而提高编译速度(对设置了noEmit只检查类型是也有效)
     "incremental": true,
@@ -54,33 +49,26 @@
     */
     "moduleSuffixes": [],
 
-    // 用来指定编译文件的根目录，编译器会在根目录查找入口文件
+    /*
+        用来指定编译文件的根目录，编译器会在根目录查找入口文件
+        ⚠️ extends时，子tsconfig.json模块未定义"rootDir"，则会使用相对于父tsconfig的"rootDir"，解析路径是父tsconfig！！！
+    */
     "rootDir": "./src",
+
     // 用来指定输出文件夹，值为一个文件夹路径字符串，输出的文件都将放置在这个文件夹
     "outDir": "./dist",
-        /* 
-    // 打包工具经过配置后下面的引入可以都生效
-    import * as utils from "./utils";     
-    import * as utils from "./utils.mjs";
-    */
-    // 基准目录：
-    /*
-    baseUrl
-        ├── ex.ts
-        ├── hello
-        │   └── world.ts
-        └── tsconfig.json
 
-      // 设置之后以当前目录为基准目录
-      // 未设置：import { helloWorld } from "./hello/world";
-      import { helloWorld } from "hello/world";
-      console.log(helloWorld);
+    
+    /*
+        作用：tsconfig.json的基准目录，paths等默认以此解析之后的路径作为基准
+        ⚠️ extends时，子tsconfig.json模块未定义"baseUrl"，则会使用相对于父tsconfig的baseUrl，解析路径是父tsconfig！！！
     */
-    // "baseUrl": "./"
+    "baseUrl": ".",
 
     // 用于设置模块名到基于baseUrl的路径映射的`别名`
     /*
       // 你可以告诉TS文件解析器路径别名，⚠️ 仅起到路径解析，如果使用其他构建工具进行打包，需在再其他构建工具(如：webpack、vite)中也要配置别名，这里只是起到类型检测的作用！
+      // ⚠️ 如果是本项目的"includes"包含的路径，则不会对import代码转换
       {
         "compilerOptions": {
           "baseUrl": "src",
@@ -91,18 +79,29 @@
           },
       }
     */
-    // "paths": {},
-    // 在构建时编译器会将这个路径列表中的路径内容都放到一个文件夹中
-    // "rootDirs": [],
-
-    /**
-    作用：强制执行某些约束，能够确定tsconfig.json是否属于模块
-    当为true时
-      1. 如果不存在`rootDir`字段，则为当前tsconfig.json文件目录，如果存在则为`rootDir`的值；
-      2. 必须包含`include`或`files`数组字段，否则抛出错误
-      3. `declaration`默认为true
+    /*
+        ⚠️ 当paths中包含了不属于本tsconfig.json的外部依赖，且在项目中被引用，那么编译时会额外构建外部依赖
+        // 根目录tsconfig.base.json
+        "compilerOptions": {
+            "rootDir": ".",
+            "baseUrl": ".",
+            "paths": {
+                "@nx-learn/common": ["libs/common/src/index.ts"] // 对于api项目而言，被继承的别名属于外部依赖
+            }
+        }
+        // 根目录/apps/api/tsconfig.json
+        "extends": "../../tsconfig.base.json",
+        "include": ['src...']
+        此时对api子项目进行编译时，会额外创建lib/common项目（因为rootDir是父级解析的，所以是能查找到lib/common目录的）
+        而且，还会对引入lib/common的import代码进行相对路径转换
+        import { test } from "@/nx-learn/common";
+        转换为
+        import { test } from "../../nx-learn/common/libs/index.js";
     */
-    // "composite": true,
+    "paths": {},
+
+    // 指定多个根目录
+    // "rootDirs": [],
 
     // ES模块交互，推荐开启，可以让ESModule与CJS进行包装，兼容性调用(默认：false)
     /**
@@ -307,9 +306,20 @@
     // 对当前tsconfig.json定义引用，即如果要编译当前项目则先编译references内的所有tsconfig.json文件，这样方便划分不同的项目
     // 如果有"increment"增量编译选项，那么增量编译是对不同tsconfig模块进行划分的，而会因为子tsconfig重新编译而导致父tsconfig重新编译，减少重复构建，提高效率
     // tsc构建或类型检查时，递归检查并增量执行(如果有increment配置)子依赖tsconfig.lib.json文件，再执行根tsconfig.json文件
+    // ⚠️ 如果要编译所有链路的tsconfig模块必须使用`tsc --build`（reference编译），而不是`tsc -p`或`tsc`（普通编译）
+    // 🌰 只对叶子节点构建：tsc --build libs/son/tsconfig.json，此时只会构建sub项目
     "references": [
         { "path": "./tsconfig.lib.json" }
     ]
+
+    /**
+    作用：强制执行某些约束，能够确定tsconfig.json是否属于模块，启用后才能references模块开启增量编译（生成.tsbuildinfo文件）
+    当为true时
+      1. 如果不存在`rootDir`字段，则为当前tsconfig.json文件目录，如果存在则为`rootDir`的值；
+      2. 必须包含`include`或`files`数组字段，否则抛出错误
+      3. `declaration`默认为true
+    */
+    // "composite": true,
     // --------------------------  编译输出相关 end --------------------------
 
 
