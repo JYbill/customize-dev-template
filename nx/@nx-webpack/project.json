@@ -1,0 +1,20 @@
+{
+  "serve": {
+    "executor": "@nrwl/webpack:dev-server",
+    "defaultConfiguration": "development", // 默认配置条件
+    "options": {
+      "webpackConfig": "apps/my-app/webpack.config.js", // webpack配置文件
+      "buildTarget": "web-print:build",
+      "hmr": true
+    },
+    "configurations": { // 配置，都以options key作为选项，使用时进行覆盖
+      "development": {
+        "buildTarget": "web-print:build:development"
+      },
+      "production": {
+        "buildTarget": "web-print:build:production",
+        "hmr": false
+      }
+    }
+  }
+}

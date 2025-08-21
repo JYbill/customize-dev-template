@@ -1,0 +1,40 @@
+{
+  // 🌰 链式串行任务
+  "run": {
+    "executor": "nx:run-commands",
+    "options": {
+      "cwd": "apps/frontend", // 运行命令的工作目录
+      "commands": [
+        "mkdir -p apps/frontend/scripts",
+        "touch apps/frontend/scripts/my-script.sh",
+        "echo 'READY'",
+
+        // 参数插入
+        // 用法一：nx run <target> --args="--name=example"
+        // 用法二👍：nx run <target> --name=example
+        // 最终运行：chmod +x apps/frontend/scripts/example.sh
+        "chmod +x apps/frontend/scripts/{args.name}.sh"
+      ],
+      // 默认当所有命令执行完毕才会认为本任务完成，你可以自定义一个特殊字符，该字符在stdout或stderr出现时，即认为任务执行完毕
+      // "readyWhen": "READY",
+      "readyWhen": ["READY"], // 出现多个指定的特殊字符时，才认为任务结束
+
+      // 是否并行
+      "parallel": false
+    }
+  },
+
+  // 🌰 禁用参数传递：默认如果不存在参数插入，会将传递的参数全部传递给命令。
+  // 下面的例子是关闭该行为，即没有使用参数插入时也不会传递参数给命令
+  "webpack": {
+    "executor": "nx:run-commands",
+    "options": {
+      "commands": [
+        {
+          "command": "webpack",
+          "forwardAllArgs": false
+        }
+      ]
+    }
+  }
+}

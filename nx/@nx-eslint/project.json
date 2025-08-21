@@ -1,0 +1,15 @@
+{
+    "targets": {
+    "lint": {
+        "executor": "@nx/eslint:lint",
+        "cache": true,
+        "outputs": ["{options.outputFile}"],
+        "options": {
+        "eslintConfig": "{projectRoot}/eslint.config.mjs", // 指定eslint文件
+        "lintFilePatterns": ["{projectRoot}/src/**/*.ts"], // 指定扫描文件
+        "fix": true, // 自动添加--fix
+        "cacheLocation": "{workspaceRoot}/.cache/api" // 指定缓存位置
+        }
+    }
+    }
+}
