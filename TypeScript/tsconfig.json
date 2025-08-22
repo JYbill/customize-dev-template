@@ -313,6 +313,7 @@
     ]
 
     /**
+    ⚠️ 一旦使用tsc --build进行构建，则"composite": true是必须的，否则会抛出错误
     作用：强制执行某些约束，能够确定tsconfig.json是否属于模块，启用后才能references模块开启增量编译（生成.tsbuildinfo文件）
     当为true时
       1. 如果不存在`rootDir`字段，则为当前tsconfig.json文件目录，如果存在则为`rootDir`的值；
