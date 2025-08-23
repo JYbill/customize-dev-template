@@ -24,6 +24,9 @@ services: # 容器列表
     # unless-stopped：崩溃或退出停止了，则会自动重启；而手动退出则不会👍
     # on-failure: n：发生错误后自动最多重启n次
     restart: unless-stopped
+
+    # 最长优雅停止时长，默认会等待10s结束
+    stop_grace_period: 10s
     
     # 从docker.env读取环境变量
     env_file:
