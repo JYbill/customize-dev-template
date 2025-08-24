@@ -8,7 +8,9 @@ PartOf=firewalld.service
 Type=simple
 ExecStart=/home/data/wzj/frpc/frpc -c /home/data/wzj/frpc/frpc.toml
 Restart=on-failure
-RestartPreventExitStatus=0
+StartLimitIntervalSec=60
+RestartSec=10
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

@@ -34,6 +34,13 @@ PIDFile=/run/fail2ban/fail2ban.pid
 Restart=on-failure
 # 0:如果是正常退出则不重启
 RestartPreventExitStatus=0
+# 每次重启延迟时间，服务失败后过10s再开始重启，默认值100ms
+RestartSec=10
+# 重启时间窗口长度，重启总时间 <= 60s
+StartLimitIntervalSec=60
+# 在重启时间窗口长度内，最多允许重启的次数，超出则放弃重启
+StartLimitBurst=5
+
 Environment="PYTHONNOUSERSITE=yes"
 
 [Install]
