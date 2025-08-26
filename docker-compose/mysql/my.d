@@ -1,7 +1,6 @@
 [mysqld]
 wait_timeout=86400
 default-time-zone='+00:00'
-skip-name-resolve
 character_set_server=utf8mb4
 server-id=1000
 
@@ -17,3 +16,38 @@ log-bin=mysql-bin
 binlog-format=ROW
 binlog_expire_logs_seconds=2592000
 max_binlog_size=100M
+
+# ------------------------------
+# 内存缓冲区设置
+# ------------------------------
+# 每个连接的排序缓冲区
+sort_buffer_size = 4M
+
+# 排序后随机读取缓冲区
+read_rnd_buffer_size = 4M
+
+# 无索引 JOIN 缓冲区
+join_buffer_size = 16M
+
+# 内存临时表大小（超过则写磁盘）
+tmp_table_size = 64M
+max_heap_table_size = 64M
+
+
+# ------------------------------
+# 常用优化
+# ------------------------------
+# 避免 DNS 查询，提高连接速度
+# skip-name-resolve
+
+# 增加最大允许包大小（必要时）
+max_allowed_packet = 64M
+
+# 调整 InnoDB 缓冲池大小（可根据服务器内存调）
+innodb_buffer_pool_size = 512M
+
+# 日志和文件路径
+log_error = /logs/mysql-error.log
+slow_query_log = 1
+slow_query_log_file = /logs/mysql-slow.log
+long_query_time = 2
