@@ -1,7 +1,7 @@
 /**
  * @file: .eslintrc.js
  * @author: xiaoqinvar
- * @desc: eslint模板
+ * @desc: eslint模板, eslint v9-
  * @dependencies: 
  * @date: 2022-12-31 11:06:09
  */
