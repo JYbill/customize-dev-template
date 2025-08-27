@@ -3,3 +3,4 @@ Host 1.1.1.1
   User xxx
   Port 1111
   IdentityFile ~/.ssh/xxx
+  IdentitiesOnly yes
