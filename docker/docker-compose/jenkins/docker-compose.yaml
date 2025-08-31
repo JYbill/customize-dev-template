@@ -1,0 +1,14 @@
+services:
+  jenkins-compose:
+    image: jenkins/jenkins:lts
+    privileged: true
+    restart: on-failure:20
+    ports:
+     - "8080:8080"
+     - "50000:50000"
+    environment:
+     - JAVA_OPTS=-Duser.timezone=Asia/Shanghai
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /usr/bin/docker:/usr/bin/docker
+     - $PWD/jenkins_home:/var/jenkins_home

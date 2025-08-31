@@ -4,3 +4,5 @@ Host 1.1.1.1
   Port 1111
   IdentityFile ~/.ssh/xxx
   IdentitiesOnly yes
+  Compression yes
+  ProxyJump root@tthd-221
