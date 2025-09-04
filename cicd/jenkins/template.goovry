@@ -1,0 +1,89 @@
+pipeline {
+    agent any
+
+    tools {
+      nodejs 'node-latest'
+    }
+    
+    stages {
+        stage('git clone') {
+            steps {
+                git branch: branch, credentialsId: 'codeup-person-password', url: 'git url'
+            }
+        }
+        
+        stage('pnpm install') {
+            steps {
+                sh 'pnpm config set package-lock false'
+                sh 'pnpm i' // DEBUG: --reporter=ndjson
+                sh 'pnpm approve-builds'
+            }
+        }
+        
+        // stage('lint') {
+        //     steps {
+        //         sh 'pnpm lint'
+        //     }
+        // }
+
+        stage('tsc type check') {
+            steps {
+                sh 'pnpm tsc --version'
+                sh 'pnpm tsc --noEmit'
+            }
+        }
+
+        stage('docker build') {
+            steps {
+                script {
+                  def dockerImageName = "backend-wzj-nodejs-v2"
+                  def branchName = sh(script: "git name-rev --name-only HEAD", returnStdout: true).trim().replace("/", "_")
+                  def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
+                  def dockerTag = "x86_${branchName}_${commitId}"
+                  
+                  env.DOCKER_IMAGE_NAME = dockerImageName
+                  env.DOCKER_TAG = dockerTag
+                  
+                  sh "docker build --build-arg HTTP_PROXY=http://127.0.0.1:7897 --build-arg https_proxy=http://127.0.0.1:7897 --build-arg http_proxy=http://127.0.0.1:7897 --build-arg HTTPS_PROXY=http://127.0.0.1:7897 -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
+                  // sh "docker build -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
+                  
+                  withCredentials([usernamePassword(
+                    credentialsId: 'nexus-155-user-pwd',
+                    usernameVariable: 'username',
+                    passwordVariable: 'password'
+                  )]) {
+                    sh 'docker login --username=$username --password=$password 127.0.0.1:8082'
+                    sh "docker tag ${dockerImageName} 127.0.0.1:8082/${dockerImageName}:${dockerTag}"
+                    sh "docker push 127.0.0.1:8082/${dockerImageName}:${dockerTag}"
+                  }
+                }
+            }
+        }
+        
+        stage("ssh deploy") {
+            steps {
+                script {
+                  def remote = [:]
+                  remote.name = '内网234'
+                  remote.host = '127.0.0.1'
+                  remote.allowAnyHosts = true
+                  
+                  withCredentials([sshUserPrivateKey(
+                    credentialsId: '234_ssh_pk',
+                    usernameVariable: 'userName',
+                    keyFileVariable: 'identity'
+                  )]) {
+                    remote.user = userName
+                    remote.identityFile = identity
+                    sshCommand remote: remote, command: """
+                      cd /home/data/wzj/wzj-nodejs-v2
+                      sed -i 's/${env.DOCKER_IMAGE_NAME}.*/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}/' docker-compose.yaml
+                      docker compose up -d
+                    """
+                  }
+                }
+            }
+        }
+        
+    }
+}
