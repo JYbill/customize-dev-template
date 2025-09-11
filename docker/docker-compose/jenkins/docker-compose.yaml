@@ -11,4 +11,5 @@ services:
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
      - /usr/bin/docker:/usr/bin/docker
+     - /usr/lib/docker/cli-plugins:/usr/lib/docker/cli-plugins:ro
      - $PWD/jenkins_home:/var/jenkins_home
