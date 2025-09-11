@@ -9,6 +9,9 @@ transport.tcpMux = true
 transport.protocol = "kcp"
 # 启用QUIC协议连接frps
 # transport.protocol = "quic"
+# 加密与压缩
+transport.useEncryption = true
+transport.useCompression = true
 
 
 # STUN打洞服务
