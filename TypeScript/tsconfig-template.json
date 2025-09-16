@@ -1,22 +1,24 @@
 {
     "compilerOptions": {
       "module": "NodeNext",
+      "target": "ESNext",
       "declaration": true,
       "removeComments": false,
       "allowSyntheticDefaultImports": true,
-      "target": "ESNext",
       "sourceMap": true,
       "outDir": "./dist",
       "baseUrl": "./",
       "incremental": true,
+      "skipDefaultLibCheck": true,
 
       // lint
+      "strict": true,
       "skipLibCheck": true,
-      "strictNullChecks": false,
-      "noImplicitAny": false,
-      "strictBindCallApply": false,
-      "forceConsistentCasingInFileNames": false,
-      "noFallthroughCasesInSwitch": false,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "strictBindCallApply": true,
+      "forceConsistentCasingInFileNames": true,
+      "noFallthroughCasesInSwitch": true,
       "noUnusedLocals": false,
       "noUnusedParameters": false,
 
@@ -31,7 +33,8 @@
   
       // 兼容swc部分
       "isolatedModules": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "verbatimModuleSyntax": true,
     }
   }
   
