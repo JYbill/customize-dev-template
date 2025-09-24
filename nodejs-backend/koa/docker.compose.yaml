@@ -1,0 +1,16 @@
+services:
+  wzj-nodejs-v2:
+    # 内网
+    image: 192.168.88.115:8082/backend-wzj-nodejs-v2:x86-debian-master_8d41098bb5
+    container_name: wzj-nodejs-v2
+    restart: unless-stopped
+    ports:
+      - "3500:3000"
+    volumes:
+      - $PWD/env:/app/src/env
+      - $PWD/pm2.config.cjs:/app/pm2.config.cjs
+      - /home/data/oss:/app/public
+      - $PWD/tmp:/app/tmp
+      - $PWD/logs:/app/logs
+      - /etc/localtime:/etc/localtime
+      - /etc/vimrc:/etc/vim/vimrc
