@@ -3,11 +3,12 @@ services:
     image: mysql:8
     container_name: mysql
     privileged: true
-    restart: on-failure:3
+    restart: on-failure:20
     volumes:
       - $PWD/conf:/etc/mysql/conf.d
       - $PWD/logs:/logs
       - $PWD/data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime
     ports:
       - "3306:3306"
     environment:

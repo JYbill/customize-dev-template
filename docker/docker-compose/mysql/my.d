@@ -1,6 +1,6 @@
 [mysqld]
 wait_timeout=86400
-default-time-zone='+00:00'
+#default-time-zone='+00:00'
 character_set_server=utf8mb4
 server-id=1000
 

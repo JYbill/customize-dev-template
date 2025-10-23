@@ -1,6 +1,6 @@
 # IDE
 .id
-.idea/*
+.idea
 
 # Logs
 *.log
@@ -48,7 +48,8 @@ docs/apidoc/
 
 .publish
 
-public/uploads/*.*
+public/**/*
+!public/*/.gitkeep
 
 app_version
 
@@ -56,8 +57,13 @@ tmp/*
 !tmp/.gitkeep
 
 .vscode/*
-/logs
+
+logs/*
+!logs/.gitkeep
 
 .env
 .development.env
 .production.env
+pnpm-lock.yaml
+package-lock.json
+.cache
