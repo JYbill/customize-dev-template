@@ -62,8 +62,9 @@
     /*
         作用：tsconfig.json的基准目录，paths等默认以此解析之后的路径作为基准
         ⚠️ extends时，子tsconfig.json模块未定义"baseUrl"，则会使用相对于父tsconfig的baseUrl，解析路径是父tsconfig！！！
+        ⚠️ TS v6会标记为过期, v7将会弃用
     */
-    "baseUrl": ".",
+    // "baseUrl": ".",
 
     // 用于设置模块名到基于baseUrl的路径映射的`别名`
     /*
