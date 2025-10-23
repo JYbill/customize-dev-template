@@ -427,7 +427,7 @@
 
     // --------------------------  source map start  --------------------------
     // 源码.ts映射.map文件，便于报错时知道ts文件错误发生的位置信息
-    "sourceMap": true
+    "sourceMap": true,
     // 指定调试器应该找到 TypeScript 文件而不是js源文件位置，这个值会被写进 .map 文件里
     // "sourceRoot": ""
     // 指定调试器找到映射文件而非生成文件的位置，指定 map 文件的根路径
@@ -520,6 +520,19 @@
         使用ESM写法编译之后的仍然为ESM语法，不会进行转译；这样的目的是让开发人员明确知道在使用何种模块化规范！
     */
     // "verbatimModuleSyntax": true, // Typescript v5.0+
+
+
+
+
+
+
+
+    // --------------------------  项目 start  --------------------------
+    // disableSourceOfProjectReferenceRedirect：编辑器跳转引入的ts时，默认跳转到.d.ts，因为一般是第三方包。如果引入的是我们自己的子项目可以设置为true，这样可以跳转到.ts文件（原理：根据sourceMap查找到，否则还是跳到.d.ts文件）
+    "disableSourceOfProjectReferenceRedirect": true
+    // disableReferencedProjectLoad: 对于references ts项目默认是打开编辑器立即加在所有ts项目图，对于大型项目会很慢，设置为true后将需要加载某个引入的类型是才会开始懒加载
+    // "disableReferencedProjectLoad": true,
+    // --------------------------  项目 end  --------------------------
   }
 
   // --------------------------  选择、排除编译文件 start  --------------------------
