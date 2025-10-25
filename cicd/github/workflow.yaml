@@ -22,6 +22,16 @@ jobs:
     runs-on: ubuntu-latest # 运行作业的服务器系统
     steps: # 运行作业的服务器系统
       - uses: actions/checkout@v4 # Action插件(v4版本)：将仓库的所有文件都可被访问
+        # with:
+          # 默认1，0表示获取完整的git历史，⚠️ 当仓库过大时可以权衡比如设置为100（就算在pr应该不会有人提交100个commit吧😓）
+          # fetch-depth: 100
+          # 不要下载tree树数据（即fetch-depth: n层的真实目录结构）
+          # filter: tree:0
+
+      # 如果需要将checkout的代码映射到github ci服务器的main分支，可以这样做，此时git branch会显示为"main"否则默认为"detached HEAD"
+      # 这对nx affected时必须的
+      # - name: Check out the default branch
+        # run: git branch --track main origin/main
 
       # 部署步骤
       - name: Deploy 🚀
