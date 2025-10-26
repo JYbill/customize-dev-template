@@ -41,6 +41,26 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+      # nrwl/nx-set-shas插件：用于在GitHub Action环境下
+      # 1. 确定"base"上一次master/main主分支的commit hash值
+      # 2. 确定"head"即PR提交的最新commit hash值
+      # 这两点用来保证"nx affected"能够正确覆盖所有受影响的文件，以及nx需要执行的依赖图
+      # 需要权限: 读取权限的contents、actions、pull-requests
+      - name: check affected commit hash
+        uses: nrwl/nx-set-shas@v4
+      # 方式一：使用环境变量的读取方式
+        # env.NX_BASE: base
+        # env.NX_HEAD: head
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      # 方式二：使用步骤的读取方式
+      # 给这个步骤设置id，方便下面的读取
+      #   id: setSHAs
+      # - run: |
+      #     echo "BASE: ${{ steps.setSHAs.outputs.base }}"
+      #     echo "HEAD: ${{ steps.setSHAs.outputs.head }}"
+
       # 部署步骤
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
