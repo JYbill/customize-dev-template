@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      # 开启nx agents，agents数量、停止nx agent命令需要自行调整
+      # - run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+
+      - uses: nrwl/nx-set-shas@v4
+      # 如果有必要需要记录nx-cloud record更容易分析问题
+      # - run: npx nx-cloud record -- echo Hello World
+      - run: npx nx affected -t lint test build
+      # 启用自愈式AI
+      - run: npx nx fix-ci
+        if: always()

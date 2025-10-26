@@ -33,6 +33,14 @@ jobs:
       # - name: Check out the default branch
         # run: git branch --track main origin/main
 
+      # setup-node插件
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # 支持: npm, yarn, pnpm，将缓存node_modules以及对应的包管理工具的缓存目录
+          cache: 'npm'
+      - run: npm ci
+
       # 部署步骤
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
