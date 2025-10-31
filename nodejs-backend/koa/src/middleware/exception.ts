@@ -4,7 +4,7 @@
  */
 import { ExecutionError } from "@sesamecare-oss/redlock";
 
-import type { Context, Next } from "koa";
+import { type Context, type Next } from "koa";
 
 import ResponseUtil from "#app/utils/response.util.ts";
 import { ErrorCode, HttpError } from "#error/index.ts";
@@ -13,7 +13,6 @@ import type { GlobalError } from "#types/library.d.ts";
 import { isTrusty } from "#utils/lodash.util.ts";
 
 const logger = globalLogger.child({ fileFlag: "middleware/exception.ts" });
-
 export default async function (ctx: Context, next: Next) {
   try {
     await next();
@@ -30,12 +29,17 @@ export default async function (ctx: Context, next: Next) {
     let error = err as GlobalError;
     ctx.status = error.status || 500;
     const data = error.data;
+
+    // 打印错误逻辑
     // 打印500错误
-    if (ctx.status === 500 || isTrusty(error.code)) {
+    if (error.name === "InternalServerError" && error.message === "stream is not readable") {
+      logger.error("user disconnect to sever");
+    } else if (ctx.status === 500 || isTrusty(error.code)) {
       const { stack, name, message, ...errorMetaData } = error;
       logger.error("%o\n%o", error, errorMetaData);
     }
 
+    // 抛出错误逻辑
     if (error instanceof ExecutionError) {
       // 抢占分布式锁失败
       ctx.status = 200;

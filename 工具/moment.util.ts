@@ -4,10 +4,19 @@ export class MomentUtil {
   /**
    * 是否是一个合法的日期字符串、Moment对象、Date对象之一
    * Invalid Date 为 false
+   * 启用了moment ISO字符串严格模式，所以数值也为false
    */
   static isValid(date: MomentDateTime) {
+    if (
+      typeof date === "number" ||
+      typeof date === "boolean" ||
+      typeof date === "symbol" ||
+      typeof date === "bigint"
+    )
+      return false;
     if (date instanceof Date) return !Number.isNaN(date.valueOf());
-    return moment(date).isValid();
+    const momentDate = moment(date, moment.ISO_8601, true);
+    return momentDate.isValid();
   }
 
   /**
