@@ -2,67 +2,101 @@ import moment from "moment";
 
 export class MomentUtil {
   /**
+   * 是否是一个合法的日期字符串、Moment对象、Date对象之一
+   * Invalid Date 为 false
+   */
+  static isValid(date: MomentDateTime) {
+    if (date instanceof Date) return !Number.isNaN(date.valueOf());
+    return moment(date).isValid();
+  }
+
+  /**
    * 检查日期时间是否符合格式化参数
    * @param datetime 日期时间
    * @param formatQuery 格式化参数
-   * @return {boolean}
    */
-  static isValidByFormat(datetime, formatQuery = "HH:mm:ss.SSS") {
+  static isValidByFormat(datetime: MomentDateTime, formatQuery = "HH:mm:ss.SSS") {
     return moment(datetime, formatQuery, true).isValid();
   }
-
   /**
    * 统一时间格式
    * @param date
    * @param format "HH:mm:ss.SSS"
-   * @return {string}
    */
-  static unifyTime(date, format) {
+  static unifyTime(date: MomentDateTime, format: string) {
     return moment(date, format).format("HH:mm:ss.SSS");
   }
 
   /**
    * 统一时间日期格式
    */
-  static unifyDateTime(date) {
+  static unifyDateTime(date: MomentDateTime) {
     return moment(date).format("YYYY-MM-DD HH:mm:ss");
+  }
+  /**
+   * 0时区统一时间日期格式
+   */
+  static unifyUTCDateTime(date: MomentDateTime) {
+    return moment(date).utc().format("YYYY-MM-DD HH:mm:ss");
   }
 
   /**
    * 统一日期格式
    * @param date
-   * @return {string}
    */
-  static unifyDate(date) {
+  static unifyDate(date: MomentDateTime) {
     return moment(date).format("YYYY-MM-DD");
   }
 
   /**
    * 获取下一分钟最开始的时间
    * @param date
-   * @return {string}
    */
-  static getTimeOfEndMinute(date) {
+  static getTimeOfEndMinute(date: MomentDateTime) {
     date = moment(date).add(1, "minute").startOf("minute");
     return MomentUtil.unifyDateTime(date);
+  }
+
+  /**
+   * 将date添加指定的num时间，单位为unit
+   * @param date
+   * @param num
+   * @param unit 参考moment时间
+   */
+  static addTime(date: MomentDateTime, num: number, unit: unitOfTime.DurationConstructor) {
+    return moment(date).add(num, unit);
+  }
+
+  /**
+   * 将date减少指定的num时间，单位为unit
+   * @param date
+   * @param num
+   * @param unit 参考moment时间
+   */
+  static subtractTime(date: MomentDateTime, num: number, unit: unitOfTime.DurationConstructor) {
+    return moment(date).subtract(num, unit);
   }
 
   /**
    * 根据格式，获取总秒数 "00:01:00"(HH:mm:ss.SSS) -> 60s
    * @param timeStr
    * @param format
-   * @return {number}
    */
-  static getSecondsByFormat(timeStr, format = "HH:mm:ss.SSS") {
-    return moment.duration(MomentUtil.unifyTime(timeStr, "HH:mm:ss.SSS")).asSeconds();
+  static getSecondsByFormat(timeStr: string, format: string = "HH:mm:ss.SSS") {
+    return moment.duration(MomentUtil.unifyTime(timeStr, format)).asSeconds();
   }
 
   /**
    * 获取datetime，从unit开始，"date"即为
-   * @return {moment.Moment}
    */
-  static getDateTimeOfUnit({ datetime, unit = "date" }) {
-    let result = null;
+  static getDateTimeOfUnit({
+    datetime,
+    unit = "date",
+  }: {
+    datetime: MomentDateTime;
+    unit?: MomentStartOf;
+  }) {
+    let result: Moment | null = null;
     if (datetime) {
       result = moment(datetime);
     } else {
@@ -74,9 +108,8 @@ export class MomentUtil {
   /**
    * 零点的日期时间
    * @param date
-   * @return {string}
    */
-  static zeroPointDateTime(date) {
+  static zeroPointDateTime(date: MomentDateTime) {
     return moment(date).format("YYYY-MM-DD 00:00:00");
   }
 
@@ -85,7 +118,7 @@ export class MomentUtil {
    * @param targetDate
    * @param originDate
    */
-  static setTimeByDate(targetDate, originDate) {
+  static setTimeByDate(targetDate: MomentDateTime, originDate: MomentDateTime) {
     originDate = moment(originDate);
     const resultDate = moment(targetDate)
       .set("hour", originDate.hour())
@@ -100,12 +133,16 @@ export class MomentUtil {
    * @param targetDate
    * @param originDate
    * @param units 默认需要设置的单位["year", "month", "date"]
-   * @return {string}
    */
-  static setDateByOriginDate(targetDate, originDate, units = ["year", "month", "date"]) {
+  static setDateByOriginDate(
+    targetDate: MomentDateTime,
+    originDate: MomentDateTime,
+    units: MomentUnitAll[] = ["year", "month", "date"],
+  ) {
     originDate = moment(originDate);
     let resultDate = moment(targetDate);
     for (const unit of units) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
       resultDate.set(unit, originDate[unit]());
     }
     return MomentUtil.unifyDateTime(resultDate);
@@ -116,9 +153,12 @@ export class MomentUtil {
    * @param target
    * @param startPoint
    * @param endPoint
-   * @return {boolean}
    */
-  static inTheDateRange(target, startPoint, endPoint) {
+  static inTheDateRange(
+    target: MomentDateTime,
+    startPoint: MomentDateTime,
+    endPoint: MomentDateTime,
+  ) {
     target = moment(target);
     startPoint = moment(startPoint);
     endPoint = moment(endPoint);
@@ -129,9 +169,8 @@ export class MomentUtil {
    * target在startPoint的左侧，也就是说target < startPoint时间点
    * @param target
    * @param startPoint
-   * @return {boolean}
    */
-  static inTheDateRangLeft(target, startPoint) {
+  static inTheDateRangLeft(target: MomentDateTime, startPoint: MomentDateTime) {
     target = moment(target);
     startPoint = moment(startPoint);
     return target.isBefore(startPoint);
@@ -141,11 +180,41 @@ export class MomentUtil {
    * target在endPoint的右侧，也就是说target > endPoint时间点
    * @param target
    * @param endPoint
-   * @return {boolean}
    */
-  static inTheDateRangRight(target, endPoint) {
+  static inTheDateRangRight(target: MomentDateTime, endPoint: MomentDateTime) {
     target = moment(target);
     endPoint = moment(endPoint);
     return target.isAfter(endPoint);
+  }
+
+  /**
+   * 将日期时间字符串转换为从当天 00:00:00 开始计算的秒数
+   * @param dateTimeStr - 日期时间字符串，格式：YYYY-MM-DD HH:MM:SS
+   * @returns 从当天 00:00:00 开始的秒数
+   */
+  static getSecondsFromStartOfDay(dateTimeStr: string) {
+    // 创建日期对象
+    const date = new Date(dateTimeStr);
+
+    // 获取当天 00:00:00 的时间戳（毫秒）
+    const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+    // 计算与当天开始的时间差（毫秒）
+    const timeDiff = date.getTime() - startOfDay;
+
+    // 转换为秒并向下取整
+    return Math.floor(timeDiff / 1000);
+  }
+
+  /**
+   * 根据分钟数值获取"mm:ss"格式的字符串
+   * 如果hh/mm为单个数值时，会补0，🌰 "8" -> "08"
+   */
+  static getHMByMinute(minute: number) {
+    const hour = Math.floor(minute / 60)
+      .toString()
+      .padStart(2, "0");
+    const min = (minute % 60).toString().padStart(2, "0");
+    return `${hour}:${min}`;
   }
 }
