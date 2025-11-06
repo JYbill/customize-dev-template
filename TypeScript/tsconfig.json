@@ -60,13 +60,13 @@
 
     
     /*
-        作用：tsconfig.json的基准目录，paths等默认以此解析之后的路径作为基准
+        作用：是paths的起点
         ⚠️ extends时，子tsconfig.json模块未定义"baseUrl"，则会使用相对于父tsconfig的baseUrl，解析路径是父tsconfig！！！
         ⚠️ TS v6会标记为过期, v7将会弃用
     */
     // "baseUrl": ".",
 
-    // 用于设置模块名到基于baseUrl的路径映射的`别名`
+    // 子tsconfig extends 父tsconfig，如果子tsconfig为定义baseUrl，则使用父tsconfig的绝对路径的paths！
     /*
       // 你可以告诉TS文件解析器路径别名，⚠️ 仅起到路径解析，如果使用其他构建工具进行打包，需在再其他构建工具(如：webpack、vite)中也要配置别名，这里只是起到类型检测的作用！
       // ⚠️ 如果是本项目的"includes"包含的路径，则不会对import代码转换
@@ -79,25 +79,6 @@
               "tests/*": ["tests/*"]
           },
       }
-    */
-    /*
-        ⚠️ 当paths中包含了不属于本tsconfig.json的外部依赖，且在项目中被引用，那么编译时会额外构建外部依赖
-        // 根目录tsconfig.base.json
-        "compilerOptions": {
-            "rootDir": ".",
-            "baseUrl": ".",
-            "paths": {
-                "@nx-learn/common": ["libs/common/src/index.ts"] // 对于api项目而言，被继承的别名属于外部依赖
-            }
-        }
-        // 根目录/apps/api/tsconfig.json
-        "extends": "../../tsconfig.base.json",
-        "include": ['src...']
-        此时对api子项目进行编译时，会额外创建lib/common项目（因为rootDir是父级解析的，所以是能查找到lib/common目录的）
-        而且，还会对引入lib/common的import代码进行相对路径转换
-        import { test } from "@/nx-learn/common";
-        转换为
-        import { test } from "../../nx-learn/common/libs/index.js";
     */
     "paths": {},
 
@@ -440,7 +421,9 @@
     /* 实验性选项 */
     // 用于指定是否启用实验性的装饰器特性
     // "experimentalDecorators": true,
-    // 是否为装饰器提供类型元数据支持
+
+    // 输出的产物中对于装饰器是否会携带类型元信息数据，需要与reflect-metadata一起使用
+    // ⚠️ 只会在js产物上追加装饰器类型元信息，如果--noEmit不会产生任何信息文件！
     // "emitDecoratorMetadata": true,
 
     // （编译时）允许TS文件使用特定于的扩展名（如 .ts、.mts 或 .tsx）相互导入，需开启noEmit或emitDeclarationOnly时才生效，由第三方构建工具处理这些模块
