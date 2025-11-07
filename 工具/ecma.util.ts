@@ -487,3 +487,70 @@ export function isValidValue<T>(value: T): boolean {
   // 其他所有值都视为有效值
   return true;
 }
+
+/**
+ * 对集合取2个set的差集、交集
+ * @param originSet 原始数据
+ * @param targetSet 目标数据
+ */
+export function divideSet<Element>(originSet: Set<Element>, targetSet: Set<Element>) {
+  const delSet = originSet.difference(targetSet);
+  const addSet = targetSet.difference(originSet);
+  const intersectionSet = originSet.intersection(targetSet);
+  return { delSet, addSet, intersectionSet };
+}
+
+/**
+ * 分割origins、targets
+ * 存在的交集为intersectionOrigin、intersectionTarget
+ * origin的差集，属于删除，del
+ * target的差集，属于新增，add
+ * @param origins 原始数据
+ * @param targets 目标数据，即最新数据
+ * @param key 根据指定的key对比，该key需要在origins元素对象、targets元素对象中存在
+ */
+export function diveCollections<Origin extends object, Target extends object>(
+  origins: Origin[],
+  targets: Target[],
+  key: keyof Origin & keyof Target,
+): {
+  delList: Origin[];
+  addList: Target[];
+  intersectionOrigins: Origin[];
+  intersectionTargets: Target[];
+} {
+  const originGroup = groupBy(origins, key);
+  const targetGroup = groupBy(targets, key);
+  const originSet = origins.reduce((set, curr) => set.add(Number(curr[key])), new Set<number>());
+  const targetSet = targets.reduce((set, curr) => set.add(Number(curr[key])), new Set<number>());
+
+  const { delSet, addSet, intersectionSet } = divideSet(originSet, targetSet);
+
+  const delList: Origin[] = [];
+  for (const value of delSet) {
+    delList.push(...originGroup[value]);
+  }
+
+  const addList: Target[] = [];
+  for (const value of addSet) {
+    addList.push(...targetGroup[value]);
+  }
+
+  const intersectionOrigins: Origin[] = [];
+  const intersectionTargets: Target[] = [];
+  for (const value of intersectionSet) {
+    const origins = originGroup[value];
+    intersectionOrigins.push(...origins);
+    const targets = targetGroup[value];
+    intersectionTargets.push(...targets);
+  }
+  return {
+    // origin的差集，属于删除
+    delList,
+    // target的差集，属于新增
+    addList,
+    // 交集
+    intersectionOrigins,
+    intersectionTargets,
+  };
+}
