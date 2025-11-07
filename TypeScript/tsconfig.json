@@ -252,20 +252,20 @@
     "useDefineForClassFields": true,
 
     /*
-    所有以"./"、"../"开头的ts文件导入，编译器将转换成对应的js文件(ts->js, mts->mjs, cts->cjs)
+    所有以"./"、"../"开头的ts文件导入，编译器将转换成对应的js文件(ts->js, mts->mjs, cts->cjs)，且需要allowTS否则会报错
     1. 依赖于"paths"别名的路径，不会被转换
     "paths": {
         "@/*": ["./src/*"]
     }
     import * as utilities from "@/utilities.ts"; // 不会被转换
-    2. package.json中的"exports"或"imports"字段的路径不会被转换
+    2. package.json中的"exports"或"imports"字段的路径不会被转换，且需要allowTS否则会报错
     "imports": {
         "#root/*": "./dist/*"
     }
     import * as utilities from "#root/utilities.ts"; // 不会被转换
 
-    // 如果希望使用exports并支持rewriteRelativeImportExtensions的转换，可以这么使用
-    // my-package/package.json
+    // 另一种不依赖于"rewriteRelativeImportExtensions"转换而动态加载js、ts的方式
+    // 通过定义package.json的exports字段，根据`node --conditions`条件有选择性的导入js或ts文件
     {
         "name": "my-package",
         "exports": {
@@ -279,11 +279,11 @@
             }
         }
     }
-    // 以如下条件进行运行
+    // 运行
     node --conditions=@my-package/development
     */
-    // 该库的目的在于：在保证最大兼容性条件下（构建工具使用别名写法不会转换），tsc能够将ts转换成对应的js文件。
-    "rewriteRelativeImportExtensions": true, // v5.7+ 导入如果以ts(ts、mts、cts)结尾，tsc将会自动转换
+    // v5.7+ 导入如果以ts(ts、mts、cts)结尾，开启后tsc将会转换成对应的js(js、mjs、cjs)，别名、package.json中imports使用交给构建工具处理（🤔 历史遗留），而相对路径tsc会转换成对应的js扩展名
+    "rewriteRelativeImportExtensions": true,
 
     // 对当前tsconfig.json定义引用，即如果要编译当前项目则先编译references内的所有tsconfig.json文件，这样方便划分不同的项目
     // 如果有"increment"增量编译选项，那么增量编译是对不同tsconfig模块进行划分的，而会因为子tsconfig重新编译而导致父tsconfig重新编译，减少重复构建，提高效率
