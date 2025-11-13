@@ -31,15 +31,13 @@ export default async function (ctx: Context, next: Next) {
     const data = error.data;
 
     // 打印错误逻辑
-    // 打印500错误
     if (error.name === "InternalServerError" && error.message === "stream is not readable") {
       logger.error("user disconnect to sever");
     } else if (ctx.status === 500 || isTrusty(error.code)) {
-      const { stack, name, message, ...errorMetaData } = error;
-      logger.error("%o\n%o", error, errorMetaData);
+      logger.error("%o", error);
     }
 
-    // 抛出错误逻辑
+    // 需要重写错误的逻辑
     if (error instanceof ExecutionError) {
       // 抢占分布式锁失败
       ctx.status = 200;
