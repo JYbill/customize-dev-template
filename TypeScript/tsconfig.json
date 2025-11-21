@@ -273,7 +273,7 @@
                 "@my-package/development": "./src/index.ts",
                 "import": "./lib/index.js"
             },
-            "./*": {
+            "./*.ts": {
                 "@my-package/development": "./src/*.ts",
                 "import": "./lib/*.js"
             }
