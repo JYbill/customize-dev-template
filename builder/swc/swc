@@ -20,7 +20,10 @@
 
       // 忽略动态导入,推荐开启,现代版本的nodejs都支持动态导入
       // ⚠️ 如果是纯ESM,则一定要开启该选项
-      "ignoreDynamic": true 
+      "ignoreDynamic": true,
+
+      // 默认false, 启用esModuleInterop互操作性。默认swc导出时会导出一个不可枚举的__esModule属性。该属性随后用于判断导入的是默认导出还是包含默认导出。
+      "noInterop": false
     },
 
     // JS编译规则
