@@ -37,9 +37,10 @@ pipeline {
             steps {
                 script {
                   def dockerImageName = "backend-wzj-nodejs-v2"
-                  def branchName = sh(script: "git name-rev --name-only HEAD", returnStdout: true).trim().replace("/", "_")
+                  def branchName = sh(script: "git branch --show-current", returnStdout: true).trim().replace("/", "_")
                   def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
-                  def dockerTag = "x86_${branchName}_${commitId}"
+                  def gitTag = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
+                  def dockerTag = "x86_${branchName}_${commitId}_${gitTag}"
                   
                   env.DOCKER_IMAGE_NAME = dockerImageName
                   env.DOCKER_TAG = dockerTag
