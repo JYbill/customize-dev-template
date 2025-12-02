@@ -12,8 +12,9 @@ import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import tsESLint from "typescript-eslint";
 import globals from "globals";
 import unusedImports from "eslint-plugin-unused-imports";
+import { defineConfig } from "eslint/config";
 
-export default tsESLint.config([
+export default defineConfig([
   eslintJS.configs.recommended,
   eslintPluginN.configs["flat/recommended-module"],
   eslintPluginPrettier,
