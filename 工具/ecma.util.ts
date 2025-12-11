@@ -512,7 +512,7 @@ export function divideSet<Element>(originSet: Set<Element>, targetSet: Set<Eleme
 export function diveCollections<Origin extends object, Target extends object>(
   origins: Origin[],
   targets: Target[],
-  key: keyof Origin & keyof Target,
+  key: keyof Origin & keyof Target
 ): {
   delList: Origin[];
   addList: Target[];
@@ -521,8 +521,8 @@ export function diveCollections<Origin extends object, Target extends object>(
 } {
   const originGroup = groupBy(origins, key);
   const targetGroup = groupBy(targets, key);
-  const originSet = origins.reduce((set, curr) => set.add(Number(curr[key])), new Set<number>());
-  const targetSet = targets.reduce((set, curr) => set.add(Number(curr[key])), new Set<number>());
+  const originSet = origins.reduce((set, curr) => set.add(String(curr[key])), new Set<string>());
+  const targetSet = targets.reduce((set, curr) => set.add(String(curr[key])), new Set<string>());
 
   const { delSet, addSet, intersectionSet } = divideSet(originSet, targetSet);
 
