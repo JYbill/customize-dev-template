@@ -7,13 +7,7 @@ export class MomentUtil {
    * 启用了moment ISO字符串严格模式，所以数值也为false
    */
   static isValid(date: MomentDateTime) {
-    if (
-      typeof date === "number" ||
-      typeof date === "boolean" ||
-      typeof date === "symbol" ||
-      typeof date === "bigint"
-    )
-      return false;
+    if (typeof date === "number" || typeof date === "boolean" || typeof date === "symbol" || typeof date === "bigint") return false;
     if (date instanceof Date) return !Number.isNaN(date.valueOf());
     const momentDate = moment(date, moment.ISO_8601, true);
     return momentDate.isValid();
@@ -98,13 +92,7 @@ export class MomentUtil {
   /**
    * 获取datetime，从unit开始，"date"即为
    */
-  static getDateTimeOfUnit({
-    datetime,
-    unit = "date",
-  }: {
-    datetime: MomentDateTime;
-    unit?: MomentStartOf;
-  }) {
+  static getDateTimeOfUnit({ datetime, unit = "date" }: { datetime: MomentDateTime; unit?: MomentStartOf }) {
     let result: Moment | null = null;
     if (datetime) {
       result = moment(datetime);
@@ -143,11 +131,7 @@ export class MomentUtil {
    * @param originDate
    * @param units 默认需要设置的单位["year", "month", "date"]
    */
-  static setDateByOriginDate(
-    targetDate: MomentDateTime,
-    originDate: MomentDateTime,
-    units: MomentUnitAll[] = ["year", "month", "date"],
-  ) {
+  static setDateByOriginDate(targetDate: MomentDateTime, originDate: MomentDateTime, units: MomentUnitAll[] = ["year", "month", "date"]) {
     originDate = moment(originDate);
     let resultDate = moment(targetDate);
     for (const unit of units) {
@@ -163,11 +147,7 @@ export class MomentUtil {
    * @param startPoint
    * @param endPoint
    */
-  static inTheDateRange(
-    target: MomentDateTime,
-    startPoint: MomentDateTime,
-    endPoint: MomentDateTime,
-  ) {
+  static inTheDateRange(target: MomentDateTime, startPoint: MomentDateTime, endPoint: MomentDateTime) {
     target = moment(target);
     startPoint = moment(startPoint);
     endPoint = moment(endPoint);
@@ -216,14 +196,11 @@ export class MomentUtil {
   }
 
   /**
-   * 根据分钟数值获取"mm:ss"格式的字符串
-   * 如果hh/mm为单个数值时，会补0，🌰 "8" -> "08"
+   * 秒、分钟、小时等数值，转换成指定的format格式
    */
-  static getHMByMinute(minute: number) {
-    const hour = Math.floor(minute / 60)
-      .toString()
-      .padStart(2, "0");
-    const min = (minute % 60).toString().padStart(2, "0");
-    return `${hour}:${min}`;
+  static numberToFormat(num: number, unit: MomentDurationUnit, format = "HH:mm:ss.SSS") {
+    const duration = moment.duration(num, unit);
+    const formatted = moment.utc(duration.asMilliseconds()).format(format);
+    return formatted;
   }
 }
