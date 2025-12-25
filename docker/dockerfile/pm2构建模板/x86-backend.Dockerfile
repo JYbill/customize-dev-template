@@ -7,10 +7,12 @@ RUN echo "deb http://mirrors.aliyun.com/debian/ bookworm main" > /etc/apt/source
    rm -rf /etc/apt/sources.list.d/*
 # 一些需要的构建命令行
 RUN apt-get update && apt-get install -y openssl build-essential && apt-get clean && apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+COPY .npmrc .
 COPY package.json .
 COPY pnpm-workspace.yaml .
 RUN npm i -g pnpm && npm cache clean -f
-RUN pnpm install --prod && pnpm store prune
+# 如果无编译内容，可以使用pnpm install --prod
+RUN pnpm install && pnpm store prune
 COPY prisma prisma
 RUN pnpm prisma:generate
 
