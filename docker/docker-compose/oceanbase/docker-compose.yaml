@@ -1,0 +1,15 @@
+services:
+  oceanbase-ce:
+    image: oceanbase/oceanbase-ce:latest
+    container_name: oceanbase-ce
+    environment:
+      # 使用 ALTER USER 'root' IDENTIFIED BY '...'; 修改root@sys、root@test密码
+      - TZ=Asia/Shanghai
+      - MODE=mini
+    ports:
+      - "2881:2881" # sql端口
+      - "2883:2883" # rpc端口
+    volumes:
+      - ob_data:/root/oceanbase/store
+      - /etc/localtime:/etc/localtime
+    restart: unless-stopped
