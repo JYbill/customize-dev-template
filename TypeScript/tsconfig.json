@@ -106,8 +106,6 @@
      将import fs from "fs"，中的fs变量，如果不是ESM则会包括成
      fs["default"] = 真实fs内容
      以fs["default"]形式去使用
-
-    ⚠️注意：如果导出的内容都在导出的原型链上，则应该使用import fs from "fs"形式，或关闭"esModuleInterop"，这于TS编译转化的工具函数有关
      */
     "esModuleInterop": true,
 
@@ -382,8 +380,8 @@
     // "types": [],
     
     /*
-       允许从没有默认导出的模块中，使用默认导出语法
-       目的：为了babel兼容性，babel这类工具会将没有默认导出的模块，额外生成默认导出
+       允许从没有默认导出的模块中，使用默认导出语法，仅仅做类型检查，不会对编译的js有任何影响，如果需要编译也具有该功能应该开启"esModuleInterop"选项
+       设计目的：为了babel兼容性，babel这类工具会将没有默认导出的模块，额外生成默认导出
        
        // utilFunction.js
        const getStringLength = (str) => str.length; 
@@ -400,7 +398,7 @@
        module.exports = allFunctions;
        module.exports.default = allFunctions;
 
-       以下情况默认标记为true，如果以下条件不满足则默认为false
+       以下条件满足任意一个即为true，否则为false
        1. esModuleInterop为true
        2. module为"system"
        3. moduleResolution为"bundler"
