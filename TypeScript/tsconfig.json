@@ -280,7 +280,9 @@
     // 运行
     node --conditions=@my-package/development
     */
-    // v5.7+ 导入如果以ts(ts、mts、cts)结尾，开启后tsc将会转换成对应的js(js、mjs、cjs)，别名、package.json中imports使用交给构建工具处理（🤔 历史遗留），而相对路径tsc会转换成对应的js扩展名
+    // 对产物的导入文件后缀进行转写
+    // v5.7+ 导入如果以ts(ts、mts、cts)结尾，开启后tsc将会转换成对应的js(js、mjs、cjs)。
+    // ⚠️ 别名、package.json imports 仍然需要交给构建工具处理（🤔 历史遗留 TS认为这些会增加运行时开销，所以不支持，所以社区说这是一个半成品功能）。只有上面几种规则会转换成js后缀
     "rewriteRelativeImportExtensions": true,
 
     // 对当前tsconfig.json定义引用，即如果要编译当前项目则先编译references内的所有tsconfig.json文件，这样方便划分不同的项目
