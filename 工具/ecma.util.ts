@@ -554,3 +554,43 @@ export function diveCollections<Origin extends object, Target extends object>(
     intersectionTargets,
   };
 }
+
+/**
+ * isTrusty的取反断言
+ * @param value
+ */
+type Truthy<T> = T extends false | 0 | "" | null | undefined | 0n | never[] | Record<string, never> ? never : T;
+
+/**
+ * isFalsy的取反断言
+ * @param value
+ * @return {boolean}
+ */
+type Falsy<T> = T extends false | 0 | "" | null | undefined | 0n | never[] | Record<string, never> ? T : never;
+
+/**
+ * 真值判断，考虑Date、Map、Set、Array、字面量对象
+ * @param value
+ */
+export const isTruthy = <T>(value: T): value is Truthy<T> => {
+  if (value instanceof Date) return !isNaN(value.getTime());
+  if (Array.isArray(value)) return value.length > 0;
+  if (value instanceof Map || value instanceof Set) return value.size > 0;
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    !(value instanceof Date) &&
+    !(value instanceof Map) &&
+    !(value instanceof Set)
+  ) {
+    return Object.keys(value).length > 0;
+  }
+  return !!value;
+};
+
+/**
+ * 假值判断，属于!isTruthy()语义化版本
+ * @param value
+ */
+const isFalsy = <T>(value: T): value is Falsy<T> => !isTruthy(value);
