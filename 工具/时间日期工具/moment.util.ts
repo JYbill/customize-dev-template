@@ -203,4 +203,14 @@ export class MomentUtil {
     const formatted = moment.utc(duration.asMilliseconds()).format(format);
     return formatted;
   }
+
+  /**
+   * date1与date2的差值，如果date1 > date2结果为正数，如果date1 < date结果为负数
+   * @param date1
+   * @param date2
+   * @param unit
+   */
+  static diff(date1: MomentDateTime, date2: MomentDateTime, unit: MomentDurationUnit) {
+    return moment(date1).diff(date2, unit);
+  }
 }
