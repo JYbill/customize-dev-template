@@ -213,4 +213,32 @@ export class MomentUtil {
   static diff(date1: MomentDateTime, date2: MomentDateTime, unit: MomentDurationUnit) {
     return moment(date1).diff(date2, unit);
   }
+
+  /**
+   * A、B两个时间存在重叠部分
+   */
+  static isOverlapDates(startA: MomentDateTime, endA: MomentDateTime, startB: MomentDateTime, endB: MomentDateTime) {
+    const startAMoment = moment(startA);
+    const endAMoment = moment(endA);
+    const startBMoment = moment(startB);
+    const endBMoment = moment(endB);
+    return (
+      // 情况一
+      //          [startA, endA]
+      //     [startB, endB]
+      (startAMoment.isSameOrAfter(startBMoment) && startAMoment.isSameOrBefore(endBMoment)) ||
+      // 情况二
+      //   [startA, endA]
+      //        [startB, endB]
+      (startBMoment.isSameOrAfter(startAMoment) && startBMoment.isSameOrBefore(endAMoment)) ||
+      // 情况三
+      // [startA,              endA]
+      //      [startB,endB]
+      (startBMoment.isSameOrAfter(startAMoment) && endBMoment.isSameOrBefore(endAMoment)) ||
+      // 情况四
+      //      [startA, endA]
+      // [startB,          endB]
+      (startAMoment.isSameOrAfter(startBMoment) && endAMoment.isSameOrBefore(endBMoment))
+    );
+  }
 }
