@@ -1,0 +1,65 @@
+# 服务端口号
+port: 8317
+
+# 管理API设置
+remote-management:
+  # 默认false：仅允许localhost访问管理接口（仍需要密钥验证）
+  # true：允许远程地址访问管理接口
+  allow-remote: true
+  # 访问管理接口的密钥。如果提供明文密钥，启动时会自动哈希加密并写回config.yaml文件。留空则完全禁用管理API（所有/v0/management 路由返回 404）
+  secret-key: ""
+  # 禁用控制面板资源下载，使用自定义管理面板适合为true
+  disable-control-panel: false
+
+# 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
+auth-dir: "~/.cli-proxy-api"
+
+# 启用debug模式。默认false
+debug: false
+
+# true: 是否将日志写入转轮文件而不是输出到stdout
+logging-to-file: false
+
+# 当为false时，禁用内存中使用统计聚合。默认true
+usage-statistics-enabled: true
+
+# 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
+proxy-url: ""
+
+# http状态码为：403, 408, 500, 502, 503, 504时，重试请求的次数。默认：0
+request-retry: 1
+
+# 额度超出的行为：优先切换其他项目(供应商)，时才会切换到预览模型
+quota-exceeded:
+  # 超额时，自动切换项目。默认true
+  switch-project: true
+  # 超额时，自动切换项目到预览版模型。默认true
+  switch-preview-model: true
+
+# ws连接(/v1/ws)启用认证
+ws-auth: true
+
+# SSE行为
+streaming:
+  # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
+  keepalive-seconds: 15
+  # 在没有任何数据发送下，发生错误时的重试次数，默认0不重试
+  bootstrap-retries: 1
+
+# 设置请求体
+payload:
+  # 默认规则：仅在请求载荷中缺少参数时设置的默认值
+  default:
+    - models:
+        - name: "gemini-2.5-pro"  # 支持通配符，如 "gemini-*"
+          protocol: "gemini"  # 限定协议类型，可选：openai、gemini、claude、codex
+      params:  # 参数设置（使用 gjson/sjson 路径语法）
+        "generationConfig.thinkingConfig.thinkingBudget": 32768  # 思考预算配置
+  
+  # 覆盖规则：始终覆盖请求参数
+  override:
+    - models:
+        - name: "gpt-*"  # 支持通配符匹配多个模型
+          protocol: "codex"  # 限定为 Codex 协议
+      params:
+        "reasoning.effort": "high"  # 推理努力程度设置为高
