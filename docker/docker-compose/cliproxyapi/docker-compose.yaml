@@ -1,0 +1,11 @@
+services:
+  cliproxyapi:
+    image: eceasy/cli-proxy-api-plus:latest
+    container_name: cliproxyapi
+    restart: on-failure:10
+    ports:
+      # 暴露的api端口
+      - 8317:8317
+    volumes:
+      - ./config.yaml:/CLIProxyAPI/config.yaml
+      - ./auth-dir:/root/.cli-proxy-api
