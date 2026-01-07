@@ -1,0 +1,92 @@
+# 服务端口号
+port: 8317
+
+# 管理API设置
+remote-management:
+  # 默认false：仅允许localhost访问管理接口（仍需要密钥验证）
+  # true：允许远程地址访问管理接口
+  allow-remote: true
+  # 访问管理接口的密钥。如果提供明文密钥，启动时会自动哈希加密并写回config.yaml文件。留空则完全禁用管理API（所有/v0/management 路由返回 404）
+  secret-key: ""
+  # 禁用控制面板资源下载，使用自定义管理面板适合为true
+  disable-control-panel: false
+
+# 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
+auth-dir: "~/.cli-proxy-api"
+
+# 访问cliproxyapi代理所需要的API密钥列表
+api-keys:
+  - "your-api-key-1"
+
+# 启用debug模式。默认false
+debug: false
+
+# 禁用高开销中间件以降低内存占用，默认false。http高消耗的中间件包括：详细请求日志、统计与监控...
+commercial-mode: false
+
+# true: 是否将日志写入转轮文件而不是输出到stdout
+logging-to-file: false
+# 默认0，日志转轮文件总数
+logs-max-total-size-mb: 10
+
+# 当为false时，禁用内存中使用统计聚合。默认true
+usage-statistics-enabled: true
+
+# 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
+proxy-url: ""
+
+# 默认false，强制使用前缀匹配模型名（xxx/gpt-4.1），而不是直接用gpt-4.1匹配。推荐false这样可以配合`routing.strategy`实现负载均衡
+force-model-prefix: false
+
+# http状态码为：403, 408, 500, 502, 503, 504时，重试请求的次数。默认：0
+request-retry: 1
+
+# 当所有的模型供应商的额度耗尽之后，每次请求CLIProxyAPI都会触发最大等待时长，默认30s
+max-retry-interval: 30
+
+# 模型命中多个供应商时，采用的路由策略
+routing:
+  # 可选值：["first-available", "round-robin"(默认值)], first-available优先使用匹配到的第一个
+  strategy: "round-robin"
+
+# 额度超出的行为：优先切换其他项目(供应商)，时才会切换到预览模型
+quota-exceeded:
+  # 超额时，自动切换项目。默认true
+  switch-project: true
+  # 超额时，自动切换项目到预览版模型。默认true
+  switch-preview-model: true
+
+# ws连接(/v1/ws)启用认证
+ws-auth: true
+
+# SSE行为
+streaming:
+  # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
+  keepalive-seconds: 15
+  # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
+  bootstrap-retries: 1
+
+# 按供应商命名模型别名
+oauth-model-mappings:
+  # gemini-cli的gemini-2.5-pro模型展示给客户端为"g2.5p"
+  gemini-cli:
+    - name: "gemini-2.5-pro" # 原始模型名
+      alias: "g2.5p" # 显示给客户端的别名
+
+# 设置请求体
+payload:
+  # 默认规则：仅在请求载荷中缺少参数时设置的默认值
+  default:
+    - models:
+        - name: "gemini-2.5-pro"  # 支持通配符，如 "gemini-*"
+          protocol: "gemini"  # 限定协议类型，可选：openai、gemini、claude、codex
+      params:  # 参数设置（使用 gjson/sjson 路径语法）
+        "generationConfig.thinkingConfig.thinkingBudget": 32768  # 思考预算配置
+  
+  # 覆盖规则：始终覆盖请求参数
+  override:
+    - models:
+        - name: "gpt-*"  # 支持通配符匹配多个模型
+          protocol: "codex"  # 限定为 Codex 协议
+      params:
+        "reasoning.effort": "high"  # 推理努力程度设置为高
