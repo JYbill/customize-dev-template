@@ -1,6 +1,12 @@
 # 服务端口号
 port: 8317
 
+# 开启TLS协议，默认tls.enable=false
+tls:
+  enable: false
+  cert: ""
+  key: ""
+
 # 管理API设置
 remote-management:
   # 默认false：仅允许localhost访问管理接口（仍需要密钥验证）
