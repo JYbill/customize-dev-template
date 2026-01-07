@@ -18,7 +18,13 @@ services: # 容器列表
     depends_on: # 依赖于hbbr容器启动后，才启动hbbs
       - hbbr
       
-    privileged: true # 允许访问宿主机所有权限
+    # 允许访问宿主机所有权限。等同于宿主机root权限
+    privileged: true
+    # 在原有容器权限基础上，添加所有的Linux（能力），比如 NET_ADMIN、SYS_TIME 等。容器获得了更多特权，但仍然<宿主机的root
+    cap_add:
+      - ALL
+    # 容器与宿主机共享同一个进程命名空间（PID namespace）。这样容器内可以看到宿主机上的所有进程，并且可以对它们进行操作（如 ps、kill）。常用于需要监控或管理宿主机进程的场景（⚠️ 有风险）
+    pid: host
     
     # 重启规则
     # always：总是重启，不推荐
