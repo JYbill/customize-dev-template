@@ -11,6 +11,9 @@ remote-management:
   # 禁用控制面板资源下载，使用自定义管理面板适合为true
   disable-control-panel: false
 
+# 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
+auth-dir: "~/.cli-proxy-api"
+
 # 访问cliproxyapi代理所需要的API密钥列表
 api-keys:
   - "your-api-key-1"
@@ -19,6 +22,9 @@ api-keys:
 logging-to-file: true
 # 默认0，日志转轮文件总数
 logs-max-total-size-mb: 10
+
+# 当为false时，禁用内存中使用统计聚合。默认true
+usage-statistics-enabled: true
 
 # 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
 proxy-url: ""

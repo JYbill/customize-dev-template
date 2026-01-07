@@ -2,6 +2,7 @@ services: # 容器列表
   hbbs: # 镜像名
     container_name: hbbs # 容器名
     image: rustdesk/rustdesk-server:latest # 对应镜像与其版本
+    pull_policy: always # 每次启动时拉取最新镜像
     
     
     volumes: # 挂载卷轴
@@ -32,7 +33,7 @@ services: # 容器列表
     env_file:
       - docker.env
     environment:
-    	- TZ=Asia/Shanghai
+      - TZ=Asia/Shanghai
     
     # 一个网络端口部署3个副本实例，需要配合docker swarm启动
     deploy:

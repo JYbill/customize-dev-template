@@ -21,6 +21,10 @@ api-keys:
 # 启用debug模式。默认false
 debug: false
 
+# 在浏览器的隐私模式下打开OAuth URL，这对于不退出账号使用其他账号很有用。默认false
+# 对于kiro 多账号OAuth授权默认开启
+incognito-browser: true
+
 # 禁用高开销中间件以降低内存占用，默认false。http高消耗的中间件包括：详细请求日志、统计与监控...
 commercial-mode: false
 

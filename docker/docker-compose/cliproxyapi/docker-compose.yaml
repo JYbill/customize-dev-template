@@ -1,6 +1,7 @@
 services:
   cliproxyapi:
     image: eceasy/cli-proxy-api-plus:latest
+    pull_policy: always
     container_name: cliproxyapi
     restart: on-failure:10
     ports:
@@ -13,3 +14,4 @@ services:
     volumes:
       - ./config.yaml:/CLIProxyAPI/config.yaml
       - ./auth-dir:/root/.cli-proxy-api
+      - ./logs:/CLIProxyAPI/logs
