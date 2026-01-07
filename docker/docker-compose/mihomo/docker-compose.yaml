@@ -1,0 +1,11 @@
+services:
+  mihomo:
+    container_name: mihomo
+    image: docker.io/metacubex/mihomo:Alpha
+    restart: on-failure:10
+    ports:
+      - "9097:9097"
+      - "7897:7897"
+    volumes:
+      - ./config.yaml:/root/.config/mihomo/config.yaml
+      - ./ui:/root/.config/mihomo/ui
