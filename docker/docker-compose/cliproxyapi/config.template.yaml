@@ -54,7 +54,9 @@ request-retry: 1
 # 当所有的模型供应商的额度耗尽之后，每次请求CLIProxyAPI都会触发最大等待时长，默认30s
 max-retry-interval: 30
 
+
 # 模型命中多个供应商时，采用的路由策略
+# 同一种类型的供应商A、B，当发现A额度耗尽会进行1s×2^n算法的重试，最长等待30分钟。（🤔源于源码）
 routing:
   # 可选值：["first-available", "round-robin"(默认值)], first-available优先使用匹配到的第一个
   strategy: "round-robin"
