@@ -1,0 +1,17 @@
+# 一些必须的配置
+mode: rule
+mixed-port: 7897
+allow-lan: true
+log-level: info
+ipv6: true
+external-controller-tls: 0.0.0.0:9091
+external-ui: /root/.config/mihomo/ui
+secret: xxx
+tls:
+  certificate: /root/.config/mihomo/cert/cert.pem
+  private-key: /root/.config/mihomo/cert/cert.key
+unified-delay: true
+tun:
+  enable: false
+sniffer:
+  enable: false

@@ -7,10 +7,10 @@ services:
     ports:
       # 暴露的api端口
       - 8317:8317
-      # OAuth - gemini
-      - 8318:8085
+      # OAuth - gemini(可以将回掉地址填入面板解决)
+      # - 8318:8085
       # OAuth - antigravity
-      - 8319:51121
+      # - 8319:51121
     volumes:
       - ./config.yaml:/CLIProxyAPI/config.yaml
       - ./auth-dir:/root/.cli-proxy-api

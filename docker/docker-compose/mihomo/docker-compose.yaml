@@ -9,3 +9,4 @@ services:
     volumes:
       - ./config.yaml:/root/.config/mihomo/config.yaml
       - ./ui:/root/.config/mihomo/ui
+      - /home/ecs-user/docker/certed/cert:/cert
