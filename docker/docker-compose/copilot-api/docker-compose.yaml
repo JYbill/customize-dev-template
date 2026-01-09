@@ -1,0 +1,16 @@
+services:
+  copilot-api:
+    image: nick3/copilot-api:all
+    container_name: copilot-api
+    restart: on-failure:10
+    ports:
+      - "4141:4141"
+    volumes:
+      - ./copilot-data:/root/.local/share/copilot-api
+    environment:
+      # 面板登录令牌
+      - ADMIN_TOKEN=xxx
+      # copilot 个人令牌
+      - COPILOT_API_KEY=xxx
+    # --rate-limit：每秒速率限制，默认none不限制，遇到速率问题可以启用
+    command: ["-v"]
