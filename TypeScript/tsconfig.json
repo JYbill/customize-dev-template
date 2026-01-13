@@ -471,6 +471,7 @@
      */
 
      
+    // 🗑️ 废弃，现在需要开启verbatimModuleSyntax才可用
     // 如何对待类型导入，取值如下
     // "remove": 移除所有类型导入
     // "preserve": 保留所有类型导入
