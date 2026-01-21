@@ -3,6 +3,10 @@ services: # 容器列表
     container_name: hbbs # 容器名
     image: rustdesk/rustdesk-server:latest # 对应镜像与其版本
     pull_policy: always # 每次启动时拉取最新镜像
+    # 指定启动的用户，也可以定义运行容器内的uid与gid
+    # "root" 指定为root用户启动
+    # "0:0" 使用0 uid:0 gid启动，等价于"root"
+    user: "root"
     
     
     volumes: # 挂载卷轴
@@ -54,3 +58,8 @@ services: # 容器列表
 networks:
   default:
     name: my_network
+
+# 具名卷
+volumes:
+  # 让docker为xxx卷分配存储地址
+  xxx:
