@@ -1,0 +1,31 @@
+services:
+  new-api:
+    image: calciumion/new-api:latest
+    container_name: new-api
+    restart: on-failure:20
+    command: --log-dir /app/logs
+    ports:
+      - "3723:3000"
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    environment:
+      - SQL_DSN=postgresql://new_api_user:9sD2vr6wUfkHzH7ixzLIXVzkeK5TAAip@172.25.156.225:5432/new-api
+#      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service, uncomment if using MySQL
+      - REDIS_CONN_STRING=redis://:990415@172.25.156.225:6379/0
+      - TZ=Asia/Shanghai
+      # 是否启用错误日志记录
+      - ERROR_LOG_ENABLED=true
+      # 是否启用内存缓存
+      - MEMORY_CACHE_ENABLED=true
+      # 是否启用批量更新
+      - BATCH_UPDATE_ENABLED=true
+      # 批量更新聚合时间间隔(秒)，默认5s，5s后将所有日志、数据一并写入到DB中
+      - BATCH_UPDATE_INTERVAL=10
+      # 流模式无响应超时时间，单位秒，默认300秒，如果出现空补全可以尝试改为更大值
+      # - STREAMING_TIMEOUT=300
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
