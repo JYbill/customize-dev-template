@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: on-failure:20
+    environment:
+      TZ: Asia/Shanghai
+      # 超级管理员设置
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: xxxxxx
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data:/var/lib/postgresql
