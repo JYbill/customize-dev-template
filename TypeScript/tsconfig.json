@@ -145,11 +145,6 @@
     // 使用`.`访问存在的属性object.params，使用object["name"]访问未知的选项
     "noPropertyAccessFromIndexSignature": true,
 
-    // 允许模块所有导出时，无需使用`* as`的语法糖
-    // 例子：原本需要import * as React from "react";
-    // 为true时，import React from "react";
-    "allowSyntheticDefaultImports": true,
-
     // 用于指定将输出文件合并为一个文件，它的值为一个文件路径名, 只有设置 module 的值为 amd 和 system 模块时才支持这个配置
     // "outFile": "./dist/main.js"
     // 是否将编译后的文件中的注释删掉, 默认false, 除了/!*开头的版权信息
