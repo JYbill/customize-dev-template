@@ -10,9 +10,6 @@
     // 指定incremental开启时，存放增量编译信息的文件路径
     "tsBuildInfoFile": ".cache/.tsbuildinfo",
 
-    // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
-    "target": "ESNext",
-
     /*
     （构建时期）使用的模块标准，target默认跟随target，如target：ES6，module默认为ES6，按照ES6模块化
     提示：node16与nodeNext: 表示node.js双模块系统（支持ESM与CJS），目前他俩表示一致，未来如果模块化内容有更新，则nodeNext表示最新的模块化特性！
@@ -50,7 +47,7 @@
     "moduleSuffixes": [],
 
     /*
-        用来指定编译文件的根目录，编译器会在根目录查找入口文件
+        用来指定编译文件的根目录，编译器会在根目录查找入口文件。ts v6默认为"."，一般推荐自己设置源码目录为"./src"
         ⚠️ extends时，子tsconfig.json模块未定义"rootDir"，则会使用相对于父tsconfig的"rootDir"，解析路径是父tsconfig！！！
     */
     "rootDir": "./src",
@@ -60,23 +57,20 @@
 
     
     /*
-        作用：是paths的起点
+        作用：是paths的起点，ts v6会标记为过期, v7将会弃用
         ⚠️ extends时，子tsconfig.json模块未定义"baseUrl"，则会使用相对于父tsconfig的baseUrl，解析路径是父tsconfig！！！
-        ⚠️ TS v6会标记为过期, v7将会弃用
     */
     // "baseUrl": ".",
 
     // 子tsconfig extends 父tsconfig，如果子tsconfig为定义baseUrl，则使用父tsconfig的绝对路径的paths！
+    // ts v6开始废弃了"baseUrl"，所以"paths"必须指定相对当前tsconfig.json的相对路径
     /*
       // 你可以告诉TS文件解析器路径别名，⚠️ 仅起到路径解析，如果使用其他构建工具进行打包，需在再其他构建工具(如：webpack、vite)中也要配置别名，这里只是起到类型检测的作用！
-      // ⚠️ 如果是本项目的"includes"包含的路径，则不会对import代码转换
       {
         "compilerOptions": {
-          "baseUrl": "src",
           "paths": {
-              "app/*": ["app/*"],
-              "config/*": ["app/_config/*"],
-              "tests/*": ["tests/*"]
+              "*": ["./src/*"], // 使用该路径的例子，import { main } from "app/index.js"
+              "config/*": ["./src/app/_config/*"]
           },
       }
     */
@@ -115,22 +109,11 @@
     // 开启，会跳过lib的ts检查，以及所有的.d.ts的检查
     "skipLibCheck": true,
 
-    // 包含一组内建JS接口的类型定义，如"DOM"...，默认包括target相匹配的api类型定义
-    "lib": ["ESNext"],
-
     // "allowJs": false, // 默认，false：不允许编写js
     // checkJs：值为 true 或 false，用来指定是否检查和报告 JS 文件中的错误，默认是 false。
     // "checkJs": false,
     // typing跟路径, 默认情况node_modules/@types都是可见的，除特例
     // "typeRoots": ["./"]
-
-    // 指定jsx代码用于的开发环境
-    // "preserve": 保留原始jsx后续用babel转更好
-    // "react"： 转成react编译后对应的js代码，如<div>哈哈哈哈</div> => createElement("div", {}, [哈哈哈哈])
-    "jsx": "preserve",
-
-    // 指定生成目标为react JSX时，使用的JSX工厂函数
-    // "jsxFactory": "React.createElement",
 
     // 用来指定是否在编译的时候生成响应的".d.ts"声明文件。如果设为 true，编译每个 ts 文件之后会生成一个 js 文件和一个声明文件
     "declaration": false,
@@ -351,6 +334,13 @@
      // 这块内容不再属于"strict"选项相关内容，而是单独的
      "noUncheckedIndexedAccess": true, // 检查访问对象时，属性是否在对象类型中定义，如果没有则抛出错误
      "noImplicitOverride": true, // 任何被覆盖的方法都必须使用override关键字
+
+     // ts v6默认为true，之前默认为false
+     /*
+        为true。如果有未找到的副作用导入时，将会抛出错误；为false。如果有未找到的副作用导入时，将忽略
+        import "./button-component.css"; // ❌ Cannot find module...
+     */
+     "noUncheckedSideEffectImports": true,
     // --------------------------  类型检查选项 end --------------------------
 
 
@@ -373,7 +363,9 @@
 
     // 用来指定声明文件或文件夹的路径列表，如果指定了此项，则只有在这里列出的声明文件才会被加载, 默认所有"**/node_modules/**/@types/*"包都将包含在你的编译过程中
     // "typeRoots": [],
+
     // 用来指定需要包含的模块，如果在代码中导入过的类型无需使用该属性，未导入但又想使用才需要
+    // ts v6开始默认为[]，需要显示指定导入哪些"node_modules/@types/*"的包，定义为"*"则恢复到v6之前到行为（导入即使用该包）
     // "types": [],
     
     /*
@@ -509,10 +501,37 @@
 
     // --------------------------  项目 start  --------------------------
     // disableSourceOfProjectReferenceRedirect：编辑器跳转引入的ts时，默认跳转到.d.ts，因为一般是第三方包。如果引入的是我们自己的子项目可以设置为true，这样可以跳转到.ts文件（原理：根据sourceMap查找到，否则还是跳到.d.ts文件）
-    "disableSourceOfProjectReferenceRedirect": true
+    "disableSourceOfProjectReferenceRedirect": true,
     // disableReferencedProjectLoad: 对于references ts项目默认是打开编辑器立即加在所有ts项目图，对于大型项目会很慢，设置为true后将需要加载某个引入的类型是才会开始懒加载
     // "disableReferencedProjectLoad": true,
     // --------------------------  项目 end  --------------------------
+
+
+
+
+    // --------------------------  语言环境 start  --------------------------
+    //用于控制是否启用通过 npm 包覆盖 TypeScript 内置 lib 文件的功能。ts v6默认为false，之前默认为true
+    /*
+        // package.json
+        dependencies: { @typescript/lib-dom: npm:@types/web }
+        启用后默认在node_modules/@typescript/lib-*查找lib需要的类型文件
+    */
+    "libReplacement": false,
+
+    // 包含一组内建JS接口的类型定义，如"DOM"...，默认包括target相匹配的api类型定义
+    "lib": ["ESNext"],
+
+    // 指定编译之后的版本目标，默认target为ES3，ESNEXT为最新规范
+    "target": "ESNext",
+
+    // 指定jsx代码用于的开发环境
+    // "preserve": 保留原始jsx后续用babel转更好
+    // "react"： 转成react编译后对应的js代码，如<div>哈哈哈哈</div> => createElement("div", {}, [哈哈哈哈])
+    "jsx": "preserve",
+
+    // 指定生成目标为react JSX时，使用的JSX工厂函数
+    // "jsxFactory": "React.createElement",
+    // --------------------------  语言环境 end  --------------------------
   }
 
   // --------------------------  选择、排除编译文件 start  --------------------------
