@@ -1,0 +1,60 @@
+{
+  "wizard": {
+    "lastRunAt": "2026-03-01T14:02:09.570Z",
+    "lastRunVersion": "2026.2.26",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/home/node/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "网关token密钥"
+    },
+    "controlUi": {
+      // 允许非TLS认证
+      "allowInsecureAuth": true,
+      // ⚠️ 禁用设备身份验证，属于严重的安全降级措施。紧急使用后请立即恢复原设置。
+      "dangerouslyDisableDeviceAuth": false,
+      // Non-loopback 必须设置allowedOrigins设置允许的访问host
+      "allowedOrigins": ["http://www.xiaoqinvar.cn:18789"]
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": ["camera.snap", "camera.clip", "screen.record", "calendar.add", "contacts.add", "reminders.add"]
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.2.26",
+    "lastTouchedAt": "2026-03-01T14:02:09.580Z"
+  }
+}
