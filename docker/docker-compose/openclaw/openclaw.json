@@ -7,23 +7,36 @@
   },
   "agents": {
     "defaults": {
+      // Agent 的默认工作目录，所有文件操作的根路径
       "workspace": "/home/node/.openclaw/workspace",
       "compaction": {
+        // 对话历史压缩策略。
+        // safeguard：分块摘要，更安全（防止长会话截断重要信息）
         "mode": "safeguard"
       },
+      // 跨会话最多同时运行 4 个 Agent
       "maxConcurrent": 4,
       "subagents": {
+        // 单次Agent对话期间最多同时委派8个子Agent完成任务
         "maxConcurrent": 8
       }
     }
   },
   "messages": {
+    // 控制何时显示「已收到」确认表情
+    // group-mentions：仅在群聊中被`@`提及才回应确认
+    // all：总显示
+    // none：不显示
     "ackReactionScope": "group-mentions"
   },
   "commands": {
+    // 自动在支持的平台（Discord/Telegram）注册原生斜杠Slash命令
     "native": "auto",
+    // 自动在原生命令菜单中暴露技能命令
     "nativeSkills": "auto",
+    // 允许通过聊天命令/restart触发Gateway 重启，也允许Agent使用 gateway 重启工具
     "restart": true,
+    // 显示用户ID/名称时使用原始格式（不做任何渲染美化）
     "ownerDisplay": "raw"
   },
   "session": {

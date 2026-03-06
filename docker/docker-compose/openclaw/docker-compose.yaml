@@ -4,7 +4,6 @@ services:
     environment:
       HOME: /home/node
       TERM: xterm-256color
-      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
     volumes:
       - ./.openclaw:/home/node/.openclaw
     ports:
@@ -27,7 +26,6 @@ services:
     environment:
       HOME: /home/node
       TERM: xterm-256color
-      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
       BROWSER: echo
     volumes:
       - ./.openclaw:/home/node/.openclaw
