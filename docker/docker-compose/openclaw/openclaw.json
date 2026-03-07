@@ -5,8 +5,36 @@
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
   },
+
+  // 工具配置
+  "tools": {
+    // 禁用工具
+    "deny": ["browser"]
+  },
+
   "agents": {
     "defaults": {
+      // 沙箱隔离
+      // agent：每个智能体一个容器 + 工作区
+      // session：每个会话一个容器 + 工作区
+      // 每个作用域工作区文件夹挂载在"workspace"下
+      "sandbox": {
+        "scope": "session"
+      },
+
+      // 模型设置
+      "model": {
+        // 主模型
+        "primary": "",
+        // 备用模型
+        "fallbacks": []
+      },
+      // 仅在主模型无法接收图像时使用
+      "imageModel": {
+        "primary": "",
+        "fallbacks": []
+      },
+
       // Agent 的默认工作目录，所有文件操作的根路径
       "workspace": "/home/node/.openclaw/workspace",
       "compaction": {
@@ -20,15 +48,115 @@
         // 单次Agent对话期间最多同时委派8个子Agent完成任务
         "maxConcurrent": 8
       }
+    },
+    // 定义agents信息
+    "list": [{ "id": "main" }]
+  },
+
+  // 模型供应商配置
+  "models": {
+    // models.json的自定义模型供应商
+    "providers": {
+      // api: openai-completions | openai-responses | anthropic-messages | google-generative-ai
+      // 自定义代理
+      "custom-proxy": {}
     }
   },
+
+  // 聊天频道配置
+  "channels": {
+    // 飞书，通过openclaw channels add交互式完成配置
+    // ⚠️ 官方已内置该插件，无需再安装插件
+    "feishu": {
+      "enabled": true,
+      // feishu插件渲染模式
+      // card：卡片渲染
+      // raw：接收所有字符串后返回文本
+      // auto：如果回复内容里检测到“适合卡片”的 Markdown 结构（比如代码块、表格），就用 card 渲染，否则用 raw 渲染（默认值）
+      "renderMode": "card",
+      "connectionMode": "websocket",
+      "domain": "feishu",
+      // 群聊回复消息的模式
+      // off：不引用原消息（私聊默认值）
+      // all：所有回复都引用原消息（群聊默认值）
+      "replyToMode": "all",
+      "groupPolicy": "open",
+      // groupPolicy: "allowlist"，groupAllowFrom表示允许使用的群组id
+      // groupAllowFrom: ["oc_xxx", "oc_yyy"],
+      "dmPolicy": "open",
+      // 哪些用户可以私信
+      "allowFrom": ["*"],
+      // 群组控制
+      "groups": {
+        "*": {
+          // 必须被`@`才会提及生效
+          "requireMention": true
+        }
+      },
+      "accounts": {
+        "main": {
+          "appId": "appId",
+          "appSecret": "appSecret"
+        }
+      },
+      // 开启正在输入
+      "typingIndicator": true,
+      // 读取发送者的用户信息
+      "resolveSenderNames": true
+    }
+  },
+
+  // 绑定聊天消息频道，决定进入某个频道的消息应该发送给哪个agent处理
+  "bindings": [
+    // 🌰 例子：进入飞书默认账号的消息发送给"main" agent处理
+    // 等价于：(channel=feishu, accountId=default) -> agent=main
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        // 这里表示对应渠道的accountId，default为默认
+        "accountId": "default"
+      }
+    }
+  ],
+
+  // 设置每个频道消息的配置，频道具体配置优先级更高
   "messages": {
     // 控制何时显示「已收到」确认表情
     // group-mentions：仅在群聊中被`@`提及才回应确认
     // all：总显示
     // none：不显示
-    "ackReactionScope": "group-mentions"
+    "ackReactionScope": "group-mentions",
+    // 固定回答的前缀
+    "responsePrefix": "👾",
+    // 收到消息后的“已读/已接收”反应表情
+    "ackReaction": "👀",
+    // 回答完成后，是否移除"ackReaction"表情
+    "removeAckAfterReply": true,
+
+    // 群组多条消息的处理情况
+    "queue": {
+      // 短时间内把连续消息收集后合并处理，只返回一条回答
+      // steer：更偏实时引导当前对话方向
+      // followup：偏跟进上一轮上下文
+      // steer-backlog / steer+backlog：引导 + 积压处理混合
+      // queue：严格排队逐条
+      // interrupt：新消息可能打断当前处理
+      "mode": "collect",
+      // 1s内的连续的消息，将会合并在1条处理
+      "debounceMs": 1000,
+      // 队列最多保留 20 条
+      "cap": 20,
+      // 队列超限时怎么处理
+      // summarize：把超出部分压缩总结成摘要
+      // old：丢最旧的
+      // new：丢最新的
+      "drop": "summarize",
+      // 按渠道覆盖上面的配置
+      "byChannel": {}
+    }
   },
+
   "commands": {
     // 自动在支持的平台（Discord/Telegram）注册原生斜杠Slash命令
     "native": "auto",
@@ -40,14 +168,23 @@
     "ownerDisplay": "raw"
   },
   "session": {
+    // 每个channel独立会话
     "dmScope": "per-channel-peer"
   },
   "gateway": {
+    // 网关端口
     "port": 18789,
+    // local网关模式
     "mode": "local",
+    // loopback: 绑定127.0.0.1/localhost本地环回地址
+    // lan：允许局域网访问
     "bind": "loopback",
     "auth": {
       "mode": "token",
+      "token": "网关token密钥"
+    },
+    "remote": {
+      // openclaw客户端连接网关的token，需与auth.token保持一致
       "token": "网关token密钥"
     },
     "controlUi": {
@@ -58,12 +195,14 @@
       // Non-loopback 必须设置allowedOrigins设置允许的访问host
       "allowedOrigins": ["http://www.xiaoqinvar.cn:18789"]
     },
+    // 信任的反代IP（如nginx ip），为空数组表示只允许本地ip代理或直接访问
+    "trustedProxies": [],
     "tailscale": {
       "mode": "off",
       "resetOnExit": false
     },
     "nodes": {
-      "denyCommands": ["camera.snap", "camera.clip", "screen.record", "calendar.add", "contacts.add", "reminders.add"]
+      "denyCommands": []
     }
   },
   "meta": {
