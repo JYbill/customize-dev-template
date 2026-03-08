@@ -29,7 +29,7 @@
         // 备用模型
         "fallbacks": []
       },
-      // 仅在主模型无法接收图像时使用
+      // 仅在主模型无法处理图像时使用
       "imageModel": {
         "primary": "",
         "fallbacks": []
@@ -37,16 +37,31 @@
 
       // Agent 的默认工作目录，所有文件操作的根路径
       "workspace": "/home/node/.openclaw/workspace",
+      // 对话历史压缩策略。
       "compaction": {
-        // 对话历史压缩策略。
         // safeguard：分块摘要，更安全（防止长会话截断重要信息）
-        "mode": "safeguard"
+        "mode": "safeguard",
+        // 预留10000tokens上下文
+        "reserveTokensFloor": 10000,
+        "memoryFlush": {
+          "enabled": true,
+          // 在reserveTokensFloor基础上增加4000tokens的缓冲
+          "softThresholdTokens": 4000,
+          "systemPrompt": "Session nearing compaction. Store durable memories now.",
+          "prompt": "Write any lasting notes to memory/YYYY-MM-DD.md; reply with NO_REPLY if nothing to store."
+        }
       },
       // 跨会话最多同时运行 4 个 Agent
       "maxConcurrent": 4,
       "subagents": {
         // 单次Agent对话期间最多同时委派8个子Agent完成任务
         "maxConcurrent": 8
+      },
+
+      // 心跳检测是否有提醒任务
+      // 如果定义了agents.list[].heartbeat，那么仅这些代理运行心跳
+      "heartbeat": {
+        "every": "30m"
       }
     },
     // 定义agents信息
@@ -169,6 +184,10 @@
   },
   "session": {
     // 每个channel独立会话
+    // main : 所有直接消息共享主会话
+    // per-peer：跨频道按发送者 ID 隔离
+    // per-channel-peer : 按频道+发送者隔离
+    // per-account-channel-peer : 按账户+频道+发送者隔离（推荐用于多账户场景）
     "dmScope": "per-channel-peer"
   },
   "gateway": {
@@ -204,6 +223,10 @@
     "nodes": {
       "denyCommands": []
     }
+  },
+  "plugins": {
+    // 允许加载的插件
+    "allow": ["qqbot", "talk-voice", "phone-control", "memory-core", "feishu", "device-pair"]
   },
   "meta": {
     "lastTouchedVersion": "2026.2.26",
