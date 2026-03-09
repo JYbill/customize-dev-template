@@ -9,7 +9,16 @@
   // 工具配置
   "tools": {
     // 禁用工具
-    "deny": ["browser"]
+    "deny": ["browser"],
+    // 允许agent给agent发送@消息
+    "agentToAgent": {
+      "enabled": true,
+      "allow": ["main", "cook"]
+    },
+    // 允许agent看到所有会话
+    "sessions": {
+      "visibility": "all"
+    }
   },
 
   "agents": {
@@ -61,7 +70,10 @@
       // 心跳检测是否有提醒任务
       // 如果定义了agents.list[].heartbeat，那么仅这些代理运行心跳
       "heartbeat": {
-        "every": "30m"
+        "every": "30m",
+        // 最后一次访问本agent的channel
+        // none: 不发送任何channel消息
+        "target": "latest"
       }
     },
     // 定义agents信息
