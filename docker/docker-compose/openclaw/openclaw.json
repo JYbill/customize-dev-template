@@ -224,9 +224,32 @@
       "denyCommands": []
     }
   },
+  "cron": {
+    "enabled": true,
+    "store": "~/.openclaw/cron/jobs.json", // 默认路径
+    "maxConcurrentRuns": 1, // 默认1，最大并发任务
+    "retry": {
+      // 默认内置策略，可选覆盖
+      "maxAttempts": 3,
+      "backoffMs": [60000, 120000, 300000],
+      "retryOn": ["rate_limit", "overloaded", "network", "server_error"]
+    },
+    "sessionRetention": "24h", // 默认 "24h"，isolated 模式 cron job 产生的 session 数据保留时长
+    "runLog": {
+      // 单个cron日志保留的最大字节数
+      "maxBytes": "2mb",
+      // 默认保留2000行日志，超出部分丢弃
+      "keepLines": 2000
+    }
+  },
   "plugins": {
+    "enabled": true,
     // 允许加载的插件
-    "allow": ["qqbot", "talk-voice", "phone-control", "memory-core", "feishu", "device-pair"]
+    "allow": ["qqbot", "talk-voice", "phone-control", "memory-core", "feishu", "device-pair"],
+    "entries": {
+      // 单一插件的精细控制
+      "qqbot": { "enabled": true }
+    }
   },
   "meta": {
     "lastTouchedVersion": "2026.2.26",
