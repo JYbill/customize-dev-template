@@ -184,6 +184,12 @@
     }
   },
 
+  // skills配置
+  "skills": {
+    // 仅对捆绑技能的可选允许列表（托管/工作区技能不受影响）
+    "allowBundled": ["gemini", "peekaboo"]
+  },
+
   "commands": {
     // 自动在支持的平台（Discord/Telegram）注册原生斜杠Slash命令
     "native": "auto",
