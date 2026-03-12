@@ -31,6 +31,12 @@
         "scope": "session"
       },
 
+      // 模型默认的深度思考等级：off | minimal | low | medium | high | xhigh | adaptive
+      "thinkingDefault": "off",
+      // 在channel显示正在输出的状态时机，取值：never | instant | thinking | message
+      "typingMode": "instant",
+      // 刷新率，单位s
+      "typingIntervalSeconds": 6,
       // 模型设置
       "model": {
         // 主模型
