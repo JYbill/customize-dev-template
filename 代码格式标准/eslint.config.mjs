@@ -52,6 +52,8 @@ export default defineConfig([
       "no-duplicate-imports": ["error"], // 禁用重复导入
       "no-dupe-keys": "error", // 禁止对象字面量中出现重复的键
       "no-control-regex": "off", // 允许正则表达式中的控制字符
+      "no-unused-vars": "off", // 未使用的变量
+      "no-useless-assignment": "off", // 变量被赋值后但后续未使用
 
       // typescript-eslint
       "@typescript-eslint/no-unused-vars": "off",
