@@ -30,6 +30,9 @@ services: # 容器列表
       - SYS_ADMIN # 一大堆系统管理类操作，但范围小于ALL
     # 容器与宿主机共享同一个进程命名空间（PID namespace）。这样容器内可以看到宿主机上的所有进程，并且可以对它们进行操作（如 ps、kill）。常用于需要监控或管理宿主机进程的场景（⚠️ 有风险）
     pid: host
+    # 进程能不能调用某些系统调用，默认是有一定的限制的
+    security_opt:
+    - seccomp:unconfined
 
     # 在容器里加一个很小的init PID:1进程，回收僵尸进程、正确转发信号、优雅退出
     init: true
