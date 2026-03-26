@@ -4,19 +4,23 @@ name: opencode
 on:
   issue_comment:
     types: [created]
-  pull_request_review_comment:
-    types: [created]
 
 jobs:
   opencode:
-    if: |
-      contains(github.event.comment.body, '/oc') ||
-      contains(github.event.comment.body, '/opencode') ||
-      contains(github.event.comment.body, '@oc') ||
-      contains(github.event.comment.body, '@opencode')
     runs-on: ubuntu-latest
+    env:
+      GH_PAT: ${{ secrets.GH_PAT }}
+      CODING_HOST: https://newapi.xiaoqinvar.cn
+      CODING_PLAN_KEY: ${{ secrets.CODING_PLAN_KEY }}
+      CODING_OPENAI_KEY: ${{ secrets.CODING_OPENAI_KEY }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body || '', '@oc-agent') &&
+       (github.event.comment.user.login || '') != 'oc-agent' &&
+       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association || ''))
     permissions:
-      id-token: write
+      contents: write
     steps:
        - name: Checkout repository
          uses: actions/checkout@v6
@@ -24,11 +28,37 @@ jobs:
            fetch-depth: 1
            persist-credentials: false
 
-       - name: Run OpenCode
-        uses: anomalyco/opencode/github@latest
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        with:
-          model: anthropic/claude-sonnet-4-20250514
-          # share: true
-          # github_token: xxxx
+       - name: 配置agent git信息
+         run: |
+           git config user.name "opencode-ai"
+           git config user.email "opencode-ai@users.noreply.github.com"
+
+       - name: 为agent认证gh命令行
+         run: |
+           gh auth login --with-token
+           gh auth status
+
+       - name: 准备opencode agent运行环境
+         uses: oven-sh/setup-bun@v2
+         with:
+           bun-version: latest
+
+       - name: 缓存
+         uses: actions/cache@v4
+         with:
+           path: |
+             ~/.bun/install/cache
+             node_modules
+           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+           restore-keys: |
+             ${{ runner.os }}-bun-
+
+       - name: 安装opencode
+         run: |
+           bun i -g opencode-ai@latest
+           opencode --version
+
+       - name: 配置opencode
+         run: |
+           cp .github/opencode/opencode.jsonc ~/.config/opencode/opencode.jsonc
+           cp .github/opencode/oh-my-openagent.jsonc ~/.config/opencode/oh-my-openagent.jsonc

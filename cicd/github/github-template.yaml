@@ -1,9 +1,17 @@
 # Action操作名称
 name: CI
 
-# 权限
+# github token权限，可以通过GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}读取该环境变量
 permissions:
+  # 允许读写仓库内容，包括代码、提交、tag、release
   contents: write
+  # 允许workflow请求OIDC，方便进行npm发布
+  id-token: write
+  # 允许创建/编辑/关闭 PR，以及添加 PR 评论
+  pull-requests: write
+  # 允许创建/编辑/关闭 issue
+  issues: write
+
 
 # 触发事件
 on:
@@ -14,6 +22,16 @@ on:
 
   # 允许您从"Actions"选项卡手动运行此工作流
   workflow_dispatch:
+    inputs:
+      # (可选)允许输入触发的prompt
+      prompt:
+        description: "输入自定义触发的提示词"
+        required: false
+
+  # issue评论事件
+  # created：创建时触发
+  issue_comment:
+    types: [created]
 
 # 工作流
 jobs:
@@ -43,6 +61,19 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+      # cache 缓存插件
+      - uses: actions/cache@v4
+        with:
+          # 缓存不同的路径
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          # 生成缓存key，方便复用，但一旦操作系统版本、bun.lock版本变化即失效
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          # 缓存未命中时的降级匹配，即使没有完全匹配的则找第一个相似的
+          restore-keys: |
+            ${{ runner.os }}-bun- 
+
       # nrwl/nx-set-shas插件：用于在GitHub Action环境下
       # 1. 确定"base"上一次master/main主分支的commit hash值
       # 2. 确定"head"即PR提交的最新commit hash值
@@ -70,3 +101,37 @@ jobs:
           folder: deploy # 仓库内需要部署的目录，且不会部署`.gitignore`内的文件
           branch: deploy # 部署到deploy分支
           commit-message: "deploy: push config or rules through action"
+  
+  agent:
+    runs-on: ubuntu-latest
+
+    # github.event_name：workflow_dispatch（手动触发）、issue_comment（评论触发）
+    # github.event_name == 'workflow_dispatch' 手动触发workflow直接执行
+    
+    # github.event.comment.body：评论内容
+
+    # github.event.comment.user.login: 评论者的用户名
+
+    # github.event.comment.author_association：评论作者属性，OWNER创建者、MEMBER成员、COLLABORATOR合作者
+
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body || '', '@sisyphus-dev-ai') &&
+       (github.event.comment.user.login || '') != 'sisyphus-dev-ai' &&
+       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association || ''))
+    steps:
+      - name: 配置agent git信息
+        run: |
+          git config user.name "opencode-ai"
+          git config user.email "opencode-ai@users.noreply.github.com"
+            # gh CLI auth as sisyphus-dev-ai
+      - name: 为agent认证gh命令行
+        run: |
+          echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+          gh auth status
+      - name: 配置opencode
+        run: |
+          # 创建opencode配置、oh-my-openagent配置
+          OPENCODE_JSON=~/.config/opencode/opencode.jsonc
+          OMO_JSON=~/.config/opencode/oh-my-openagent.jsonc
