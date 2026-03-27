@@ -1,5 +1,4 @@
 name: opencode
-# 参考opencode官方文档：https://opencode.ai/docs/github/
 
 on:
   issue_comment:
@@ -14,11 +13,10 @@ jobs:
       CODING_PLAN_KEY: ${{ secrets.CODING_PLAN_KEY }}
       CODING_OPENAI_KEY: ${{ secrets.CODING_OPENAI_KEY }}
     if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issue_comment' &&
+      github.event_name == 'issue_comment' &&
        contains(github.event.comment.body || '', '@oc-agent') &&
        (github.event.comment.user.login || '') != 'oc-agent' &&
-       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association || ''))
+       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association || '')
     permissions:
       contents: write
     steps:
@@ -62,3 +60,9 @@ jobs:
          run: |
            cp .github/opencode/opencode.jsonc ~/.config/opencode/opencode.jsonc
            cp .github/opencode/oh-my-openagent.jsonc ~/.config/opencode/oh-my-openagent.jsonc
+
+       - name: 运行opencode
+         run: |
+           ISSUE_NUMBER="${{ github.event.issue.number }}"
+           REPO="${{ github.repository }}"
+           opencode run "REPO: ${{ github.repository }} ISSUE_NUMBER: ${{ github.event.issue.number }}。必须：通过gh命令行像当前issues发送评论，进行回复用户的对话"

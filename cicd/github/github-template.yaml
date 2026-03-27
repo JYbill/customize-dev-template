@@ -11,6 +11,8 @@ permissions:
   pull-requests: write
   # 允许创建/编辑/关闭 issue
   issues: write
+  # 有权限给某个 commit / PR 写 GitHub 状态检查结果
+  statuses: write
 
 
 # 触发事件
@@ -45,7 +47,7 @@ jobs:
           # fetch-depth: 100
           # 不要下载tree树数据（即fetch-depth: n层的真实目录结构）
           # filter: tree:0
-          # 控制 checkout 后是否将认证 token 持久化写入本地 git config，推荐设置为false，默认为true
+          # 控制 checkout 后是否将认证 git token 持久化写入本地 git config，推荐设置为false，默认为true。⚠️ 如果要创建分支并推送一定要开启
           # persist-credentials: false
 
       # 如果需要将checkout的代码映射到github ci服务器的main分支，可以这样做，此时git branch会显示为"main"否则默认为"detached HEAD"
