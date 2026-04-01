@@ -1,0 +1,26 @@
+services:
+    docling-serve:
+      image: ghcr.io/docling-project/docling-serve:latest
+      ports:
+        - "5001:5001"
+      environment:
+        - DOCLING_SERVE_ENABLE_UI=true
+        # 模型持久化路径，避免每次重启重新下载
+        - DOCLING_SERVE_ARTIFACTS_PATH=/app/models/
+        # 并发 worker 数，CPU 核数的一半比较稳
+        - DOCLING_SERVE_ENG_LOC_NUM_WORKERS=4
+        # 限制单文档最大页数，防止超大文档把服务器打挂
+        - DOCLING_SERVE_MAX_NUM_PAGES=100
+        # 多个worker共享同一套模型
+        - DOCLING_SERVE_ENG_LOC_SHARE_MODELS=true
+        # 可选：X-Api-Key请求头鉴权
+        - DOCLING_SERVE_API_KEY=a1s2#f4g5
+      volumes:
+        - ./models:/app/models
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s

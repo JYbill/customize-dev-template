@@ -32,7 +32,9 @@ services: # 容器列表
     pid: host
     # 进程能不能调用某些系统调用，默认是有一定的限制的
     security_opt:
-    - seccomp:unconfined
+      - seccomp:unconfined
+    # 限制内存，防止 OOM 把宿主机拖垮
+    mem_limit: 8g
 
     # 在容器里加一个很小的init PID:1进程，回收僵尸进程、正确转发信号、优雅退出
     init: true
@@ -51,6 +53,14 @@ services: # 容器列表
       - docker.env
     environment:
       - TZ=Asia/Shanghai
+    
+    # 健康检查
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
     
     # 一个网络端口部署3个副本实例，需要配合docker swarm启动
     deploy:
