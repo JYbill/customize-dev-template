@@ -54,3 +54,13 @@ streaming:
   keepalive-seconds: 15
   # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
   bootstrap-retries: 1
+
+
+# 设置请求参数
+payload:
+  default:
+    - models:
+        - name: gpt-5*
+          protocol: ""
+      params:
+        reasoning.effort: high
