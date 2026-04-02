@@ -1,0 +1,69 @@
+{
+  "enable_ui": true,
+  // 并发 worker 数，CPU 核数的一半比较稳
+  "eng_loc_num_workers": 4,
+  // 限制单文档最大页数，防止超大文档把服务器打挂
+  "max_num_pages": 100,
+  // 多个worker共享同一套模型
+  "eng_loc_share_models": true,
+  // 允许pipeline组件远程发起API请求模型
+  "enable_remote_services": true,
+  // 允许用户指定完全自定义的视觉语言模型流水线配置
+  "allow_custom_vlm_config": true,
+  "default_vlm_preset": "qwen25_vl_api",
+  "allowed_vlm_presets": ["qwen25_vl_api"],
+  "custom_vlm_presets": {
+    "qwen25_vl_api": {
+      "engine_options": {
+        "engine_type": "api",
+        "url": "http://192.168.88.224:3723/v1/chat/completions",
+        "params": {
+          "name": "qwen3-vl-flash",
+          "default_repo_id": "qwen3-vl-flash",
+          "temperature": 0.0,
+          "max_tokens": 4096
+        },
+        "timeout": 90,
+        "concurrency": 1
+      },
+      "model_spec": {
+        "name": "qwen3-vl-flash",
+        "prompt": "Convert this page to markdown. Do not miss any text and only output the bare markdown!",
+        "response_format": "markdown"
+      },
+      "scale": 2.0,
+      "max_size": null,
+      "batch_size": 1,
+      "force_backend_text": false
+    }
+  },
+  "default_picture_description_preset": "qwen25_vl_api",
+  "allowed_picture_description_presets": ["qwen25_vl_api"],
+  "custom_picture_description_presets": {
+    "qwen25_vl_api": {
+      "engine_options": {
+        "engine_type": "api",
+        "url": "http://192.168.88.224:3723/v1/chat/completions",
+        "params": {
+          "model": "qwen3-vl-flash",
+          "temperature": 0.0,
+          "max_tokens": 1024
+        },
+        "timeout": 90,
+        "concurrency": 1
+      },
+      "model_spec": {
+        "name": "qwen3-vl-flash",
+        "default_repo_id": "qwen3-vl-flash",
+        "prompt": "Describe this image.",
+        "response_format": "plaintext"
+      },
+      "batch_size": 1,
+      "scale": 2.0,
+      "picture_area_threshold": 0.05,
+      "classification_allow": null,
+      "classification_deny": null,
+      "classification_min_confidence": 0.0
+    }
+  }
+}

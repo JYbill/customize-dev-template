@@ -38,6 +38,9 @@ services: # 容器列表
 
     # 在容器里加一个很小的init PID:1进程，回收僵尸进程、正确转发信号、优雅退出
     init: true
+
+    # 优雅停止，默认会等待10s结束
+    stop_grace_period: 2s
     
     # 重启规则
     # always：总是重启，不推荐
