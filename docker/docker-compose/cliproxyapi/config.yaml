@@ -46,8 +46,10 @@ usage-statistics-enabled: true
 # 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
 proxy-url: ""
 
-# http状态码为：403, 408, 500, 502, 503, 504时，重试请求的次数。默认：0
-request-retry: 1
+# http状态码为：403/408/500/502/503/504时，重试请求的次数。默认：3。当前凭证即会进入cool-down状态
+request-retry: 3
+# 默认：30.如果所有的凭证都进入了cool-down状态，客户端请求时会返回http 429状态，以及Retry-After: 30头，能够让客户端知道还需要等待多久
+max-retry-interval: 30
 
 # ws连接(/v1/ws)启用认证
 ws-auth: true

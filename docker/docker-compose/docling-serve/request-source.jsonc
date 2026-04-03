@@ -1,0 +1,90 @@
+{
+  // 请求源
+  "sources": [
+    {
+      "kind": "http",
+      "url": "http://192.168.88.234/env-share/test/test.png"
+    }
+  ],
+  "options": {
+    "to_formats": ["json"],
+    "image_export_mode": "referenced",
+    // 默认true，允许 Docling 做文字识别，适合扫描件、图片 PDF、纯图片
+    "do_ocr": true,
+    // 默认false，即使PDF里本来有文本层，也尽量走OCR
+    "force_ocr": false,
+    // ocr引擎库，可选枚举：auto, easyocr, ocrmac, rapidocr, tesserocr, tesseract
+    "ocr_engine": "easyocr",
+    // OCR 识别语言列表，配错了识别效果可能很烂
+    "ocr_lang": ["ch_sim", "en"],
+    // Docling 用哪套底层方式读 PDF、拿布局、拿页面内容。默认值：docling_parse，可选值："pypdfium2" "docling_parse" "dlparse_v1" "dlparse_v2" "dlparse_v4"
+    "pdf_backend": "docling_parse",
+    // 表格结构识别模式，默认"accurate"还原度更高，可选：fast更快
+    "table_mode": "accurate",
+    // 表格单元格匹配开关，默认true，作用是让检测到的表格结构和单元格内容做更细的对齐。开启后通常表格更规整，但可能更慢。
+    "table_cell_matching": true,
+    // 处理图片、pdf的管线组件，默认"standard"，可选："legacy" "standard" "vlm" "asr"
+    "pipeline": "vlm",
+    // 限制处理页码范围，默认值：[1,9223372036854776000]
+    "page_range": [1, 9223372036854776000],
+    // 单个文档最大处理时长，单位s，默认7天
+    "document_timeout": 604800,
+    // 遇错是否直接中断整个文档处理，默认false
+    "abort_on_error": false,
+    // 是否开启表格结构提取
+    "do_table_structure": true,
+    // 开启后，输出里会包含图片相关内容/引用，默认true
+    "include_images": true,
+    // 图像缩放比例，默认2x，对ocr友好
+    "images_scale": 2,
+    // Markdown 导出时的分页占位符，默认""
+    "md_page_break_placeholder": "",
+    // 识别文档里的代码块，并补充代码相关信息，适合技术文档
+    "do_code_enrichment": false,
+    // 识别公式，并尽量提取更结构化的公式表达
+    "do_formula_enrichment": false,
+    // 对图片做分类
+    "do_picture_classification": false,
+    // 对文档内的图表进行分类（比如：xlsx的图表）
+    "do_chart_extraction": false,
+    // 对图片生成描述
+    "do_picture_description": false,
+    // 图片描述功能的面积阈值，表示页面里多大的图片才值得跑 picture description。默认0.05，即占页面面积的5%以上才跑。
+    "picture_description_area_threshold": 0.05,
+    // vlm 组件的预设
+    "vlm_pipeline_preset": "qwen25_vl_api",
+    // 可以设置远程模型api
+    "vlm_pipeline_custom_config": {
+      "engine_options": {
+        "engine_type": "api",
+        "url": "http://192.168.88.224:3723/v1/chat/completions",
+        "headers": {
+          "Authorization": "sk-PC26kWiQpuctFx6uaiBy44ElgL6DUGviE2OkNlkvQpxs4rPZ"
+        },
+        "params": {
+          "model": "qwen3-vl-flash",
+          "temperature": 0.0,
+          "max_tokens": 4096
+        },
+        "timeout": 90,
+        "concurrency": 1
+      },
+      "model_spec": {
+        "name": "qwen3-vl-flash",
+        "default_repo_id": "qwen3-vl-flash",
+        "prompt": "如果图片内有文字则识别出来，如果没有则表述图片",
+        "response_format": "markdown"
+      },
+      "scale": 2.0,
+      "max_size": null,
+      "batch_size": 1,
+      "force_backend_text": false
+    },
+    // picture description的预设
+    "picture_description_preset": "",
+    // 可以设置远程模型api
+    "picture_description_custom_config": {},
+    // 代码/公式增强的预设
+    "code_formula_preset": ""
+  }
+}

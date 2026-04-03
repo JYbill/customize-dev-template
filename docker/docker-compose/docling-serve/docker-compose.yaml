@@ -4,12 +4,16 @@ services:
       ports:
         - "5001:5001"
       environment:
+        # 开发时设置，如果为""则在启动时下载所有默认模型
+        - DOCLING_SERVE_ARTIFACTS_PATH=""
         - DOCLING_SERVE_CONFIG_FILE=/app/config.json
         # 可选：X-Api-Key请求头鉴权
         - DOCLING_SERVE_API_KEY=a1s2#f4g5
       volumes:
-        - ./models:/app/models
+        - ./models:/opt/app-root/src/models
+        - ./config.json:/app/config.json
       restart: unless-stopped
+      stop_grace_period: 2s
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:5001/api"]
         interval: 30s
