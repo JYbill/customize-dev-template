@@ -17,6 +17,10 @@ remote-management:
   # 禁用控制面板资源下载，使用自定义管理面板适合为true
   disable-control-panel: false
 
+# round-robin (default), fill-first(用完一下再切换下一个)
+routing:
+  strategy: "fill-first"
+
 # 禁用高开销中间件以降低内存占用。
 commercial-mode: false
 
@@ -56,7 +60,7 @@ streaming:
   bootstrap-retries: 1
 
 
-# 设置请求参数
+# 设置请求参数，下面参数实际测试下仅对相同api生效，即openai response api -> openai response api此时才会设置默认值。如果是协议转换则使用medium默认的深度思考级别
 payload:
   default:
     - models:
