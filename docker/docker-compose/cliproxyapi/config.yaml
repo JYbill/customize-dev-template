@@ -70,3 +70,13 @@ payload:
           protocol: ""
       params:
         reasoning.effort: high
+
+# 对于responses api的prompt_cache_key的行为 👍
+# claude api -> cli-proxy-api -> codex api/codex OAuth(responses api)，将model + metadata.user_id作为prompt_cache_key的唯一id
+
+# 对于responses的previous_response_id参数行为
+# response api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，且不会记录每一轮的messages
+# ws api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，但会记录每一轮的messages在内存中，发送给上游提供商时会拼成messages完整的历史对话列表并发送
+
+# 对于responses api -> claude api的cache_control参数行为
+# response api -> cli-proxy-api -> claude api。tools 数组最后一个tool上加；system 最后一个 block上加；messages 倒数第二个 user block上加
