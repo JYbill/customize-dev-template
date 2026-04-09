@@ -38,7 +38,7 @@ logs-max-total-size-mb: 10
 
 # 如果是 false：请求codex api供应商时代理基本不加这层官方 Codex 指令，原请求直接走
 # 如果是 true：cli-proxy-api会在codex api请求上，按模型补进官方Codex的那套提示词指令进行伪造
-codex-instructions-enabled: false
+codex-instructions-enabled: true
 
 # 当为false时，禁用内存中使用统计聚合。默认true
 usage-statistics-enabled: true
