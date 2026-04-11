@@ -18,6 +18,7 @@ remote-management:
   disable-control-panel: false
 
 # round-robin (default), fill-first(用完一下再切换下一个)
+# ⚠️ 如果上游进入cool-down状态时，会使用下一个同名模型其他上游供应商
 routing:
   strategy: "fill-first"
 
@@ -61,7 +62,6 @@ streaming:
   # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
   bootstrap-retries: 1
 
-
 # 设置请求参数，下面参数实际测试下仅对相同api生效，即openai response api -> openai response api此时才会设置默认值。如果是协议转换则使用medium默认的深度思考级别
 payload:
   default:
@@ -80,3 +80,7 @@ payload:
 
 # 对于responses api -> claude api的cache_control参数行为
 # response api -> cli-proxy-api -> claude api。tools 数组最后一个tool上加；system 最后一个 block上加；messages 倒数第二个 user block上加
+
+# POST /v1/messages/count_tokens（携带本地完整的当前会话上下文在请求体），claude code发送/context行为
+# 如果上游为claude api则发送到上游查询真实的token usage数据并返回
+# 如果上游为codex api / openai compatible 则根据会话上下文tokenizer计算token数量并返回
