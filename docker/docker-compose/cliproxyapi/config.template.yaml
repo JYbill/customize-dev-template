@@ -53,11 +53,10 @@ proxy-url: ""
 force-model-prefix: false
 
 # http状态码为：403, 408, 500, 502, 503, 504时，重试请求的次数。默认：0
-request-retry: 1
+request-retry: 0
 
 # 当所有的模型供应商的额度耗尽之后，每次请求CLIProxyAPI都会触发最大等待时长，默认30s
-max-retry-interval: 30
-
+max-retry-interval: 0
 
 # 模型命中多个供应商时，采用的路由策略
 # 同一种类型的供应商A、B，当发现A额度耗尽会进行1s×2^n算法的重试，最长等待30分钟。（🤔源于源码）
@@ -78,9 +77,9 @@ ws-auth: true
 # SSE行为
 streaming:
   # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
-  keepalive-seconds: 15
+  keepalive-seconds: 0
   # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
-  bootstrap-retries: 1
+  bootstrap-retries: 0
 
 # 按供应商命名模型别名
 oauth-model-mappings:
@@ -94,15 +93,15 @@ payload:
   # 默认规则：仅在请求载荷中缺少参数时设置的默认值
   default:
     - models:
-        - name: "gemini-2.5-pro"  # 支持通配符，如 "gemini-*"
-          protocol: "gemini"  # 限定协议类型，可选：openai、gemini、claude、codex
-      params:  # 参数设置（使用 gjson/sjson 路径语法）
-        "generationConfig.thinkingConfig.thinkingBudget": 32768  # 思考预算配置
-  
+        - name: "gemini-2.5-pro" # 支持通配符，如 "gemini-*"
+          protocol: "gemini" # 限定协议类型，可选：openai、gemini、claude、codex
+      params: # 参数设置（使用 gjson/sjson 路径语法）
+        "generationConfig.thinkingConfig.thinkingBudget": 32768 # 思考预算配置
+
   # 覆盖规则：始终覆盖请求参数
   override:
     - models:
-        - name: "gpt-*"  # 支持通配符匹配多个模型
-          protocol: "codex"  # 限定为 Codex 协议
+        - name: "gpt-*" # 支持通配符匹配多个模型
+          protocol: "codex" # 限定为 Codex 协议
       params:
-        "reasoning.effort": "high"  # 推理努力程度设置为高
+        "reasoning.effort": "high" # 推理努力程度设置为高
