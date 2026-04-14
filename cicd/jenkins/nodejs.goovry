@@ -2,60 +2,54 @@ pipeline {
     agent any
 
     tools {
-      nodejs 'node-latest'
+      nodejs 'node-24'
     }
     
     stages {
         stage('git clone') {
             steps {
-                git branch: branch, credentialsId: 'codeup-person-password', url: 'git url'
+                git branch: branch, credentialsId: 'codeup-person-password', url: '...'
             }
         }
         
         stage('pnpm install') {
             steps {
-                sh 'pnpm config set package-lock false'
-                sh 'pnpm i' // DEBUG: --reporter=ndjson
-                sh 'pnpm approve-builds'
+                sh 'npm config set package-lock true'
+                sh 'pnpm install --frozen-lockfile' // DEBUG: --reporter=ndjson
+                sh 'node --version'
+                sh 'pnpm --version'
             }
         }
         
-        // stage('lint') {
-        //     steps {
-        //         sh 'pnpm lint'
-        //     }
-        // }
-
-        stage('tsc type check') {
+        stage('tsc check') {
             steps {
-                sh 'pnpm tsc --version'
-                sh 'pnpm tsc --noEmit'
+                sh 'pnpm tsgocheck'
             }
         }
 
         stage('docker build') {
             steps {
                 script {
-                  def dockerImageName = "backend-wzj-nodejs-v2"
+                  def dockerImageName = "backend-..."
                   def branchName = sh(script: "git branch --show-current", returnStdout: true).trim().replace("/", "_")
                   def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
                   def gitTag = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
-                  def dockerTag = "x86_${branchName}_${commitId}_${gitTag}"
+                  def dockerTag = "${platform == 'x86-debian' ? 'x86' : 'arm'}_${branchName}_${commitId}_${gitTag}"
                   
                   env.DOCKER_IMAGE_NAME = dockerImageName
                   env.DOCKER_TAG = dockerTag
                   
-                  sh "docker build --build-arg HTTP_PROXY=http://127.0.0.1:7897 --build-arg https_proxy=http://127.0.0.1:7897 --build-arg http_proxy=http://127.0.0.1:7897 --build-arg HTTPS_PROXY=http://127.0.0.1:7897 -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
-                  // sh "docker build -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
+                //   sh "docker build --build-arg HTTP_PROXY=http://192.168.88.116:7897 --build-arg https_proxy=http://192.168.88.116:7897 --build-arg http_proxy=http://192.168.88.116:7897 --build-arg HTTPS_PROXY=http://192.168.88.116:7897 -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
+                  sh "docker build -f '${platform}.Dockerfile' -t ${dockerImageName} ."
                   
                   withCredentials([usernamePassword(
                     credentialsId: 'nexus-155-user-pwd',
                     usernameVariable: 'username',
                     passwordVariable: 'password'
                   )]) {
-                    sh 'docker login --username=$username --password=$password 127.0.0.1:8082'
-                    sh "docker tag ${dockerImageName} 127.0.0.1:8082/${dockerImageName}:${dockerTag}"
-                    sh "docker push 127.0.0.1:8082/${dockerImageName}:${dockerTag}"
+                    sh 'docker login --username=$username --password=$password 192.168.88.115:8082'
+                    sh "docker tag ${dockerImageName} 192.168.88.115:8082/${dockerImageName}:${dockerTag}"
+                    sh "docker push 192.168.88.115:8082/${dockerImageName}:${dockerTag}"
                   }
                 }
             }
@@ -64,9 +58,12 @@ pipeline {
         stage("ssh deploy") {
             steps {
                 script {
+                  if (platform == 'arm') {
+                     return
+                  }
                   def remote = [:]
                   remote.name = '内网234'
-                  remote.host = '127.0.0.1'
+                  remote.host = '192.168.88.234'
                   remote.allowAnyHosts = true
                   
                   withCredentials([sshUserPrivateKey(
