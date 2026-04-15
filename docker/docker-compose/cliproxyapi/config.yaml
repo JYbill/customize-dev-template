@@ -32,6 +32,12 @@ auth-dir: "~/.cli-proxy-api"
 api-keys:
   - "your-api-key-1"
 
+# 启用debug模式。默认false
+debug: false
+
+# 打印请求日志
+request-log: true
+
 # true: 是否将日志写入转轮文件而不是输出到stdout
 logging-to-file: true
 # 默认0，日志转轮文件总数
