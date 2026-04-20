@@ -14,13 +14,12 @@ permissions:
   # 有权限给某个 commit / PR 写 GitHub 状态检查结果
   statuses: write
 
-
 # 触发事件
 on:
   push:
-    branches: [ "main" ] # 针对main分支
+    branches: ["main"] # 针对main分支
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   # 允许您从"Actions"选项卡手动运行此工作流
   workflow_dispatch:
@@ -39,28 +38,33 @@ on:
 jobs:
   # 任务"build"
   build:
+    # 矩阵配置，会使用22.x的node版本跑一次，配置多个元素就会跑多次
+    strategy:
+      matrix:
+        node-version: [22.x]
+
     runs-on: ubuntu-latest # 运行作业的服务器系统
     steps: # 运行作业的服务器系统
       - uses: actions/checkout@v4 # Action插件(v4版本)：将仓库的所有文件都可被访问
         # with:
-          # 默认1，0表示获取完整的git历史，⚠️ 当仓库过大时可以权衡比如设置为100（就算在pr应该不会有人提交100个commit吧😓）
-          # fetch-depth: 100
-          # 不要下载tree树数据（即fetch-depth: n层的真实目录结构）
-          # filter: tree:0
-          # 控制 checkout 后是否将认证 git token 持久化写入本地 git config，推荐设置为false，默认为true。⚠️ 如果要创建分支并推送一定要开启
-          # persist-credentials: false
+        # 默认1，0表示获取完整的git历史，⚠️ 当仓库过大时可以权衡比如设置为100（就算在pr应该不会有人提交100个commit吧😓）
+        # fetch-depth: 100
+        # 不要下载tree树数据（即fetch-depth: n层的真实目录结构）
+        # filter: tree:0
+        # 控制 checkout 后是否将认证 git token 持久化写入本地 git config，推荐设置为false，默认为true。⚠️ 如果要创建分支并推送一定要开启
+        # persist-credentials: false
 
       # 如果需要将checkout的代码映射到github ci服务器的main分支，可以这样做，此时git branch会显示为"main"否则默认为"detached HEAD"
       # 这对nx affected时必须的
       # - name: Check out the default branch
-        # run: git branch --track main origin/main
+      # run: git branch --track main origin/main
 
       # setup-node插件
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           # 支持: npm, yarn, pnpm，将缓存node_modules以及对应的包管理工具的缓存目录
-          cache: 'npm'
+          cache: "npm"
       - run: npm ci
 
       # cache 缓存插件
@@ -74,7 +78,7 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
           # 缓存未命中时的降级匹配，即使没有完全匹配的则找第一个相似的
           restore-keys: |
-            ${{ runner.os }}-bun- 
+            ${{ runner.os }}-bun-
 
       # nrwl/nx-set-shas插件：用于在GitHub Action环境下
       # 1. 确定"base"上一次master/main主分支的commit hash值
@@ -84,8 +88,8 @@ jobs:
       - name: check affected commit hash
         uses: nrwl/nx-set-shas@v4
       # 方式一：使用环境变量的读取方式
-        # env.NX_BASE: base
-        # env.NX_HEAD: head
+      # env.NX_BASE: base
+      # env.NX_HEAD: head
       - run: |
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
@@ -103,13 +107,13 @@ jobs:
           folder: deploy # 仓库内需要部署的目录，且不会部署`.gitignore`内的文件
           branch: deploy # 部署到deploy分支
           commit-message: "deploy: push config or rules through action"
-  
+
   agent:
     runs-on: ubuntu-latest
 
     # github.event_name：workflow_dispatch（手动触发）、issue_comment（评论触发）
     # github.event_name == 'workflow_dispatch' 手动触发workflow直接执行
-    
+
     # github.event.comment.body：评论内容
 
     # github.event.comment.user.login: 评论者的用户名
