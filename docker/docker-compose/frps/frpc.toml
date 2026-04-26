@@ -36,6 +36,9 @@ localIP = "127.0.0.1"
 localPort = 22
 # 默认没有visitor侧没有配置user才能访问
 allowUsers = []
+# 是否禁用局域网地址作为辅助地址，默认false，推荐设置为true
+[proxies.natTraversal]
+disableAssistedAddrs = true
 
 [[proxies]]
 # 自定义内网http地址
