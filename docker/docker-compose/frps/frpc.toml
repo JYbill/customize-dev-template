@@ -34,6 +34,8 @@ type = "xtcp"
 secretKey = "abcdefg"
 localIP = "127.0.0.1"
 localPort = 22
+# 默认没有visitor侧没有配置user才能访问
+allowUsers = []
 
 [[proxies]]
 # 自定义内网http地址
