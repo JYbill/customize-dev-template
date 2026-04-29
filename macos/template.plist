@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- 名称最好与文件名保持一致，表示任务名 -->
+    <key>Label</key>
+    <string>com.xiaoqinvar.frpc-proxies</string>
+
+    <!-- 工作目录，launchd会在启动进程前chdir到该目录 -->
+    <key>WorkingDirectory</key>
+    <string>/Users/xiaoqinvar/cli/frp</string>
+    
+    <!-- Program 必须是可执行文件的绝对路径 -->
+    <key>Program</key>
+    <string>/Users/xiaoqinvar/cli/frp/frpc</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>frpc</string>
+      <string>-c</string>
+      <!-- 可以用`./`表示在工作目录，按{WorkingDirectory}解析 -->
+      <string>/Users/xiaoqinvar/cli/frp/frpc-proxies.toml</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- 非正常退出则重启 <false/> 表示非正常退出 -->
+    <key>KeepAlive</key>
+    <dict>
+      <key>SuccessfulExit</key>
+      <false/>
+    </dict>
+
+    <!-- 重试间隔单位秒 -->
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+
+    <!-- 标准输出流日志 -->
+    <key>StandardOutPath</key>
+    <string>/Users/xiaoqinvar/Library/Logs/frpc-proxies.log</string>
+
+    <!-- 错误输出流日志 -->
+    <key>StandardErrorPath</key>
+    <string>/Users/xiaoqinvar/Library/Logs/frpc-proxies.err.log</string>
+  </dict>
+</plist>
