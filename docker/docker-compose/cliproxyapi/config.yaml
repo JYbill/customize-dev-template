@@ -21,9 +21,13 @@ remote-management:
 # ⚠️ 如果上游进入cool-down状态时，会使用下一个同名模型其他上游供应商
 routing:
   strategy: "fill-first"
+  # 默认false，true则为启用粘性会话。为false则启用routing.strategy策略
+  session-affinity: true
+  # 粘性会话缓存多少时间
+  session-affinity-ttl: "1h"
 
-# 禁用高开销中间件以降低内存占用。
-commercial-mode: false
+# 禁用高开销中间件以降低内存占用，默认false。为true则关闭日志
+commercial-mode: true
 
 # 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
 auth-dir: "~/.cli-proxy-api"
@@ -43,12 +47,25 @@ logging-to-file: true
 # 默认0，日志转轮文件总数
 logs-max-total-size-mb: 10
 
-# 如果是 false：请求codex api供应商时代理基本不加这层官方 Codex 指令，原请求直接走
-# 如果是 true：cli-proxy-api会在codex api请求上，按模型补进官方Codex的那套提示词指令进行伪造
-codex-instructions-enabled: true
+# 默认false。为true表示上游响应头转发给下游客户端
+passthrough-headers: false
 
-# 当为false时，禁用内存中使用统计聚合。默认true
-usage-statistics-enabled: true
+# 设置claude请求头，如果存在则忽略，不存在则覆盖
+claude-header-defaults:
+  user-agent: "claude-cli/2.1.44 (external, sdk-cli)"
+  package-version: "0.74.0"
+  runtime-version: "v24.3.0"
+  os: "MacOS"
+  arch: "arm64"
+  timeout: "600"
+  stabilize-device-profile: false
+
+# 设置需要覆盖的codex请求头，下面为默认值。仅对codex OAuth生效
+codex-header-defaults:
+  # 仅对 http 生效
+  user-agent: "codex_cli_rs/0.114.0 (Mac OS 14.2.0; x86_64) vscode/1.111.0"
+  # 仅对 ws 生效
+  beta-features: "multi_agent"
 
 # 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
 proxy-url: ""
@@ -61,12 +78,14 @@ max-retry-interval: 0
 # ws连接(/v1/ws)启用认证
 ws-auth: true
 
+# 非流式响应保活，默认0关闭，单位为秒，每N秒吐空行。目的在于避免nginx网关因为长时间上游无响应而直接断开链接
+nonstream-keepalive-interval: 30
 # SSE行为
 streaming:
   # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
-  keepalive-seconds: 15
+  keepalive-seconds: 0
   # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
-  bootstrap-retries: 1
+  bootstrap-retries: 0
 
 # 设置请求参数，下面参数实际测试下仅对相同api生效，即openai response api -> openai response api此时才会设置默认值。如果是协议转换则使用medium默认的深度思考级别
 payload:
