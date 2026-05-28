@@ -1,14 +1,23 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label 'built-in'
+            customWorkspace "/var/jenkins_home/workspace/微助教/${branch}"
+        }
+    }
 
     tools {
       nodejs 'node-24'
     }
-    
+
     stages {
         stage('git clone') {
             steps {
-                git branch: branch, credentialsId: 'codeup-person-password', url: '...'
+                withEnv([
+                  'GIT_SSH_COMMAND=ssh -o ProxyCommand="connect-proxy -S 192.168.88.251:7891 %h %p"'
+                ]) {
+                    git branch: branch, credentialsId: 'github-wzj-nodejs-v2-deploy-pk', url: '...'
+                }
             }
         }
 
@@ -22,22 +31,22 @@ pipeline {
                     ) == 0
                     if (!existEnv) {
                       sh "mkdir -p ${envPath}"
-                      sh "curl -o ${envPath}/.env {内网url拉取env环境变量}"
+                      sh "curl -o ${envPath}/.env http://192.168.88.234/env-share/wzj-nodejs-v2/wzj/env.txt"
                       sh "touch ${envPath}/.env"
                     }
                 }
             }
         }
-        
+
         stage('pnpm install') {
             steps {
-                sh 'npm config set package-lock true'
-                sh 'pnpm install --frozen-lockfile' // DEBUG: --reporter=ndjson
                 sh 'node --version'
                 sh 'pnpm --version'
+                sh 'pnpm config list'
+                sh 'pnpm install --frozen-lockfile' // DEBUG: --reporter=ndjson
             }
         }
-        
+
         stage('tsc check') {
             steps {
                 sh 'pnpm tsgocheck'
@@ -47,42 +56,53 @@ pipeline {
         stage('docker build') {
             steps {
                 script {
-                  def dockerImageName = "backend-..."
+                  def dockerImageName = "backend-wzj-nodejs-v2"
                   def branchName = sh(script: "git branch --show-current", returnStdout: true).trim().replace("/", "_")
                   def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
                   def gitTag = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
                   def dockerTag = "${platform == 'x86-debian' ? 'x86' : 'arm'}_${branchName}_${commitId}_${gitTag}"
-                  
+
                   env.DOCKER_IMAGE_NAME = dockerImageName
                   env.DOCKER_TAG = dockerTag
-                  
-                //   sh "docker build --build-arg HTTP_PROXY=http://192.168.88.116:7897 --build-arg https_proxy=http://192.168.88.116:7897 --build-arg http_proxy=http://192.168.88.116:7897 --build-arg HTTPS_PROXY=http://192.168.88.116:7897 -f 'x86-debian.Dockerfile' -t ${dockerImageName} ."
-                  sh "docker build -f '${platform}.Dockerfile' -t ${dockerImageName} ."
-                  
+
+                 //   sh "docker build --build-arg HTTP_PROXY=http://192.168.88.116:7897 --build-arg https_proxy=http://192.168.88.116:7897 --build-arg http_proxy=http://192.168.88.116:7897 --build-arg HTTPS_PROXY=http://192.168.88.116:7897 -f '${platform}.Dockerfile' -t ${dockerImageName} ."
+                 sh "docker build -f '${platform}.Dockerfile' -t ${dockerImageName} ."
+               }
+            }
+        }
+
+        stage('docker push 115 nexus') {
+            steps {
+                script {
                   withCredentials([usernamePassword(
                     credentialsId: 'nexus-155-user-pwd',
                     usernameVariable: 'username',
                     passwordVariable: 'password'
                   )]) {
                     sh 'docker login --username=$username --password=$password 192.168.88.115:8082'
-                    sh "docker tag ${dockerImageName} 192.168.88.115:8082/${dockerImageName}:${dockerTag}"
-                    sh "docker push 192.168.88.115:8082/${dockerImageName}:${dockerTag}"
+                    sh "docker tag ${env.DOCKER_IMAGE_NAME} 192.168.88.115:8082/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
+                    sh "docker push 192.168.88.115:8082/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
                   }
                 }
             }
         }
-        
+
+
         stage("ssh deploy") {
             steps {
                 script {
-                  if (platform == 'arm') {
-                     return
-                  }
+                  // 允许部署的分支
+                  def allowDeployBranchList = ['merge/wzj-temp']
+                  if (!allowDeployBranchList.contains(branch)) { return }
+
+                  // arm版本禁止部署
+                  if (platform == 'arm') { return }
+
                   def remote = [:]
                   remote.name = '内网234'
                   remote.host = '192.168.88.234'
                   remote.allowAnyHosts = true
-                  
+
                   withCredentials([sshUserPrivateKey(
                     credentialsId: '234_ssh_pk',
                     usernameVariable: 'userName',
@@ -99,6 +119,28 @@ pipeline {
                 }
             }
         }
-        
     }
+
+    post {
+      success {
+          script {
+              setBuildStatus("Build complete", "SUCCESS")
+          }
+      }
+      failure {
+          script {
+              setBuildStatus("Build failed", "FAILURE")
+          }
+      }
+    }
+}
+
+void setBuildStatus(String message, String state) {
+    step([
+        $class: "GitHubCommitStatusSetter",
+        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/..."],
+        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "jenkins/..."],
+        errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+        statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+    ]);
 }
