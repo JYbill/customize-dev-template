@@ -106,3 +106,7 @@ payload:
           protocol: "codex" # 限定为 Codex 协议
       params:
         "reasoning.effort": "high" # 推理努力程度设置为高
+
+codex:
+  # 默认false。为true且(routing.strategy="fill-first" || routing.session-affinity=true)才生效；作用：提取请求的身份信息id与选中的provider进行绑定，方便后续的粘性会话启用
+  identity-confuse: true
