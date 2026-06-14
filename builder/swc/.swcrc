@@ -14,7 +14,7 @@
 
   // 模块化规则
   "module": {
-    // commonjs、es6(esm)...
+    // commonjs、es6(esm)、systemjs(老前端项目模块化)...
     // 参考: https://swc.rs/docs/configuration/modules#es6
     "type": "es6",
 
