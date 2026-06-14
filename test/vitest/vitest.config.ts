@@ -52,7 +52,11 @@ export default defineConfig({
     reporters: ["default"],
     // 测试覆盖率产物配置
     coverage: {
-      provider: "v8",
+      provider: "v8", // 覆盖率数据采集插件
+      // text: 打印到终端
+      // html: 生成 html
+      // json-summary：生成 coverage/coverage-summary.json 产物
+      reporter: ["text", "html", "json-summary"], // 覆盖率报告样式
       reportsDirectory: "coverage", // 指定测试报告输出目录
       include: ["src/**/*.ts"],
       exclude: ["src/**/*.d.ts", "src/library/prisma/generate/**"],
