@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  // 配置缓存目录，默认为 node_modules/.vite/apps/{package.json name}
+  cacheDir: "./node_modules/.vite/app",
   plugins: [
     // 使用 vite + swc 进行编译
     swc.vite({
@@ -45,10 +47,13 @@ export default defineConfig({
         },
       },
     ],
-    // 测试覆盖率配置
+    // 测试结果的输出配置
+    // default: 在终端里显示默认测试报告
+    reporters: ["default"],
+    // 测试覆盖率产物配置
     coverage: {
       provider: "v8",
-      reportsDirectory: "coverage",
+      reportsDirectory: "coverage", // 指定测试报告输出目录
       include: ["src/**/*.ts"],
       exclude: ["src/**/*.d.ts", "src/library/prisma/generate/**"],
     },
