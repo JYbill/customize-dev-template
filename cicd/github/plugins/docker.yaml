@@ -52,8 +52,11 @@ jobs:
           # 读取"docker/metadata-action"生成的 tags 和 labels
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # 构建前，从 GitHub Actions 缓存里读取 Docker 缓存
-          cache-from: type=gha
+          # 构建前，从 GitHub Actions 缓存里读取 Docker 缓存，可以读取多个缓存作用域
+          cache-from: |
+            type=gha,scope=lint
+            type=gha,scope=install
           # 构建后，把本次 Docker 构建缓存保存到 GitHub Actions 缓存里
           # mode=max 表示尽量保存更多构建层
-          cache-to: type=gha,mode=max
+          # scope 表示写入缓存的作用域，
+          cache-to: type=gha,scope=production,mode=max

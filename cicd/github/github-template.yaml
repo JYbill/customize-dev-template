@@ -45,7 +45,7 @@ concurrency:
 
 # 工作流
 jobs:
-  # 任务"build"
+  # 任务一
   build:
     # 矩阵配置，会使用22.x的node版本跑一次，配置多个元素就会跑多次
     strategy:
@@ -54,6 +54,7 @@ jobs:
 
     runs-on: ubuntu-latest # 运行作业的服务器系统
 
+  # 任务二：设置前置任务条件
   build-push:
     name: parallel
     runs-on: ubuntu-latest
