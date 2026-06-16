@@ -4,6 +4,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: setup qemu
+        uses: docker/setup-qemu-action@v3
+
       - name: setup buildx
         # 启用并配置 Docker Buildx插件
         uses: docker/setup-buildx-action@v3
