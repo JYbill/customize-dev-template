@@ -66,5 +66,8 @@
   "minify": false,
 
   // 打出source-map
-  "sourceMaps": true
+  "sourceMaps": true,
+
+  // 是否去除源码的第一层目录，默认 false
+  "stripLeadingPaths": true
 }
