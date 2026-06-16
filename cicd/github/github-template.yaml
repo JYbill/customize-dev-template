@@ -20,6 +20,15 @@ on:
     branches: ["main"] # 针对main分支
   pull_request:
     branches: ["main"]
+  # 在 GitHub 页面里手动点按钮触发、API 触发，触发路径：Actions → 选择这个 workflow → Run workflow
+  workflow_dispatch:
+
+# 并发控制：同一个 group 里的工作流不能并发跑多个
+concurrency:
+  # group名
+  group: dockerhub-publish-${{ github.ref }}
+  # 新任务来了会取消旧任务
+  cancel-in-progress: true
 
   # 允许您从"Actions"选项卡手动运行此工作流
   workflow_dispatch:
@@ -44,69 +53,13 @@ jobs:
         node-version: [22.x]
 
     runs-on: ubuntu-latest # 运行作业的服务器系统
-    steps: # 运行作业的服务器系统
-      - uses: actions/checkout@v4 # Action插件(v4版本)：将仓库的所有文件都可被访问
-        # with:
-        # 默认1，0表示获取完整的git历史，⚠️ 当仓库过大时可以权衡比如设置为100（就算在pr应该不会有人提交100个commit吧😓）
-        # fetch-depth: 100
-        # 不要下载tree树数据（即fetch-depth: n层的真实目录结构）
-        # filter: tree:0
-        # 控制 checkout 后是否将认证 git token 持久化写入本地 git config，推荐设置为false，默认为true。⚠️ 如果要创建分支并推送一定要开启
-        # persist-credentials: false
 
-      # 如果需要将checkout的代码映射到github ci服务器的main分支，可以这样做，此时git branch会显示为"main"否则默认为"detached HEAD"
-      # 这对nx affected时必须的
-      # - name: Check out the default branch
-      # run: git branch --track main origin/main
-
-      # setup-node插件
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          # 支持: npm, yarn, pnpm，将缓存node_modules以及对应的包管理工具的缓存目录
-          cache: "npm"
-      - run: npm ci
-
-      # cache 缓存插件
-      - uses: actions/cache@v4
-        with:
-          # 缓存不同的路径
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          # 生成缓存key，方便复用，但一旦操作系统版本、bun.lock版本变化即失效
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          # 缓存未命中时的降级匹配，即使没有完全匹配的则找第一个相似的
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      # nrwl/nx-set-shas插件：用于在GitHub Action环境下
-      # 1. 确定"base"上一次master/main主分支的commit hash值
-      # 2. 确定"head"即PR提交的最新commit hash值
-      # 这两点用来保证"nx affected"能够正确覆盖所有受影响的文件，以及nx需要执行的依赖图
-      # 需要权限: 读取权限的contents、actions、pull-requests
-      - name: check affected commit hash
-        uses: nrwl/nx-set-shas@v4
-      # 方式一：使用环境变量的读取方式
-      # env.NX_BASE: base
-      # env.NX_HEAD: head
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-      # 方式二：使用步骤的读取方式
-      # 给这个步骤设置id，方便下面的读取
-      #   id: setSHAs
-      # - run: |
-      #     echo "BASE: ${{ steps.setSHAs.outputs.base }}"
-      #     echo "HEAD: ${{ steps.setSHAs.outputs.head }}"
-
-      # 部署步骤
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: deploy # 仓库内需要部署的目录，且不会部署`.gitignore`内的文件
-          branch: deploy # 部署到deploy分支
-          commit-message: "deploy: push config or rules through action"
+  build-push:
+    name: parallel
+    runs-on: ubuntu-latest
+    needs:
+      - lint-format
+      - test
 
   agent:
     runs-on: ubuntu-latest

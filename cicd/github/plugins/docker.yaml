@@ -1,0 +1,56 @@
+jobs:
+  docker:
+    name: build push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: setup buildx
+        # 启用并配置 Docker Buildx插件
+        uses: docker/setup-buildx-action@v3
+
+      - name: login dockerhub
+        # 登录docker hub 账号密码插件
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: docker metadata
+        id: meta
+        # 用来生成 Docker 镜像的元信息，主要是 镜像 tag 和 label
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          # 最后会作为docker tag的完整名称，⚠️ 每个条件都会产生一条docker tag
+          # type为ref表示使用分支信息、sha表示使用 git commit sha 信息、raw 表示使用表达式
+          # enable表示是否启用该条件
+
+          # type=ref,event=branch 用分支名生成 tag，例子：从 main 分支触发则为"your-image:main"
+          # type=ref,event=tag  Git tag 名生成 Docker tag，例子：git 为"v1.2.0"则生成"your-image:v1.2.0"
+          # {{is_default_branch}} 本插件的一个内置变量，用于表示当前流水线是否为github的默认分支
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: build push
+        uses: docker/build-push-action@v6
+        with:
+          # 当前构建在仓库的根目录
+          context: .
+          # 表示只构建 Dockerfile 里名为 production 的阶段
+          file: ./x86-debian.Dockerfile
+          # 指定构建镜像层
+          target: production
+          # 指定构建目标平台
+          platforms: linux/amd64,linux/arm64
+          push: true
+          # 读取"docker/metadata-action"生成的 tags 和 labels
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # 构建前，从 GitHub Actions 缓存里读取 Docker 缓存
+          cache-from: type=gha
+          # 构建后，把本次 Docker 构建缓存保存到 GitHub Actions 缓存里
+          # mode=max 表示尽量保存更多构建层
+          cache-to: type=gha,mode=max
