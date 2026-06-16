@@ -18,6 +18,12 @@ permissions:
 on:
   push:
     branches: ["main"] # 针对main分支
+    # 特定路径下的更改 push 事件会被忽略，不会触发工作流
+    paths-ignore:
+      - README.md
+      - docs/**
+      - docker-compose.yaml
+      - docker.compose.yaml
   pull_request:
     branches: ["main"]
   # 在 GitHub 页面里手动点按钮触发、API 触发，触发路径：Actions → 选择这个 workflow → Run workflow
