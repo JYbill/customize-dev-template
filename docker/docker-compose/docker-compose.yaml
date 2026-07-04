@@ -2,6 +2,15 @@ services: # 容器列表
   hbbs: # 镜像名
     container_name: hbbs # 容器名
     image: rustdesk/rustdesk-server:latest # 对应镜像与其版本
+    
+    ports:
+      # 映射单个端口
+      - "5000:5000"
+      # 映射连续端口
+      - "5000-5010:5000-5010"
+      # 根据传输层协议指定暴露连续端口
+      - "5000-5010:5000-5010/tcp"
+
     pull_policy: always # 每次启动时拉取最新镜像
     # 指定启动的用户，也可以定义运行容器内的uid与gid
     # "root" 指定为root用户启动
