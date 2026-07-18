@@ -87,4 +87,7 @@ networks:
 # 具名卷
 volumes:
   # 让docker为xxx卷分配存储地址
-  xxx:
+  xxx1:
+  # 等价于
+  xxx2:
+    driver: local
