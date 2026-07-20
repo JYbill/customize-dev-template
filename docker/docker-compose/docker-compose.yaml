@@ -28,8 +28,9 @@ services: # 容器列表
       
     
     network_mode: "host" # 网络
-    depends_on: # 依赖于hbbr容器启动后，才启动hbbs
-      - hbbr
+    # &xxx 表示定义锚点，可以在后续其他容器中的 depends_on 使用"*app-depends-on" 使用该锚点内的配置
+    # depends_on: &app-depends-on
+    #   - hbbr
       
     # 允许访问宿主机所有权限。等同于宿主机root权限
     privileged: true
@@ -47,9 +48,6 @@ services: # 容器列表
 
     # 在容器里加一个很小的init PID:1进程，回收僵尸进程、正确转发信号、优雅退出
     init: true
-
-    # 优雅停止，默认会等待10s结束
-    stop_grace_period: 2s
     
     # 重启规则
     # always：总是重启，不推荐
@@ -63,7 +61,8 @@ services: # 容器列表
     # 从docker.env读取环境变量
     env_file:
       - docker.env
-    environment:
+    # "&xxx" 定义环境变量锚点，后续其他容器可以复用该环境变量
+    environment: &app-envs
       - TZ=Asia/Shanghai
     
     # 健康检查
@@ -77,6 +76,13 @@ services: # 容器列表
     # 一个网络端口部署3个副本实例，需要配合docker swarm启动
     deploy:
       replicas: 3
+
+  test:
+    image: busybox
+    restart: "no"
+    environment:
+      <<: *app-envs # 读取锚点环境变量配置
+      # 如果需要覆盖环境变量配置，则可以在后续正常定义同名环境变量
 
 # 设置网络
 # 访问：http://my_network:port
