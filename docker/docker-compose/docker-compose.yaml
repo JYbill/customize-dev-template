@@ -1,3 +1,6 @@
+# 注意事项
+# 更改环境变量后需要重建容器docker compose up -d，这样才能将最新的环境变量设置到容器内
+
 services: # 容器列表
   hbbs: # 镜像名
     container_name: hbbs # 容器名
