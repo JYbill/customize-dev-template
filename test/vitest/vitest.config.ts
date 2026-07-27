@@ -31,7 +31,7 @@ export default defineConfig({
     // 设置 project 子项目，用来定义不同的配置
     projects: [
       {
-        // 继承上面全局的配置
+        // 继承上面全局的配置，⚠️ 同名配置不会合并而是覆盖
         extends: true,
         test: {
           name: "test",
@@ -43,7 +43,12 @@ export default defineConfig({
         test: {
           name: "e2e",
           include: ["test/**/*.e2e-spec.ts"],
+          // 测试文件并行，默认为 true
           fileParallelism: false,
+          sequence: {
+            // 多个 setupFiles 按配置数组的先后顺序，逐个执行并等待完成，默认值为 "parallel"并行
+            setupFiles: "list",
+          },
         },
       },
     ],
