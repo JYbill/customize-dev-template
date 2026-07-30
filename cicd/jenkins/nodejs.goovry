@@ -7,16 +7,21 @@ pipeline {
     }
 
     tools {
-      nodejs 'node-24'
+      nodejs 'node-latest'
     }
 
     stages {
         stage('git clone') {
             steps {
-                withEnv([
-                  'GIT_SSH_COMMAND=ssh -o ProxyCommand="connect-proxy -S 192.168.88.251:7891 %h %p"'
-                ]) {
-                    git branch: branch, credentialsId: 'github-wzj-nodejs-v2-deploy-pk', url: '...'
+                git branch: branch, credentialsId: 'github-wzj-nodejs-v2-deploy-pk', url: 'git@github.com:whtthd/wzj-nodejs-v2.git'
+            }
+        }
+
+        stage("collect changed files") {
+            steps {
+                script {
+                    def checkFiles = getGithubCommitFiles()
+                    env.CHECK_FILES = checkFiles.join(' ')
                 }
             }
         }
@@ -24,54 +29,90 @@ pipeline {
         stage("install env") {
             steps {
                 script {
-                    def envPath = "/var/jenkins_home/workspace/微助教/${branch}/env"
-                    def existEnv = sh(
-                      script: "[ -f '${envPath}/.env' ]",
-                      returnStatus: true
-                    ) == 0
-                    if (!existEnv) {
-                      sh "mkdir -p ${envPath}"
-                      sh "curl -o ${envPath}/.env http://192.168.88.234/env-share/wzj-nodejs-v2/wzj/env.txt"
-                      sh "touch ${envPath}/.env"
-                    }
+                    env.WORKSPACE = "/var/jenkins_home/workspace/微助教/${branch}"
+                    def envPath = "${env.WORKSPACE}/env"
+                    sh "mkdir -p '${envPath}'"
+                    sh "curl -fSL -o '${envPath}/.env' 'http://192.168.88.234/env-share/wzj-nodejs-v2/wzj/env.txt'"
+                    sh "rm -f '${envPath}/.development.env' '${envPath}/.production.env'"
+                    sh "touch '${envPath}/.development.env' '${envPath}/.production.env'"
                 }
             }
         }
 
-        stage('pnpm install') {
+        stage('install') {
             steps {
-                sh 'node --version'
-                sh 'pnpm --version'
-                sh 'pnpm config list'
-                sh 'pnpm install --frozen-lockfile' // DEBUG: --reporter=ndjson
+                // sh '''
+                // docker build --progress=plain \
+                //     --build-arg HTTP_PROXY=http://192.168.88.251:7890 \
+                //     --build-arg https_proxy=http://192.168.88.251:7890 \
+                //     --build-arg http_proxy=http://192.168.88.251:7890 \
+                //     --build-arg HTTPS_PROXY=http://192.168.88.251:7890 \
+                //     -f "${platform}.Dockerfile" --target install .
+                // '''
+                sh "docker build --progress=plain -f '${platform}.Dockerfile' --target install ."
             }
         }
 
-        stage('tsc check') {
-            steps {
-                sh 'pnpm tsgocheck'
+        stage("lint & format & test") {
+            parallel {
+                stage("lint & format") {
+                    steps {
+                        sh "docker build --progress=plain --build-arg CHECK_FILES='${env.CHECK_FILES}' -f '${platform}.Dockerfile' --target format ."
+                        sh "docker build --progress=plain --build-arg CHECK_FILES='${env.CHECK_FILES}' -f '${platform}.Dockerfile' --target lint ."
+                    }
+                }
+        
+                stage("test") {
+                    when {
+                        expression {
+                            return !params.skipTest
+                        }
+                    }
+                    steps {
+                        script {
+                            sh "docker build --progress=plain -f '${platform}.Dockerfile' --target test ."
+
+                            def coveragePath = "${env.WORKSPACE}/coverage"
+                            sh "rm -rf ${coveragePath}/*"
+                            sh """
+                            docker build --progress=plain \
+                                --target coverage-report \
+                                --output type=local,dest="${coveragePath}" \
+                                -f "${platform}.Dockerfile" .
+                            """
+                            publishHTML([
+                              allowMissing: false,
+                              alwaysLinkToLastBuild: true,
+                              keepAll: true,
+                              reportDir: 'coverage',
+                              reportFiles: 'index.html',
+                              reportName: 'Coverage Report'
+                            ])
+                            
+                            sh "echo '${env.BUILD_URL}Coverage_20Report/'"
+                        }
+                    }
+                }
             }
         }
-
-        stage('docker build') {
+        
+        stage("build") {
             steps {
                 script {
-                  def dockerImageName = "backend-wzj-nodejs-v2"
-                  def branchName = sh(script: "git branch --show-current", returnStdout: true).trim().replace("/", "_")
-                  def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
-                  def gitTag = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
-                  def dockerTag = "${platform == 'x86-debian' ? 'x86' : 'arm'}_${branchName}_${commitId}_${gitTag}"
-
-                  env.DOCKER_IMAGE_NAME = dockerImageName
-                  env.DOCKER_TAG = dockerTag
-
-                 //   sh "docker build --build-arg HTTP_PROXY=http://192.168.88.116:7897 --build-arg https_proxy=http://192.168.88.116:7897 --build-arg http_proxy=http://192.168.88.116:7897 --build-arg HTTPS_PROXY=http://192.168.88.116:7897 -f '${platform}.Dockerfile' -t ${dockerImageName} ."
-                 sh "docker build -f '${platform}.Dockerfile' -t ${dockerImageName} ."
-               }
+                    def dockerImageName = "backend-wzj-nodejs-v2"
+                    def branchName = sh(script: "git branch --show-current", returnStdout: true).trim().replace("/", "_")
+                    def commitId = sh(script: "git rev-parse --short=10 HEAD", returnStdout: true).trim()
+                    def gitTag = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
+                    def dockerTag = "${platform == 'x86-debian' ? 'x86' : 'arm'}_${branchName}_${commitId}_${gitTag}"
+                    
+                    env.DOCKER_IMAGE_NAME = dockerImageName
+                    env.DOCKER_TAG = dockerTag
+                    sh "docker build --progress=plain -f '${platform}.Dockerfile' --target production -t ${dockerImageName} ."
+                }
             }
         }
 
-        stage('docker push 115 nexus') {
+        stage("docker push 115 nexus") {
             steps {
                 script {
                   withCredentials([usernamePassword(
@@ -138,9 +179,47 @@ pipeline {
 void setBuildStatus(String message, String state) {
     step([
         $class: "GitHubCommitStatusSetter",
-        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/..."],
-        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "jenkins/..."],
+        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/whtthd/wzj-nodejs-v2"],
+        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "jenkins/wzj-nodejs-v2"],
         errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
         statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
     ]);
+}
+
+def getGithubCommitFiles() {
+    def webhookPayload = [:]
+
+    // Generic Webhook Trigger 中配置 body = $，并勾选 Avoid flattening branches。
+    if (env.body?.trim()) {
+        webhookPayload = new groovy.json.JsonSlurperClassic().parseText(env.body)
+    }
+
+    def webhookCommits = webhookPayload instanceof Map ? (webhookPayload.commits ?: []) : []
+    def changedFiles = webhookCommits instanceof List
+        ? webhookCommits.collectMany { commit -> (commit.added ?: []) + (commit.modified ?: []) }
+        : []
+
+    if (changedFiles.isEmpty()) {
+        echo "未从 Generic Webhook Trigger body.commits 获取到变更文件，回退提取最近 15 个 commit 的文件列表。"
+        def recentCommitFiles = sh(
+            script: "git -c core.quotepath=false log -15 --name-only --pretty=format: --diff-filter=ACMR | awk 'NF' | sort -u",
+            returnStdout: true
+        ).trim()
+        changedFiles = recentCommitFiles ? recentCommitFiles.readLines() : []
+    } else {
+        echo "已从 Generic Webhook Trigger body.commits 获取变更文件。"
+    }
+
+    def candidateFiles = changedFiles
+        .collect {
+            "${it ?: ''}".trim()
+        }
+        .findAll { it ==~ '^src/[A-Za-z0-9_./-]+\\.[cm]?tsx?$' }
+        .unique()
+        .sort()
+
+    def checkFiles = candidateFiles.findAll { fileExists(it) }
+
+    echo "变更文件数：${changedFiles.size()}，待检查文件数：${checkFiles.size()}"
+    return checkFiles
 }
