@@ -20,7 +20,7 @@ export default defineConfig({
     }),
   ],
   test: {
-    // 测试环境
+    // 测试环境，如果安装了 jsdom 可以用 jsdom 模拟浏览器环境
     environment: "node",
     // 不把 describe、it、expect、beforeEach 这些测试 API 注入成全局变量，需要显示 import 使用
     globals: false,
