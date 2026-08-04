@@ -1,0 +1,29 @@
+[Unit]
+Description=DeepSeek V4 Flash DS4 Server
+# 等待系统声明网络已经就绪
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tthd
+Group=tthd
+WorkingDirectory=/home/tthd/ds4-on-spark
+
+Environment=HOME=/home/tthd
+Environment=DS4_SRC_DIR=/home/tthd/ds4-on-spark
+Environment=DS4_GGUF_DIR=/home/tthd/models/ds4-on-spark
+# 固定当前模型，避免未来启动器默认值变化后自动切换模型
+Environment=GGUF_FILE=DeepSeek-V4-Flash-IQ2XXS-w2Q2K-AProjQ8-SExpQ8-OutQ8-chat-v2-imatrix-0731.gguf
+Environment=DSPARK_FILE=DSpark-drafter-Q2K-Q8-0731.gguf
+
+ExecStart=/home/tthd/.local/bin/ds4-serve --host 0.0.0.0 --port 8000 -c 32768
+
+Restart=on-failure
+RestartSec=10
+KillSignal=SIGTERM
+TimeoutStopSec=120
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
