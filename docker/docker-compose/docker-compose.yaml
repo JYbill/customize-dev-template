@@ -83,6 +83,7 @@ services: # 容器列表
   test:
     image: busybox
     restart: "no"
+    ipc: host # 容器共享宿主机 IPC，能使用宿主机的共享内存环境，但隔离性较差，也可能与其他容器互相影响。可访问宿主机的 System V 共享内存、信号量、消息队列，以及 POSIX 消息队列等 IPC 资源
     environment:
       <<: *app-envs # 读取锚点环境变量配置
       # 如果需要覆盖环境变量配置，则可以在后续正常定义同名环境变量
