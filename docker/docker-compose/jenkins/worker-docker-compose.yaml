@@ -1,0 +1,30 @@
+services:
+  jenkins-worker:
+    image: jenkins/inbound-agent:jdk25
+    container_name: jenkins-worker
+    init: true
+    restart: unless-stopped
+    group_add:
+      - "983"
+    environment:
+      TZ: Asia/Shanghai
+      JENKINS_JAVA_OPTS: "-Duser.timezone=Asia/Shanghai"
+    command:
+      - "-url"
+      - "http://192.168.88.223:8080/"
+      - "-name"
+      - "docker-worker-88-226"
+      - "-secret"
+      - "bcb22d3f5cd69a5783480dc72190d4676fac7d91eb4dc233dbe9a25d74e43adc"
+      - "-webSocket"
+      - "-workDir"
+      - "/home/jenkins/agent"
+    volumes:
+      - ./jenkins_home:/home/jenkins
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker:ro
+      - /usr/libexec/docker/cli-plugins:/usr/lib/docker/cli-plugins:ro
+      - /home/tthd/.docker/buildx:/home/jenkins/.docker/buildx
+
+volumes:
+  worker_home:
