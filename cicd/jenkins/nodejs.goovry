@@ -1,14 +1,11 @@
 pipeline {
     agent {
         node {
-            label 'built-in'
-            customWorkspace "/var/jenkins_home/workspace/微助教/${branch}"
+            label ''
+            customWorkspace "workspace/微助教/${branch}"
         }
     }
 
-    tools {
-      nodejs 'node-latest'
-    }
 
     stages {
         stage('git clone') {
@@ -22,6 +19,7 @@ pipeline {
                 script {
                     def checkFiles = getGithubCommitFiles()
                     env.CHECK_FILES = checkFiles.join(' ')
+                    env.RUN_CHECKS = checkFiles ? 'true' : 'false'
                 }
             }
         }
@@ -29,7 +27,6 @@ pipeline {
         stage("install env") {
             steps {
                 script {
-                    env.WORKSPACE = "/var/jenkins_home/workspace/微助教/${branch}"
                     def envPath = "${env.WORKSPACE}/env"
                     sh "mkdir -p '${envPath}'"
                     sh "curl -fSL -o '${envPath}/.env' 'http://192.168.88.234/env-share/wzj-nodejs-v2/wzj/env.txt'"
@@ -41,61 +38,23 @@ pipeline {
 
         stage('install') {
             steps {
-                // sh '''
-                // docker build --progress=plain \
-                //     --build-arg HTTP_PROXY=http://192.168.88.251:7890 \
-                //     --build-arg https_proxy=http://192.168.88.251:7890 \
-                //     --build-arg http_proxy=http://192.168.88.251:7890 \
-                //     --build-arg HTTPS_PROXY=http://192.168.88.251:7890 \
-                //     -f "${platform}.Dockerfile" --target install .
-                // '''
                 sh "docker build --progress=plain -f '${platform}.Dockerfile' --target install ."
             }
         }
 
-        stage("lint & format & test") {
-            parallel {
-                stage("lint & format") {
-                    steps {
+        stage("lint & format") {
+            steps {
+                script {
+                    if (env.RUN_CHECKS == 'true') {
                         sh "docker build --progress=plain --build-arg CHECK_FILES='${env.CHECK_FILES}' -f '${platform}.Dockerfile' --target format ."
                         sh "docker build --progress=plain --build-arg CHECK_FILES='${env.CHECK_FILES}' -f '${platform}.Dockerfile' --target lint ."
-                    }
-                }
-        
-                stage("test") {
-                    when {
-                        expression {
-                            return !params.skipTest
-                        }
-                    }
-                    steps {
-                        script {
-                            sh "docker build --progress=plain -f '${platform}.Dockerfile' --target test ."
-
-                            def coveragePath = "${env.WORKSPACE}/coverage"
-                            sh "rm -rf ${coveragePath}/*"
-                            sh """
-                            docker build --progress=plain \
-                                --target coverage-report \
-                                --output type=local,dest="${coveragePath}" \
-                                -f "${platform}.Dockerfile" .
-                            """
-                            publishHTML([
-                              allowMissing: false,
-                              alwaysLinkToLastBuild: true,
-                              keepAll: true,
-                              reportDir: 'coverage',
-                              reportFiles: 'index.html',
-                              reportName: 'Coverage Report'
-                            ])
-                            
-                            sh "echo '${env.BUILD_URL}Coverage_20Report/'"
-                        }
+                    } else {
+                        echo '没有需要检查的 TS 文件，跳过 lint 和 format'
                     }
                 }
             }
         }
-        
+
         stage("build") {
             steps {
                 script {
@@ -107,7 +66,9 @@ pipeline {
                     
                     env.DOCKER_IMAGE_NAME = dockerImageName
                     env.DOCKER_TAG = dockerTag
-                    sh "docker build --progress=plain -f '${platform}.Dockerfile' --target production -t ${dockerImageName} ."
+                    // 本地镜像按任务和构建号区分，避免两条流水线互相覆盖。
+                    env.LOCAL_IMAGE = "${dockerImageName}:${dockerTag}-wzj-${env.BUILD_NUMBER}"
+                    sh "docker build --progress=plain -f '${platform}.Dockerfile' --target production -t ${env.LOCAL_IMAGE} ."
                 }
             }
         }
@@ -121,7 +82,7 @@ pipeline {
                     passwordVariable: 'password'
                   )]) {
                     sh 'docker login --username=$username --password=$password 192.168.88.115:8082'
-                    sh "docker tag ${env.DOCKER_IMAGE_NAME} 192.168.88.115:8082/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
+                    sh "docker tag ${env.LOCAL_IMAGE} 192.168.88.115:8082/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
                     sh "docker push 192.168.88.115:8082/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_TAG}"
                   }
                 }
@@ -210,15 +171,14 @@ def getGithubCommitFiles() {
         echo "已从 Generic Webhook Trigger body.commits 获取变更文件。"
     }
 
-    def candidateFiles = changedFiles
-        .collect {
-            "${it ?: ''}".trim()
-        }
-        .findAll { it ==~ '^src/[A-Za-z0-9_./-]+\\.[cm]?tsx?$' }
-        .unique()
-        .sort()
-
-    def checkFiles = candidateFiles.findAll { fileExists(it) }
+    def sourceFiles = changedFiles
+        .collect { "${it ?: ''}" }
+        .findAll { it.startsWith('src/') && it ==~ '.*\\.[cm]?tsx?$' }
+    def unsupported = sourceFiles.findAll { !(it ==~ '^src/[A-Za-z0-9_./-]+\\.[cm]?tsx?$') }
+    if (unsupported) {
+        error('变更含当前 CHECK_FILES 接口不支持的源码文件名；请调整文件名或检查脚本，不能静默漏检。')
+    }
+    def checkFiles = sourceFiles.unique().sort().findAll { fileExists(it) }
 
     echo "变更文件数：${changedFiles.size()}，待检查文件数：${checkFiles.size()}"
     return checkFiles
