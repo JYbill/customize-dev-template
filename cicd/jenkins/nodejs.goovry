@@ -8,6 +8,20 @@ pipeline {
 
 
     stages {
+        stage('Init') {
+            steps {
+                echo "执行节点：${env.NODE_NAME}"
+                echo "执行器编号：${env.EXECUTOR_NUMBER}"
+                echo "工作目录：${env.WORKSPACE}"
+                script {
+                    def hostName = isUnix()
+                        ? sh(script: 'hostname', returnStdout: true).trim()
+                        : bat(script: '@hostname', returnStdout: true).trim()
+                    echo "主机名：${hostName}"
+                }
+            }
+        }
+
         stage('git clone') {
             steps {
                 git branch: branch, credentialsId: 'github-wzj-nodejs-v2-deploy-pk', url: 'git@github.com:whtthd/wzj-nodejs-v2.git'
