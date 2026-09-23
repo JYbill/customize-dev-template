@@ -3,17 +3,16 @@ import dotenv from "@dotenvx/dotenvx";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const envDir = fileURLToPath(new URL("../../env/", import.meta.url));
 
-const envPath = path.resolve(__dirname, "../env");
-
+// 基础环境文件先加载，当前环境文件可覆盖同名配置。
 dotenv.config({
   path: [
-    path.resolve(envPath, `.${process.env.NODE_ENV ?? "development"}.env`),
-    path.resolve(envPath, ".env"),
+    path.join(envDir, ".env"),
+    path.join(envDir, "." + (process.env.NODE_ENV ?? "development") + ".env"),
   ],
-  overload: false,
+  overload: true,
   strict: true,
   logLevel: "error",
+  ignore: ["MISSING_ENV_FILE"],
 });

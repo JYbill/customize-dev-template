@@ -1,18 +1,10 @@
-import { config } from "#config";
+import Koa from "koa";
 
-import koa, { type Context } from "koa";
+// Koa 3 将当前请求的 Context 放入自己的 AsyncLocalStorage。
+const app = new Koa({ asyncLocalStorage: true });
 
-import { globalLogger as logger } from "#logger";
-
-const app = new koa();
-
-// koa配置
-app.proxy = true;
-app.subdomainOffset = 0;
-app.keys = config.auth.SESSION_SECRETS;
-
-app.on("error", (koaErr: Error, _ctx: Context) => {
-  logger.error("koa error: %s", koaErr.stack || koaErr);
+app.on("error", (error: Error) => {
+  console.error("Koa 请求处理失败", error);
 });
 
 export { app };

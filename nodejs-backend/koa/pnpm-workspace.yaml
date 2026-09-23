@@ -1,4 +1,0 @@
-onlyBuiltDependencies:
-  - "bufferutil"
-  - "msgpackr-extract"
-  - "utf-8-validate"
