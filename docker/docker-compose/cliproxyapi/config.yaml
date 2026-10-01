@@ -100,22 +100,14 @@ oauth:
         disable-cloaking-model-list: true
       # 设置claude请求头，如果存在则忽略，不存在则覆盖
       header-defaults:
-        user-agent: "claude-cli/2.1.44 (external, sdk-cli)"
-        package-version: "0.74.0"
-        runtime-version: "v24.3.0"
-        os: "MacOS"
-        arch: "arm64"
-        timeout: "600"
         # 请求伪装中的日期信息使用此默认时区，凭据内的 timezone 可覆盖它。
         timezone: "Asia/Tokyo"
-        stabilize-device-profile: false
+        stabilize-device-profile: true
     codex:
-      # 设置需要覆盖的codex请求头，下面为默认值。仅对codex OAuth生效
-      header-defaults:
-        # 仅对 http 生效
-        user-agent: "codex_cli_rs/0.114.0 (Mac OS 14.2.0; x86_64) vscode/1.111.0"
-        # 仅对 ws 生效
-        beta-features: "multi_agent"
+      # 默认 false：冷却整个凭据；true：只冷却本次请求的模型。
+      model-level-cooling: false
+      # 默认 false：仅对 responses ws 在生成过程中继续发送输入。
+      response-steering: false
 
 observability:
   logs:

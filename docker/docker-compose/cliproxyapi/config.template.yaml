@@ -92,14 +92,74 @@ oauth:
       # ws连接(/v1/ws)启用认证
       ws-auth: true
     claude:
-      # false：保留默认的 Claude OAuth 请求伪装行为；true：禁用全局请求伪装。
+      # 以下为 v8.0.8 的 Claude OAuth 配置；API Key 的伪装行为在 api-keys.claude 中单独配置。
+      # 默认 false：额度耗尽时冷却整个凭据；true：只冷却本次请求的模型。
+      model-level-cooling: false
+      # 默认 false：自动对非 Claude Code 客户端进行请求伪装。
+      # true：禁用 Claude Code 身份伪装和系统提示词替换，透传原始系统提示词。
+      # 单个 OAuth 凭据文件中的 cloak_mode 可以覆盖此设置。
       disable-claude-cloak-mode: false
       claude-code:
-        # 模型列表返回原始模型 ID。
+        # true：Anthropic 模型列表返回原始模型 ID；默认 false：返回伪装后的模型 ID。
+        # 此项只控制模型列表中的名称，不控制请求伪装。
         disable-cloaking-model-list: true
+      # 使用 v8.0.8 内置指纹默认值，仅启用按凭据固定指纹。
       header-defaults:
-        # 请求伪装中的日期信息使用此默认时区，凭据内的 timezone 可覆盖它。
-        timezone: "Asia/Tokyo"
+        # user-agent: "claude-cli/2.1.280 (external, cli)"
+        # package-version: "0.112.1"
+        # runtime-version: "v26.3.0"
+        # os: "MacOS"
+        # arch: "arm64"
+        # timeout: "600"
+        # timezone: "" # 默认使用凭据时区，未指定则使用 CPA 进程的本地时区。
+        # 默认 false；true：CPA 按凭据固定请求头指纹（版本、OS、架构），取配置值或内置默认值。
+        stabilize-device-profile: true
+
+    codex:
+      # 默认 false：冷却整个凭据；true：只冷却本次请求的模型。
+      model-level-cooling: false
+      # 默认 false：仅对 responses ws 在生成过程中继续发送输入。
+      response-steering: false
+      # 默认 false；CPA 向上游发送请求时，强制设置官方 Codex 的 User-Agent 和 Originator（不区分是否为codex cli）
+      disable-codex-cloaking: false
+
+      # 当上游发生错误时方便进行重试或换模型供应商重试
+      # 默认 false；true：暂存握手、心跳和空内容帧，延后向客户端提交响应。
+      stream-bootstrap-buffering: false
+      # 仅配合上述缓冲使用；默认 "0"：无时间上限，仍受 48 帧和 1 MiB 缓冲预算限制。
+      # 可设 "20s"：达到时限后释放缓冲
+      stream-bootstrap-timeout: "0"
+
+      # 默认 false；true：适配官方 Codex 客户端的多 Agent 请求格式。
+      optimize-multi-agent-v2: false
+      # 默认 false，Codex + Codex OAuth 通常无需开启；仅当带 X-Openai-Subagent: collab_spawn 的 codex_app/create_thread、send_message_to_thread 委派结果缺少 call_id 而agent cli不支持缺少ai tool call导致报错才需要
+      orphan-delegation-compatibility: false
+
+      # Codex Live 的 WebRTC 音频和 DataChannel 中继，默认关闭；启用需要可达的入站 UDP。
+      live-media-relay:
+        enabled: false
+        # 最大并发媒体会话数；0 使用默认值 32。
+        max-sessions: 32
+        # true：拒绝下游 SDP 中指向私有、回环、链路本地或未指定地址的候选。
+        # 本地或可信内网的 Codex Desktop 连接通常保持 false。
+        disable-private-remote-ips: false
+        # CPA 位于 1:1 NAT 后时，对外通告的公网 IPv4/IPv6 地址。
+        public-ip: ""
+        # 可选 UDP 端口范围；必须同时设置，每个会话至少分配两个端口。
+        udp-port-min: 0
+        udp-port-max: 0
+        # 可选 STUN/TURN 服务器；按实际服务填写后再取消注释。
+        # ice-servers:
+        #   - urls: ["stun:stun.example.com:3478"]
+        #   - urls: ["turn:turn.example.com:3478?transport=udp"]
+        #     username: "user"
+        #     credential: "secret"
+
+      # user-agent：默认被 Codex 伪装覆盖，无需设置。
+      # beta-features：仅用于 WebSocket，默认留给客户端决定；不会开启客户端多 Agent 功能。
+      # header-defaults:
+      #   user-agent: "codex_cli_rs/0.114.0 (Mac OS 14.2.0; x86_64) vscode/1.111.0"
+      #   beta-features: "multi_agent"
 
 observability:
   logs:
