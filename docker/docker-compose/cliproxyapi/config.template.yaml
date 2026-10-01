@@ -135,7 +135,9 @@ oauth:
       # 默认 false，Codex + Codex OAuth 通常无需开启；仅当带 X-Openai-Subagent: collab_spawn 的 codex_app/create_thread、send_message_to_thread 委派结果缺少 call_id 而agent cli不支持缺少ai tool call导致报错才需要
       orphan-delegation-compatibility: false
 
-      # Codex Live 的 WebRTC 音频和 DataChannel 中继，默认关闭；启用需要可达的入站 UDP。
+      # webrtc的http sdp协商元数据中，可以包含tcp、udp两种协议的候选服务的地址，同时也可以包含tcp、udp两种协议的TURN服务
+      # codex cli通过http sdp协商webrtc的元信息后，通过udp直连cpa（设置ice-servers将可以用TURN中继TCP/UDP传输），然后cpa与openai协商webrtc连接方式，可能是udp打洞也可能是走TURN中继节点，这个就要看UDP能否直连，不能直连可能走TURN中继
+      # 对于cpa - openai官方这条路，配置代理后强制走http sdp协商的webrtc元信息中的TCP连接方式
       live-media-relay:
         enabled: false
         # 最大并发媒体会话数；0 使用默认值 32。
@@ -143,7 +145,7 @@ oauth:
         # true：拒绝下游 SDP 中指向私有、回环、链路本地或未指定地址的候选。
         # 本地或可信内网的 Codex Desktop 连接通常保持 false。
         disable-private-remote-ips: false
-        # CPA 位于 1:1 NAT 后时，对外通告的公网 IPv4/IPv6 地址。
+        # codex 会通过http sdp（Session Description Protocol）即webrtc前置请求用于交换客户端与服务端的所需信息，其中就包括服务端的public-ip，后续客户端将通过public-ip与cpa服务端建立webrtc通信
         public-ip: ""
         # 可选 UDP 端口范围；必须同时设置，每个会话至少分配两个端口。
         udp-port-min: 0
