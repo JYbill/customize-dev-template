@@ -1,14 +1,21 @@
-# 服务端口号
-port: 8317
+config-version: 8
 
-# 开启TLS协议，默认tls.enable=false
-tls:
-  enable: true
-  cert: "/cert/cert.pem"
-  key: "/cert/cert.key"
+server:
+  # 服务端口号
+  port: 8317
+
+  # 开启TLS协议，默认tls.enable=false
+  tls:
+    enable: true
+    cert: "/cert/cert.pem"
+    key: "/cert/cert.key"
+
+  # 禁用高开销中间件以降低内存占用，默认false。为true则关闭日志
+  commercial-mode: true
+
 
 # 管理API设置
-remote-management:
+management:
   # 默认false：仅允许localhost访问管理接口（仍需要密钥验证）
   # true：允许远程地址访问管理接口
   allow-remote: true
@@ -16,6 +23,13 @@ remote-management:
   secret-key: ""
   # 禁用控制面板资源下载，使用自定义管理面板适合为true
   disable-control-panel: false
+
+access:
+
+  # 访问cliproxyapi代理所需要的API密钥列表
+  api-keys:
+    - "your-api-key-1"
+
 
 # round-robin (default), fill-first(用完一下再切换下一个)
 # ⚠️ 如果上游进入cool-down状态时，会使用下一个同名模型其他上游供应商
@@ -25,87 +39,91 @@ routing:
   session-affinity: true
   # 粘性会话缓存多少时间
   session-affinity-ttl: "1h"
+  retry:
+    # http状态码为：403/408/500/502/503/504时，重试请求的次数。默认：3。当前凭证即会进入cool-down状态
+    request-retry: 0
+    # 默认：30.如果所有的凭证都进入了cool-down状态，客户端请求时会返回http 429状态，以及Retry-After: 30头，能够让客户端知道还需要等待多久
+    max-retry-interval: 0
 
-# 禁用高开销中间件以降低内存占用，默认false。为true则关闭日志
-commercial-mode: true
+requests:
 
-# 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
-auth-dir: "~/.cli-proxy-api"
+  # 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
+  proxy-url: ""
 
-# 访问cliproxyapi代理所需要的API密钥列表
-api-keys:
-  - "your-api-key-1"
+  # 默认false。为true表示上游响应头转发给下游客户端
+  passthrough-headers: false
 
-# 启用debug模式。默认false
-debug: false
+  # 非流式响应保活，默认0关闭，单位为秒，每N秒吐空行。目的在于避免nginx网关因为长时间上游无响应而直接断开链接
+  nonstream-keepalive-interval: 30
+  # SSE行为
+  streaming:
+    # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
+    keepalive-seconds: 0
+    # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
+    bootstrap-retries: 0
 
-# 打印请求日志
-request-log: true
+  # 设置请求参数，下面参数实际测试下仅对相同api生效，即openai response api -> openai response api此时才会设置默认值。如果是协议转换则使用medium默认的深度思考级别
+  payload:
+    default:
+      - models:
+          - name: gpt-5*
+            protocol: ""
+        params:
+          reasoning.effort: high
 
-# true: 是否将日志写入转轮文件而不是输出到stdout
-logging-to-file: true
-# 默认0，日志转轮文件总数
-logs-max-total-size-mb: 10
+  # 对于responses api的prompt_cache_key的行为 👍
+  # claude api -> cli-proxy-api -> codex api/codex OAuth(responses api)，将model + metadata.user_id作为prompt_cache_key的唯一id
 
-# 默认false。为true表示上游响应头转发给下游客户端
-passthrough-headers: false
+  # 对于responses的previous_response_id参数行为
+  # response api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，且不会记录每一轮的messages
+  # ws api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，但会记录每一轮的messages在内存中，发送给上游提供商时会拼成messages完整的历史对话列表并发送
 
-# 设置claude请求头，如果存在则忽略，不存在则覆盖
-claude-header-defaults:
-  user-agent: "claude-cli/2.1.44 (external, sdk-cli)"
-  package-version: "0.74.0"
-  runtime-version: "v24.3.0"
-  os: "MacOS"
-  arch: "arm64"
-  timeout: "600"
-  stabilize-device-profile: false
+  # 对于responses api -> claude api的cache_control参数行为
+  # response api -> cli-proxy-api -> claude api。tools 数组最后一个tool上加；system 最后一个 block上加；messages 倒数第二个 user block上加
 
-# 设置需要覆盖的codex请求头，下面为默认值。仅对codex OAuth生效
-codex-header-defaults:
-  # 仅对 http 生效
-  user-agent: "codex_cli_rs/0.114.0 (Mac OS 14.2.0; x86_64) vscode/1.111.0"
-  # 仅对 ws 生效
-  beta-features: "multi_agent"
+  # POST /v1/messages/count_tokens（携带本地完整的当前会话上下文在请求体），claude code发送/context行为
+  # 如果上游为claude api则发送到上游查询真实的token usage数据并返回
+  # 如果上游为codex api / openai compatible 则根据会话上下文tokenizer计算token数量并返回
 
-# 代理URL. 支持socks5/http/https协议. 比如: socks5://user:pass@192.168.1.1:1080/
-proxy-url: ""
+oauth:
+  # 存储认证令牌的目录（如果需要设置到其他地方，可以参考文档：https://help.router-for.me/configuration/storage/pgsql.html）
+  auth-dir: "~/.cli-proxy-api"
+  providers:
+    aistudio:
+      # ws连接(/v1/ws)启用认证
+      ws-auth: true
+    claude:
+      # false：保留默认的 Claude OAuth 请求伪装行为；true：禁用全局请求伪装。
+      disable-claude-cloak-mode: false
+      claude-code:
+        # 模型列表返回原始模型 ID。
+        disable-cloaking-model-list: true
+      # 设置claude请求头，如果存在则忽略，不存在则覆盖
+      header-defaults:
+        user-agent: "claude-cli/2.1.44 (external, sdk-cli)"
+        package-version: "0.74.0"
+        runtime-version: "v24.3.0"
+        os: "MacOS"
+        arch: "arm64"
+        timeout: "600"
+        # 请求伪装中的日期信息使用此默认时区，凭据内的 timezone 可覆盖它。
+        timezone: "Asia/Tokyo"
+        stabilize-device-profile: false
+    codex:
+      # 设置需要覆盖的codex请求头，下面为默认值。仅对codex OAuth生效
+      header-defaults:
+        # 仅对 http 生效
+        user-agent: "codex_cli_rs/0.114.0 (Mac OS 14.2.0; x86_64) vscode/1.111.0"
+        # 仅对 ws 生效
+        beta-features: "multi_agent"
 
-# http状态码为：403/408/500/502/503/504时，重试请求的次数。默认：3。当前凭证即会进入cool-down状态
-request-retry: 0
-# 默认：30.如果所有的凭证都进入了cool-down状态，客户端请求时会返回http 429状态，以及Retry-After: 30头，能够让客户端知道还需要等待多久
-max-retry-interval: 0
-
-# ws连接(/v1/ws)启用认证
-ws-auth: true
-
-# 非流式响应保活，默认0关闭，单位为秒，每N秒吐空行。目的在于避免nginx网关因为长时间上游无响应而直接断开链接
-nonstream-keepalive-interval: 30
-# SSE行为
-streaming:
-  # 默认0禁用，当<=0禁用，用于ws、SSE的心跳包发送的间隔（包内容："\n\n"）
-  keepalive-seconds: 0
-  # 默认0，在没有任何数据发送下，发生错误时的重试次数，0表示不重试
-  bootstrap-retries: 0
-
-# 设置请求参数，下面参数实际测试下仅对相同api生效，即openai response api -> openai response api此时才会设置默认值。如果是协议转换则使用medium默认的深度思考级别
-payload:
-  default:
-    - models:
-        - name: gpt-5*
-          protocol: ""
-      params:
-        reasoning.effort: high
-
-# 对于responses api的prompt_cache_key的行为 👍
-# claude api -> cli-proxy-api -> codex api/codex OAuth(responses api)，将model + metadata.user_id作为prompt_cache_key的唯一id
-
-# 对于responses的previous_response_id参数行为
-# response api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，且不会记录每一轮的messages
-# ws api -> cli-proxy-api -> codex api/codex OAuth/claude api...，将请求的previous_response_id参数直接删除，但会记录每一轮的messages在内存中，发送给上游提供商时会拼成messages完整的历史对话列表并发送
-
-# 对于responses api -> claude api的cache_control参数行为
-# response api -> cli-proxy-api -> claude api。tools 数组最后一个tool上加；system 最后一个 block上加；messages 倒数第二个 user block上加
-
-# POST /v1/messages/count_tokens（携带本地完整的当前会话上下文在请求体），claude code发送/context行为
-# 如果上游为claude api则发送到上游查询真实的token usage数据并返回
-# 如果上游为codex api / openai compatible 则根据会话上下文tokenizer计算token数量并返回
+observability:
+  logs:
+    # 启用debug模式。默认false
+    debug: true
+    # 打印请求日志
+    request-log: true
+    # true: 是否将日志写入转轮文件而不是输出到stdout
+    logging-to-file: true
+    # 默认0，日志转轮文件总数
+    logs-max-total-size-mb: 10
